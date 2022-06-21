@@ -3,9 +3,19 @@
     <head>
         <meta charset="UTF-8">
         <title>Interns Summer 2022</title>
+
+        <script>
+            function processInput() {
+                let x = document.forms["form"]["form-text-inp"].value;
+
+                console.log(x);
+            }
+        </script>
     </head>
     <body>
-        <input type="text">
-        <button>Process</button>
+        <form name="form" onsubmit="return processInput()" method="POST">
+            <input type="text" name="form-text-inp">
+            <input type="submit" value="Process">
+        </form>
     </body>
 </html>
