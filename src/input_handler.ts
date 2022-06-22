@@ -1,5 +1,10 @@
 function processInput() {
-    let textValue = document.forms["form"]["form-text-inp"].value;
+    let textValue: string = document.forms["form"]["form-text-inp"].value;
 
-    console.log(textValue);
+    // Serialize text field value
+    let formData: object = {textInput: textValue};
+    // Store serialized data
+    localStorage.setItem("formDataJSON", JSON.stringify(formData));
+
+    console.log(localStorage.getItem("formDataJSON"));
 }
