@@ -7,7 +7,11 @@ import (
 
 func ProcessInput(jsondata string) map[string]interface{} {
 	var result map[string]interface{}
-	json.Unmarshal([]byte(jsondata), &result)
+	err := json.Unmarshal([]byte(jsondata), &result)
+
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	return result
 }
