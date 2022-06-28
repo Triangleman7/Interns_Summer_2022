@@ -8,7 +8,6 @@ function processFormPrimary() {
     // Get value of text field
     let textFieldValue: string = element["primary-form-text"].value;
 
-    console.log(
-        `<form name="primary">: Text Field value = "${textFieldValue}"`
-    );
+    // Debugging
+    // console.log(`<form name="primary">: Text Field value = "${textFieldValue}"`);
 }

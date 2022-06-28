@@ -12,7 +12,9 @@ func main() {
 	// Register handler functions
 	http.HandleFunc("/", server.ProcessRootResponse)
 
-	fmt.Printf("Listening on Localhost (Port %v)\n\n", server.PORT)		// Debugging
+	// Debugging
+	fmt.Printf("Listening on Localhost (Port %v)\n\n", server.PORT)
+
 	err := http.ListenAndServe(fmt.Sprintf(":%v", server.PORT), nil)
 	if err != nil { log.Fatal(err) }
 }
