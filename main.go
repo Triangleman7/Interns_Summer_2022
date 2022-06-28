@@ -1,34 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/Triangleman7/Interns_Summer_2022/api"
 )
 
-func ProcessInput(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.Error(w, "404 not found.", http.StatusNotFound)
-		return
-	}
-
-	switch r.Method {
-	case "GET":
-		http.ServeFile(w, r, "ui/index.html")
-	case "POST":
-		err := r.ParseForm();
-		if err != nil {
-			fmt.Println(w, "ParseForm() err: %v", err)
-		}
-
-		textinput := r.FormValue("form-text-inp")
-
-		fmt.Printf("form[name='form'] > form[name='form-text-input'] = '%v'\n", textinput)
-	}
-}
-
 func main() {
-	http.HandleFunc("/", ProcessInput)
+	http.HandleFunc("/", api.ProcessInput)
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
