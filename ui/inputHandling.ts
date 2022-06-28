@@ -1,8 +1,14 @@
-function processInput() {
-    let formElement: HTMLFormElement = document.forms[<any>"form"];     // Attribute 'name' value used to get <form> element from DOM (TS expects numerical index; <any> type assertion used)
-    let textValue: string = formElement["form-text-inp"].value;
+/**
+ * Processes input on submission of `<form name='primary'>` element.
+ */
+function processFormPrimary() {
+    // Get corresopnding <form> element from DOM
+    let element: HTMLFormElement = document.forms[<any>"primary"];     // TS expects numerical index; <any> type assertion used to use index with `name` attribute value
+
+    // Get value of text field
+    let textFieldValue: string = element["primary-form-text"].value;
 
     console.log(
-        `form[name='form'] > form[name='form-text-input'] = "${textValue}"`
+        `<form name="primary">: Text Field value = "${textFieldValue}"`
     );
 }
