@@ -2,18 +2,36 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 )
 
-const testjson string = `{
-	"testString": "Hello World!",
-	"testInt": 42,
-	"testFloat": 3.14,
-	"testBoolean": true,
-	"testArray": [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]
-}`
+func ProcessInput(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.Error(w, "404 not found.", http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+		http.ServeFile(w, r, "ui/index.html")
+	case "POST":
+		err := r.ParseForm();
+		if err != nil {
+			fmt.Println(w, "ParseForm() err: %v", err)
+		}
+
+		textinput := r.FormValue("form-text-inp")
+
+		fmt.Printf("form[name='form'] > form[name='form-text-input'] = '%v'\n", textinput)
+	}
+}
 
 func main() {
-	data := api.ProcessInput(testjson)
+	http.HandleFunc("/", ProcessInput)
 
-	fmt.Println(data)
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
