@@ -5,16 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Triangleman7/Interns_Summer_2022/api"
+	"github.com/Triangleman7/Interns_Summer_2022/server"
 )
-
-var PORT int = 8080
 
 func main() {
 	// Register handler functions
-	http.HandleFunc("/", api.ProcessRootResponse)
+	http.HandleFunc("/", server.ProcessRootResponse)
 
-	fmt.Printf("Listening on Localhost (Port %v)\n\n", PORT)	// Debuggin
-	err := http.ListenAndServe(fmt.Sprintf(":%v", PORT), nil)
+	fmt.Printf("Listening on Localhost (Port %v)\n\n", server.PORT)		// Debugging
+	err := http.ListenAndServe(fmt.Sprintf(":%v", server.PORT), nil)
 	if err != nil { log.Fatal(err) }
 }

@@ -1,10 +1,12 @@
-package api
+package server
 
 import (
 	"fmt"
 	"net/http"
 	"strings"
 )
+
+var PORT int = 8080
 
 func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 	// Assert URL path directs to the root address
