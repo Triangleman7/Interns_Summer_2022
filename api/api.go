@@ -33,6 +33,10 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("<form name=\"primary\">: Text Field value = \"%v\"\n", valueTextField)
 		fmt.Printf("\tFormatted: \"%v\"\n", fvalueTextField)
 
+		// Write formatted value of text field to HTML document
+		var filename string = "primary_form_text.html"
+		WriteHTML(filename, fvalueTextField)
+
 	default:
 		fmt.Fprintf(w, "Only GET and POST requests supported")
 	}
