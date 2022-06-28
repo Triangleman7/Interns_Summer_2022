@@ -20,8 +20,11 @@ func ProcessInput(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(w, "ParseForm() err: %v", err)
 		}
 
-		textinput := r.FormValue("form-text-inp")
+		rawTextInput := r.FormValue("form-text-inp")
+		fTextInput := CapitalizeInput(rawTextInput)
 
-		fmt.Printf("form[name='form'] > form[name='form-text-input'] = '%v'\n", textinput)
+		fmt.Printf("form[name='form'] > form[name='form-text-input']:\n")
+		fmt.Printf("\tRaw: %v\n", rawTextInput)
+		fmt.Printf("\tFormatted: %v\n", fTextInput)
 	}
 }
