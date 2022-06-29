@@ -11,6 +11,13 @@ import (
 var OutputDirectory string = "out/"
 var PermissionBits os.FileMode = 0755
 
+func constructHTML(value string) string {
+	content, err := ioutil.ReadFile("server/output-template.html")
+	if err != nil { log.Fatal(err) }
+
+	return fmt.Sprintf(string(content), value)
+}
+
 func WriteHTML(filename string, value string) {
 	// Assert that the target file is an HTML document
 	if filepath.Ext(filename) != ".html" {
@@ -29,6 +36,6 @@ func WriteHTML(filename string, value string) {
 	if err != nil { log.Fatal(err) }
 
 	// Write `value` argument to determined file
-	err = ioutil.WriteFile(path, []byte(value), PermissionBits)
+	err = ioutil.WriteFile(path, []byte(constructHTML(value)), PermissionBits)
 	if err != nil { log.Fatal(err) }
 }

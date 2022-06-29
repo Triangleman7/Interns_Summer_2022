@@ -36,7 +36,7 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		// fmt.Printf("\tFormatted: \"%v\"\n", fvalueTextField)
 
 		// Write formatted value of text field to HTML document
-		var filename string = "primary_form_text.html"
+		var filename string = "primary-form-text.html"
 		WriteHTML(filename, fvalueTextField)
 
 	default:
