@@ -32,8 +32,8 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		fvalueTextField := strings.ToUpper(valueTextField)
 
 		// Debugging
-		// fmt.Printf("<form name=\"primary\">: Text Field value = \"%v\"\n", valueTextField)
-		// fmt.Printf("\tFormatted: \"%v\"\n", fvalueTextField)
+		fmt.Fprintf(w, "<form name=\"primary\">: Text Field value = \"%v\"\n", valueTextField)
+		fmt.Fprintf(w, "\tFormatted: \"%v\"\n", fvalueTextField)
 
 		// Write formatted value of text field to HTML document
 		var filename string = "primary-form-text.html"
