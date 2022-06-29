@@ -6,10 +6,10 @@ function processFormPrimary() {
     let element: HTMLFormElement = document.forms[<any>"primary"];     // TS expects numerical index; <any> type assertion used to use index with `name` attribute value
 
     // Get value of text field
-    let textFieldValue: string = element["primary-form-text"].value;
+    let textFieldValue: string = element["primary-text"].value;
 
     // Get value of dropdown menu
-    let menuValue: string = element["primary-form-text-operation"].value;
+    let menuValue: string = element["primary-text-operation"].value;
 
     // Debugging
     console.log(`<form name="primary">: Text Field value = "${textFieldValue}"`);
