@@ -8,6 +8,22 @@ import (
 
 var PORT int = 8080
 
+func formatValue(input string, method string) string {
+	switch method {
+	case "":			// 'No Operation'
+		return input
+
+	case "lower":		// 'Lowercase'
+		return strings.ToLower(input)
+
+	case "upper":		// 'Uppercase'
+		return strings.ToUpper(input)
+
+	default:
+		return ""
+	}
+}
+
 func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 	// Assert URL path directs to the root address
 	if r.URL.Path != "/" {
@@ -25,19 +41,25 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm();
 		if err != nil { fmt.Fprintf(w, "ParseForm() err: %v", err) }
 
+		var res string;
+
 		// Get value of text field
 		valueTextField := r.FormValue("primary-text")
 
+		// Get value of dropdown menu
+		valueMenu := r.FormValue("primary-text-operation")
+
 		// Format value of text field
-		fvalueTextField := strings.ToUpper(valueTextField)
+		res = formatValue(valueTextField, valueMenu)
 
 		// Debugging
 		fmt.Fprintf(w, "<form name=\"primary\">: Text Field value = \"%v\"\n", valueTextField)
-		fmt.Fprintf(w, "\tFormatted: \"%v\"\n", fvalueTextField)
+		fmt.Fprintf(w, "<form name=\"primary\">: Dropdown Menu value = \"%v\"\n", valueMenu)
+		fmt.Fprintf(w, "\tFormatted: \"%v\"\n", res)
 
 		// Write formatted value of text field to HTML document
 		var filename string = "primary-text.html"
-		WriteHTML(filename, fvalueTextField)
+		WriteHTML(filename, res)
 
 	default:
 		fmt.Fprintf(w, "Only GET and POST requests supported")
