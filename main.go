@@ -11,6 +11,8 @@ import (
 func main() {
 	// Register handler functions
 	http.HandleFunc("/", server.ProcessRootResponse)
+	fs := http.FileServer(http.Dir("ui"))
+	http.Handle("/ui/", http.StripPrefix("/ui/", fs))
 
 	// Debugging
 	fmt.Printf("Listening on Localhost (Port %v)\n\n", server.PORT)
