@@ -8,7 +8,12 @@
     </head>
     <body>
         <form name="primary" method="POST" action="/" onsubmit="processFormPrimary()">
-            <input name="primary-form-text" type="text" >
+            <input name="primary-form-text" type="text">
+            <select name="primary-form-text-operation" id="operation-select">
+                <option value="">No Operation</option>
+                <option value="lower">Lowercase</option>
+                <option value="upper">Uppercase</option>
+            </select>
             <input value="Process" type="submit" >
         </form>
     </body>
