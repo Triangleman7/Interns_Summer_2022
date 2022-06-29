@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/Triangleman7/Interns_Summer_2022/outputdata"
 )
 
 var PORT int = 8080
@@ -59,7 +61,7 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 
 		// Write formatted value of text field to HTML document
 		var filename string = "primary-text.html"
-		WriteHTML(filename, res)
+		outputdata.WriteHTML(filename, res)
 
 	default:
 		fmt.Fprintf(w, "Only GET and POST requests supported")
