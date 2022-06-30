@@ -20,7 +20,7 @@ func OutputHTML(targetpath string, templatepath string, values ...interface{}) {
 
 	// Assert that the target file is an HTML document
 	if filepath.Ext(targetpath) != ".html" {
-		err = errors.New(fmt.Sprintf("Expecte file extension '.html' (%v)", targetpath))
+		err = errors.New(fmt.Sprintf("Expected file extension '.html' (%v)", targetpath))
 		panic(err)
 	}
 
