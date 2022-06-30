@@ -17,7 +17,7 @@ function processFormPrimary() {
     // Debugging
     console.log(`<form name="primary">: Text Field value = "${textFieldValue}"`);
     console.log(`<form name="primary">: Dropdown Menu value = "${menuValue}"`);
-    console.log(`<form name="primary">: File Upload value = ${fileUploadValue}`)
+    console.log(`<form name="primary">: File Upload value = ${fileUploadValue}`);
 
     return true;
 }

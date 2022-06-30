@@ -1,8 +1,10 @@
 package server
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -47,15 +49,21 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "ui/index.html")
 
 	case "POST":
+		var buf bytes.Buffer
 		var res string
 
 		// Catch errors thrown while parsing form submission
-		err = r.ParseForm();
+		err = r.ParseMultipartForm(0);
 		if err != nil { panic(err) }
 
 		// Get values from form submission
 		var valueTextField string = r.FormValue("primary-text")
 		var valueMenu string = r.FormValue("primary-text-operation")
+		file, header, err := r.FormFile("primary-image")
+		if err != nil { panic(err) }
+
+		// Process `file`
+		io.Copy(&buf, file)
 
 		// Format value of text field
 		err, res = formatValue(valueTextField, valueMenu)
@@ -64,6 +72,8 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		// Debugging
 		fmt.Fprintf(w, "<form name=\"primary\">: Text Field value = \"%v\"\n", valueTextField)
 		fmt.Fprintf(w, "<form name=\"primary\">: Dropdown Menu value = \"%v\"\n", valueMenu)
+		fmt.Fprintf(w, "<form name=\"primary\">: Image Field value = \"%v\"\n", header.Filename)
+		fmt.Fprint(w, buf)
 		fmt.Fprintf(w, "\tFormatted: \"%v\"\n", res)
 
 		// Write formatted value of text field to output files
