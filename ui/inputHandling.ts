@@ -11,9 +11,13 @@ function processFormPrimary() {
     // Get value of dropdown menu
     let menuValue: string = element["primary-text-operation"].value;
 
+    // Get value of file upload field
+    let fileUploadValue: string = element["primary-image"].value;
+
     // Debugging
     console.log(`<form name="primary">: Text Field value = "${textFieldValue}"`);
     console.log(`<form name="primary">: Dropdown Menu value = "${menuValue}"`);
+    console.log(`<form name="primary">: File Upload value = ${fileUploadValue}`)
 
     return true;
 }
