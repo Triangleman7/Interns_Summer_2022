@@ -60,7 +60,7 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "\tFormatted: \"%v\"\n", res)
 
 		// Write formatted value of text field to HTML document
-		outputdata.OutputHTML("primary-text.html", res)
+		outputdata.OutputHTML("primary-text.html", "outputdata/templates/template.html", res)
 
 	default:
 		fmt.Fprintf(w, "Only GET and POST requests supported")
