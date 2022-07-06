@@ -8,18 +8,6 @@ import (
 	"path/filepath"
 )
 
-var OutputDirectory string = "out/"
-var PermissionBits os.FileMode = 0755
-
-func DirectorySetup() {
-	// Remove the target directory and its children
-	os.RemoveAll(OutputDirectory)		// Returns `nil` if directory exists
-
-	// Create an empty output directory
-	err := os.Mkdir(OutputDirectory, PermissionBits)
-	if err != nil { panic(err) }
-}
-
 func readTemplate(path string) (error, string) {
 	var err error
 	var reader []byte
@@ -43,7 +31,7 @@ func readTemplate(path string) (error, string) {
 	return nil, content
 }
 
-func WriteOutput(targetpath string, templatepath string, values ...interface{}) {
+func WriteOutput(targetpath string, templatepath string, mode os.FileMode, values ...interface{}) {
 	var err error
 
 	// Assert that the target file and template file have the same file extension
@@ -53,9 +41,6 @@ func WriteOutput(targetpath string, templatepath string, values ...interface{}) 
 		err = errors.New(fmt.Sprintf("File extension mismatch (Target File: '%v'; Template File: '%v')", targetext, templateext))
 		panic(err)
 	}
-
-	// Construct relative path to output file
-	var path string = filepath.Join(OutputDirectory, targetpath)
 
 	// Read format string from `templatepath`
 	var template string
@@ -69,7 +54,7 @@ func WriteOutput(targetpath string, templatepath string, values ...interface{}) 
 	switch targetext {
 	// Word Document (.DOC), HTML Document(.HTML)
 	case ".doc", ".html":
-		err = ioutil.WriteFile(path, []byte(formatted), PermissionBits)
+		err = ioutil.WriteFile(targetpath, []byte(formatted), mode)
 		if err != nil { panic(err) }
 
 	default:

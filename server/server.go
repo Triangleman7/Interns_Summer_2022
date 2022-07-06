@@ -1,36 +1,31 @@
 package server
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
-	"io"
 	"net/http"
-	"strings"
+	"os"
+	"path/filepath"
 
 	"github.com/Triangleman7/Interns_Summer_2022/outputdata"
 )
 
 var PORT int = 8080
 
-func formatValue(input string, method string) (error, string) {
-	var err error
+var OUTPUTDIRECTORY string = "out/"
+var TEMPDIRECTORY string = "temp/"
+var PERMISSIONBITS os.FileMode = 0755
 
-	switch method {
-	// 'No Operation'
-	case "":
-		return nil, input
-	// 'Lowercase'
-	case "lower":
-		return nil, strings.ToLower(input)
-	// 'Uppercase'
-	case "upper":
-		return nil, strings.ToUpper(input)
-	// Failsafe, but should not be possible
-	default:
-		err = errors.New(fmt.Sprintf("Unexpected value received: '%v'", input))
-		return err, ""
-	}
+func DirectorySetup(dirpath string, permissions os.FileMode) {
+	DirectoryTeardown(dirpath)
+
+	// Create an empty output directory
+	var err error = os.Mkdir(dirpath, permissions)
+	if err != nil { panic(err) }
+}
+
+func DirectoryTeardown(dirpath string) {
+	var err error = os.RemoveAll(dirpath)
+	if err != nil { panic(err) }
 }
 
 func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +44,6 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "ui/index.html")
 
 	case "POST":
-		var buf bytes.Buffer
 		var res string
 
 		// Catch errors thrown while parsing form submission
@@ -62,23 +56,27 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		file, header, err := r.FormFile("primary-image")
 		if err != nil { panic(err) }
 
-		// Process `file`
-		io.Copy(&buf, file)
-
 		// Format value of text field
 		err, res = formatValue(valueTextField, valueMenu)
 		if err != nil { panic(err) }
+
+		// Upload `file`
+		var uploadpath string = UploadFile(file, header)
 
 		// Debugging
 		fmt.Fprintf(w, "<form name=\"primary\">: Text Field value = \"%v\"\n", valueTextField)
 		fmt.Fprintf(w, "<form name=\"primary\">: Dropdown Menu value = \"%v\"\n", valueMenu)
 		fmt.Fprintf(w, "<form name=\"primary\">: Image Field value = \"%v\"\n", header.Filename)
-		fmt.Fprint(w, buf)
+		fmt.Fprintf(w, "\tUploaded: \"%v\"\n", uploadpath)
 		fmt.Fprintf(w, "\tFormatted: \"%v\"\n", res)
 
 		// Write formatted value of text field to output files
-		outputdata.WriteOutput("primary-text.html", "outputdata/templates/template.html", res)
-		outputdata.WriteOutput("primary-text.doc", "outputdata/templates/template.doc", res)
+		var htmlpath string = filepath.Join(OUTPUTDIRECTORY, "primary-text.html")
+		var docpath string = filepath.Join(OUTPUTDIRECTORY, "primary-text.doc")
+		outputdata.WriteOutput(htmlpath, "outputdata/templates/template.html", PERMISSIONBITS, res)
+		outputdata.WriteOutput(docpath, "outputdata/templates/template.doc", PERMISSIONBITS, res)
+
+		file.Close()
 
 	default:
 		fmt.Fprintf(w, "Only GET and POST requests supported")
