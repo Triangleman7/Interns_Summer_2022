@@ -6,29 +6,27 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/Triangleman7/Interns_Summer_2022/outputdata/doc"
+	"github.com/Triangleman7/Interns_Summer_2022/outputdata/html"
 )
 
-func readTemplate(path string) (error, string) {
+func GetTemplate(path string) (error, string) {
 	var err error
-	var reader []byte
 	var content string
-
-	// Read format string from `path`
 	var extension string = filepath.Ext(path)
+
 	switch extension {
-	// Word Document (.DOC), HTML Document (.HTML)
-	case ".doc", ".html":
-		reader, err = ioutil.ReadFile(path)
-		if err != nil { panic(err) }
-
-		content = string(reader)
-
+	case ".doc":
+		err, content = nil, doc.ReadTemplate(path)
+	case ".html":
+		err, content = nil, html.ReadTemplate(path)
 	default:
 		err = errors.New(fmt.Sprintf("Unexpected file extension for Template File: '%v'", extension))
-		return err, ""
+		content = ""
 	}
-
-	return nil, content
+	
+	return err, content
 }
 
 func WriteOutput(targetpath string, templatepath string, mode os.FileMode, values ...interface{}) {
@@ -44,7 +42,7 @@ func WriteOutput(targetpath string, templatepath string, mode os.FileMode, value
 
 	// Read format string from `templatepath`
 	var template string
-	err, template = readTemplate(templatepath)
+	err, template = GetTemplate(templatepath)
 	if err != nil { panic(err) }
 
 	// Format `values` into format string
@@ -52,11 +50,14 @@ func WriteOutput(targetpath string, templatepath string, mode os.FileMode, value
 
 	// Write formatted string to `targetpath`
 	switch targetext {
-	// Word Document (.DOC), HTML Document(.HTML)
-	case ".doc", ".html":
+	// Word Document (.DOC)
+	case ".doc":
 		err = ioutil.WriteFile(targetpath, []byte(formatted), mode)
 		if err != nil { panic(err) }
-
+	// HTML Document (.HTML)
+	case ".html":
+		err = ioutil.WriteFile(targetpath, []byte(formatted), mode)
+		if err != nil { panic(err) }
 	default:
 		err = errors.New(fmt.Sprintf("Unexpected file extension for Target File: '%v'", targetext))
 		panic(err)
