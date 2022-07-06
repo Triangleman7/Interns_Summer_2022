@@ -1,6 +1,15 @@
 package server
 
+import (
+	"fmt"
+	"net/http"
+	"path/filepath"
+
+	"github.com/Triangleman7/Interns_Summer_2022/outputdata"
+)
+
 func HandleFormPrimary(w http.ResponseWriter, r *http.Request) {
+	var err error
 	var res string
 
 	// Parse form submission

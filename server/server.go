@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
-
-	"github.com/Triangleman7/Interns_Summer_2022/outputdata"
 )
 
 var PORT int = 8080
@@ -29,8 +26,6 @@ func DirectoryTeardown(dirpath string) {
 }
 
 func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
-	var err error
-
 	// Assert URL path directs to the root address
 	if r.URL.Path != "/" {
 		http.Error(w, "404 not found.", http.StatusNotFound)

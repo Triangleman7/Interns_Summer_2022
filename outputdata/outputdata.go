@@ -18,9 +18,9 @@ func GetTemplate(path string) (error, string) {
 
 	switch extension {
 	case ".doc":
-		err, content = nil, doc.ReadTemplate(path)
+		err, content = doc.ReadTemplate(path)
 	case ".html":
-		err, content = nil, html.ReadTemplate(path)
+		err, content = html.ReadTemplate(path)
 	default:
 		err = errors.New(fmt.Sprintf("Unexpected file extension for Template File: '%v'", extension))
 		content = ""
