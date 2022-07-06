@@ -26,7 +26,7 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		if err != nil { fmt.Fprintf(w, "ParseForm() err: %v", err) }
 
 		// Get value of text field
-		valueTextField := r.FormValue("primary-form-text")
+		valueTextField := r.FormValue("primary-text")
 
 		// Format value of text field
 		fvalueTextField := strings.ToUpper(valueTextField)
@@ -36,7 +36,7 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "\tFormatted: \"%v\"\n", fvalueTextField)
 
 		// Write formatted value of text field to HTML document
-		var filename string = "primary-form-text.html"
+		var filename string = "primary-text.html"
 		WriteHTML(filename, fvalueTextField)
 
 	default:
