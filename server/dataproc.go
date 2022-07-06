@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func formatValue(input string, method string) (error, string) {
+func FormatValue(input string, method string) (error, string) {
 	var err error
 
 	switch method {
@@ -19,7 +19,7 @@ func formatValue(input string, method string) (error, string) {
 	// 'Uppercase'
 	case "upper":
 		return nil, strings.ToUpper(input)
-	// Failsafe, but should not be possible
+	// Failsafe; Theoretically should not be possible
 	default:
 		err = errors.New(fmt.Sprintf("Unexpected value received: '%v'", input))
 		return err, ""
