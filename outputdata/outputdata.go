@@ -29,7 +29,7 @@ func GetTemplate(path string) (error, string) {
 	return err, content
 }
 
-func WriteOutput(targetpath string, templatepath string, mode os.FileMode, values ...interface{}) {
+func WriteOutput(targetpath string, templatepath string, mode os.FileMode, content string) {
 	var err error
 
 	// Assert that the target file and template file have the same file extension
@@ -46,7 +46,7 @@ func WriteOutput(targetpath string, templatepath string, mode os.FileMode, value
 	if err != nil { panic(err) }
 
 	// Format `values` into format string
-	var formatted string = fmt.Sprintf(template, values...)
+	var formatted string = fmt.Sprintf(template, content)
 
 	// Write formatted string to `targetpath`
 	switch targetext {

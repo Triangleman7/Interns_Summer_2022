@@ -32,19 +32,23 @@ func SetupCloseHandler() {
 func main() {
 	var err error
 
-	// Create a listener on a new goroutine to handle OS interrupts
-	SetupCloseHandler()
-
-	// Register handler functions
-	http.HandleFunc("/", server.ProcessRootResponse)
-	fs := http.FileServer(http.Dir("ui"))
-	http.Handle("/ui/", http.StripPrefix("/ui/", fs))
-
 	// Set up temporary directory
 	server.DirectorySetup(server.TEMPDIRECTORY, server.PERMISSIONBITS)
 
 	// Set up output directory
 	server.DirectorySetup(server.OUTPUTDIRECTORY, server.PERMISSIONBITS)
+
+	// Create a listener on a new goroutine to handle OS interrupts
+	SetupCloseHandler()
+
+	// Register handler functions
+	http.HandleFunc("/", server.ProcessRootResponse)
+
+	var fs http.Handler
+	fs = http.FileServer(http.Dir("ui"))
+	http.Handle("/ui/", http.StripPrefix("/ui/", fs))
+	fs = http.FileServer(http.Dir("temp"))
+	http.Handle("/temp/", http.StripPrefix("/temp/", fs))
 
 	// Debugging
 	fmt.Printf("Listening on Localhost (Port %v)\n\n", server.PORT)
