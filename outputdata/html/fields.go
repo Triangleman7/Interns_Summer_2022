@@ -2,10 +2,11 @@ package html
 
 import (
 	"fmt"
+	"path/filepath"
 )
 
 func Image(res *string, src string) {
-	var tag string = fmt.Sprintf("<img src=\"%v\">", src)
+	var tag string = fmt.Sprintf("<img src=\"%v\">", filepath.Join("..", src))
 	*res += fmt.Sprintf("%v\n", tag)
 }
 

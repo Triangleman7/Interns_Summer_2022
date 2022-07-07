@@ -14,7 +14,8 @@ func UploadFile(file multipart.File, header *multipart.FileHeader) string {
 	var path string = filepath.Join(TEMPDIRECTORY, header.Filename)
 
 	// Create file at target path
-	destination, err := os.Create(path)
+	var destination *os.File
+	destination, err = os.Create(path)
 	if err != nil { panic(err) }
 
 	// Copy received file contents to target file in local directory

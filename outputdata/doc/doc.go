@@ -2,18 +2,17 @@ package doc
 
 import (
 	"io/ioutil"
+	"os"
+
+	"github.com/Triangleman7/Interns_Summer_2022/outputdata"
 )
 
-func ReadTemplate(path string) (error, string) {
+func WriteDOC(targetpath string, templatepath string, mode os.FileMode, content []byte) {
 	var err error
-	var reader []byte
-	var content string
 
-	reader, err = ioutil.ReadFile(path)
+	err = outputdata.AssertTemplateMatch(targetpath, templatepath)
 	if err != nil { panic(err) }
 
-	content = string(reader)
-
-	return nil, content
+	err = ioutil.WriteFile(targetpath, content, mode)
+	if err != nil { panic(err) }
 }
-
