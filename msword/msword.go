@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/fs"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -95,13 +94,11 @@ func (d *Docx) ReplaceRaw(oldString string, newString string, num int) {
 
 func (d *Docx) Replace(oldString string, newString string, num int) (err error) {
 	oldString, err = encode(oldString)
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
+
 	newString, err = encode(newString)
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
+
 	d.content = strings.Replace(d.content, oldString, newString, num)
 
 	return nil
@@ -109,13 +106,11 @@ func (d *Docx) Replace(oldString string, newString string, num int) (err error) 
 
 func (d *Docx) ReplaceLink(oldString string, newString string, num int) (err error) {
 	oldString, err = encode(oldString)
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
+
 	newString, err = encode(newString)
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
+
 	d.links = strings.Replace(d.links, oldString, newString, num)
 
 	return nil
@@ -132,9 +127,8 @@ func (d *Docx) ReplaceFooter(oldString string, newString string) (err error) {
 func (d *Docx) WriteToFile(path string) (err error) {
 	var target *os.File
 	target, err = os.Create(path)
-	if err != nil {
-		return
-	}
+	if err != nil { return }
+
 	defer target.Close()
 	err = d.Write(target)
 	return
@@ -147,13 +141,11 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 		var readCloser io.ReadCloser
 
 		writer, err = w.Create(file.Name)
-		if err != nil {
-			return err
-		}
+		if err != nil { return err }
+
 		readCloser, err = file.Open()
-		if err != nil {
-			return err
-		}
+		if err != nil { return err }
+
 		if file.Name == "word/document.xml" {
 			writer.Write([]byte(d.content))
 		} else if file.Name == "word/_rels/document.xml.rels" {
@@ -164,9 +156,7 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 			writer.Write([]byte(d.footers[file.Name]))
 		} else if strings.HasPrefix(file.Name, "word/media/") && d.images[file.Name] != "" {
 			newImage, err := os.Open(d.images[file.Name])
-			if err != nil {
-				return err
-			}
+			if err != nil { return err }
 			writer.Write(streamToByte(newImage))
 			newImage.Close()
 		} else {
@@ -179,13 +169,10 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 
 func replaceHeaderFooter(headerFooter map[string]string, oldString string, newString string) (err error) {
 	oldString, err = encode(oldString)
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
+
 	newString, err = encode(newString)
-	if err != nil {
-		return err
-	}
+	if err != nil { return err }
 
 	for k := range headerFooter {
 		headerFooter[k] = strings.Replace(headerFooter[k], oldString, newString, -1)
@@ -194,49 +181,20 @@ func replaceHeaderFooter(headerFooter map[string]string, oldString string, newSt
 	return nil
 }
 
-//ReadDocxFromFS opens a docx file from the file system
-func ReadDocxFromFS(file string, fs fs.FS) (*ReplaceDocx, error) {
-	f, err := fs.Open(file)
-	if err != nil {
-		return nil, err
-	}
-	buff := bytes.NewBuffer([]byte{})
-	size, err := io.Copy(buff, f)
-	if err != nil {
-		return nil, err
-	}
-	reader := bytes.NewReader(buff.Bytes())
-	return ReadDocxFromMemory(reader, size)
-}
-
-func ReadDocxFromMemory(data io.ReaderAt, size int64) (*ReplaceDocx, error) {
-	reader, err := zip.NewReader(data, size)
-	if err != nil {
-		return nil, err
-	}
-	zipData := ZipInMemory{data: reader}
-	return ReadDocx(zipData)
-}
-
 func ReadDocxFile(path string) (*ReplaceDocx, error) {
 	reader, err := zip.OpenReader(path)
-	if err != nil {
-		return nil, err
-	}
+	if err != nil { return nil, err }
+
 	zipData := ZipFile{data: reader}
 	return ReadDocx(zipData)
 }
 
 func ReadDocx(reader ZipData) (*ReplaceDocx, error) {
 	content, err := readText(reader.files())
-	if err != nil {
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	links, err := readLinks(reader.files())
-	if err != nil {
-		return nil, err
-	}
+	if err != nil { return nil, err }
 
 	headers, footers, _ := readHeaderFooter(reader.files())
 	images, _ := retrieveImageFilenames(reader.files())
@@ -246,9 +204,7 @@ func ReadDocx(reader ZipData) (*ReplaceDocx, error) {
 func retrieveImageFilenames(files []*zip.File) (map[string]string, error) {
 	images := make(map[string]string)
 	for _, f := range files {
-		if strings.HasPrefix(f.Name, "word/media/") {
-			images[f.Name] = ""
-		}
+		if strings.HasPrefix(f.Name, "word/media/") { images[f.Name] = "" }
 	}
 	return images, nil
 }
@@ -297,14 +253,11 @@ func buildHeaderFooter(headerFooter []*zip.File) (map[string]string, error) {
 func readText(files []*zip.File) (text string, err error) {
 	var documentFile *zip.File
 	documentFile, err = retrieveWordDoc(files)
-	if err != nil {
-		return text, err
-	}
+	if err != nil { return text, err }
+
 	var documentReader io.ReadCloser
 	documentReader, err = documentFile.Open()
-	if err != nil {
-		return text, err
-	}
+	if err != nil { return text, err }
 
 	text, err = wordDocToString(documentReader)
 	return
@@ -313,14 +266,11 @@ func readText(files []*zip.File) (text string, err error) {
 func readLinks(files []*zip.File) (text string, err error) {
 	var documentFile *zip.File
 	documentFile, err = retrieveLinkDoc(files)
-	if err != nil {
-		return text, err
-	}
+	if err != nil { return text, err }
+
 	var documentReader io.ReadCloser
 	documentReader, err = documentFile.Open()
-	if err != nil {
-		return text, err
-	}
+	if err != nil { return text, err }
 
 	text, err = wordDocToString(documentReader)
 	return
@@ -328,17 +278,14 @@ func readLinks(files []*zip.File) (text string, err error) {
 
 func wordDocToString(reader io.Reader) (string, error) {
 	b, err := ioutil.ReadAll(reader)
-	if err != nil {
-		return "", err
-	}
+	if err != nil { return "", err }
+
 	return string(b), nil
 }
 
 func retrieveWordDoc(files []*zip.File) (file *zip.File, err error) {
 	for _, f := range files {
-		if f.Name == "word/document.xml" {
-			file = f
-		}
+		if f.Name == "word/document.xml" { file = f }
 	}
 	if file == nil {
 		err = errors.New("document.xml file not found")
@@ -348,9 +295,7 @@ func retrieveWordDoc(files []*zip.File) (file *zip.File, err error) {
 
 func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
 	for _, f := range files {
-		if f.Name == "word/_rels/document.xml.rels" {
-			file = f
-		}
+		if f.Name == "word/_rels/document.xml.rels" { file = f }
 	}
 	if file == nil {
 		err = errors.New("document.xml.rels file not found")
@@ -380,19 +325,18 @@ func streamToByte(stream io.Reader) []byte {
 	return buf.Bytes()
 }
 
-// To get Word to recognize a tab character, we have to first close off the previous
-// text element.  This means if there are multiple consecutive tabs, there are empty <w:t></w:t>
-// in between but it still seems to work correctly in the output document, certainly better
-// than other combinations I tried.
+// To get Word to recognize a tab character, the previous text element has to be closed off first.
+// This means that if there are multiple consecutive tabs, there are empty <w:t></w:t> in between,
+// but it still seems to work correctly in the output document, certainly better than with other
+// combinations attempted.
 const TAB = "</w:t><w:tab/><w:t>"
 const NEWLINE = "<w:br/>"
 
 func encode(s string) (string, error) {
 	var b bytes.Buffer
 	enc := xml.NewEncoder(bufio.NewWriter(&b))
-	if err := enc.Encode(s); err != nil {
-		return s, err
-	}
+	if err := enc.Encode(s); err != nil { return s, err }
+
 	output := strings.Replace(b.String(), "<string>", "", 1) // remove string tag
 	output = strings.Replace(output, "</string>", "", 1)
 	output = strings.Replace(output, "&#xD;&#xA;", NEWLINE, -1) // \r\n (Windows newline)
