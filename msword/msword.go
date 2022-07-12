@@ -3,11 +3,8 @@ package msword
 
 import (
 	"archive/zip"
-	"bufio"
 	"bytes"
-	"encoding/xml"
 	"io"
-	"strings"
 )
 
 type ZipData interface {

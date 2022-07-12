@@ -1,6 +1,9 @@
 package msword
 
 import (
+	"bufio"
+	"bytes"
+	"encoding/xml"
 	"fmt"
 	"strings"
 )
