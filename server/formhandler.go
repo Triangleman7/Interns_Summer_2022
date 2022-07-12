@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/Triangleman7/Interns_Summer_2022/outputdata/doc"
+	"github.com/Triangleman7/Interns_Summer_2022/msword"
+	"github.com/Triangleman7/Interns_Summer_2022/outputdata/docx"
 	"github.com/Triangleman7/Interns_Summer_2022/outputdata/html"
 )
 
@@ -17,13 +18,13 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) {
 	err = r.ParseMultipartForm(0);
 	if err != nil { panic(err) }
 
-	// 
+	// Process <input name="primary-text"> form field
 	var vTextField, vMenu, fvTextField string
 	vTextField = r.FormValue("primary-text")
 	vMenu = r.FormValue("primary-text-operation")
 	err, fvTextField = FormatValue(vTextField, vMenu)
 	
-	//
+	// Process <input name="primary-image"> form field
 	var file multipart.File
 	var header *multipart.FileHeader
 	var uploadpath string
@@ -33,19 +34,22 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) {
 	err = file.Close()
 	if err != nil { panic(err) }
 
-	// Debugging\
+	// Debugging
 	fmt.Fprintf(w, "<form name=\"primary\">: Text Field value = '%v', Dropdown Menu value = '%v', Image Field value = '%v'\n", vTextField, vMenu, header.Filename)
 	fmt.Fprintf(w, "\tUploaded: \"%v\"\n", uploadpath)
 	fmt.Fprintf(w, "\tFormatted: \"%v\"\n", fvTextField)
 
 	// Construct paths to output files
 	var htmlpath string = filepath.Join(OUTPUTDIRECTORY, "form-primary.html")
-	var docpath string = filepath.Join(OUTPUTDIRECTORY, "form-primary.doc")
+	var docxpath string = filepath.Join(OUTPUTDIRECTORY, "form-primary.docx")
 
-	// Construct DOC output
-	var outDOC []byte
-	doc.Paragraph(&outDOC, fvTextField)
-	doc.Image(&outDOC, uploadpath)
+	// Construct DOCX output
+	var reader *msword.ReplaceDocx
+	reader, err = msword.ReadDocxFile("outputdata/templates/template.docx")
+	if err != nil { panic(err) }
+	var outDOCX *msword.Docx
+	outDOCX = reader.Editable()
+	docx.Paragraph("primary-text", outDOCX, fvTextField)
 
 	// Construct HTML output
 	var outHTML string
@@ -55,6 +59,6 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) {
 	html.Image("primary-image", &outHTML, uploadpath)
 
 	// Write output to corresponding files
-	doc.WriteDOC(docpath, "outputdata/templates/template.doc", PERMISSIONBITS, outDOC)
+	docx.WriteDOCX(docxpath, outDOCX)
 	html.WriteHTML(htmlpath, PERMISSIONBITS, outHTML)
 }
