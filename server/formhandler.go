@@ -50,6 +50,7 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) {
 	var outDOCX *msword.Docx
 	outDOCX = reader.Editable()
 	docx.Paragraph("primary-text", outDOCX, fvTextField)
+	docx.Image(1, outDOCX, uploadpath)
 
 	// Construct HTML output
 	var outHTML string
