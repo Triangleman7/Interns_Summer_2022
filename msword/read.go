@@ -30,6 +30,30 @@ func readText(files []*zip.File) (text string, err error) {
 	return
 }
 
+// readLinks returns the content of the hyperlinks of the target Word Document. The return value
+// text is the text content of all referenced hyperlinks of the target Word Document.
+//
+// The ZIP archive, files, of the Word Document files is traversed to search for the appropriate
+// XML document, which is then read from to obtain the hyperlinks of the target Word Document.
+//
+// Raises any errors encountered while reading the Word Document text content.
+func readLinks(files []*zip.File) (text string, err error) {
+	// Get Word Document hyperlinks XML document
+	var documentFile *zip.File
+	documentFile, err = retrieveLinkDoc(files)
+	if err != nil { return text, err }
+
+	// Read target XML document
+	var documentReader io.ReadCloser
+	documentReader, err = documentFile.Open()
+	if err != nil { return text, err }
+
+	// Get text content of Word Document hyperlinks
+	text, err = wordDocToString(documentReader)
+
+	return
+}
+
 // readHeaderFooter returns the content of each header/footer type of the target Word Document. The
 // return value textHeader is a map of each header type and its corresponding text content; the
 // return value textFooter is a map of each footer type and its corresponding text content.
@@ -76,30 +100,6 @@ func buildHeaderFooter(files []*zip.File) (textHeaderFooter map[string]string, e
 		// Map header/footer type to corresponding text content
 		textHeaderFooter[element.Name] = text
 	}
-
-	return
-}
-
-// readLinks returns the content of the hyperlinks of the target Word Document. The return value
-// text is the text content of all referenced hyperlinks of the target Word Document.
-//
-// The ZIP archive, files, of the Word Document files is traversed to search for the appropriate
-// XML document, which is then read from to obtain the hyperlinks of the target Word Document.
-//
-// Raises any errors encountered while reading the Word Document text content.
-func readLinks(files []*zip.File) (text string, err error) {
-	// Get Word Document hyperlinks XML document
-	var documentFile *zip.File
-	documentFile, err = retrieveLinkDoc(files)
-	if err != nil { return text, err }
-
-	// Read target XML document
-	var documentReader io.ReadCloser
-	documentReader, err = documentFile.Open()
-	if err != nil { return text, err }
-
-	// Get text content of Word Document hyperlinks
-	text, err = wordDocToString(documentReader)
 
 	return
 }

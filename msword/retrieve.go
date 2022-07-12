@@ -25,6 +25,25 @@ func retrieveWordDoc(files []*zip.File) (file *zip.File, err error) {
 	return
 }
 
+// retrieveLinkDoc parses through the Word Document ZIP archive (files) to find the XML document
+// "word/_rels/document.xml.rels", which contains the formatting for the hyperlinks contained in
+// the Word Document.
+//
+// If the target XML document is found in the ZIP archive, a pointer to its corresponding zip.File
+// (file) object is returned.
+//
+// An error (err) is raised if the target XML document cannot be found in the ZIP archive.
+func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
+	// Traverse ZIP archive to search for XML document
+	for _, f := range files {
+		if f.Name == "word/_rels/document.xml.rels" { return f, err }
+	}
+
+	// Target XML document not found
+	err = errors.New("word/_relse/document.xml.rels file not found")
+	return
+}
+
 // retrieveHeaderFooterDoc parses through the Word Document ZIP archive (files) to find the XML
 // documents that contain the formatting for the headers and footers contained in the Word
 // Document.
@@ -51,25 +70,6 @@ func retrieveHeaderFooterDoc(files []*zip.File) (headers []*zip.File, footers []
 		err = errors.New("headers[1-3].xml file not found and footers[1-3].xml file not found")
 	}
 
-	return
-}
-
-// retrieveLinkDoc parses through the Word Document ZIP archive (files) to find the XML document
-// "word/_rels/document.xml.rels", which contains the formatting for the hyperlinks contained in
-// the Word Document.
-//
-// If the target XML document is found in the ZIP archive, a pointer to its corresponding zip.File
-// (file) object is returned.
-//
-// An error (err) is raised if the target XML document cannot be found in the ZIP archive.
-func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
-	// Traverse ZIP archive to search for XML document
-	for _, f := range files {
-		if f.Name == "word/_rels/document.xml.rels" { return f, err }
-	}
-
-	// Target XML document not found
-	err = errors.New("word/_relse/document.xml.rels file not found")
 	return
 }
 
