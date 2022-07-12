@@ -6,12 +6,11 @@ import (
 	"io/ioutil"
 )
 
-// readText returns the text content of the body of the target Word Document. The return value text
-// is the text content of body of the target Word Document.
+// readText returns the content of the body of the target Word Document. The return value text is
+// the text content of body of the target Word Document.
 //
-// The ZIP archive, files, of the Word Document XML documents is traversed to search for the
-// appropriate XML document, which is then read from to obtain the body text of the target Word
-// Document.
+// The ZIP archive, files, of the Word Document files is traversed to search for the appropriate
+// XML document, which is then read from to obtain the body text of the target Word Document.
 //
 // Raises any errors encountered while reading the Word Document text content.
 func readText(files []*zip.File) (text string, err error) {
@@ -31,14 +30,13 @@ func readText(files []*zip.File) (text string, err error) {
 	return
 }
 
-// readHeaderFooter returns the text content of each header/footer type of the target Word
-// Document. The return value textHeader is a map of each header type and its corresponding text
-// content; the return value textFooter is a map of each footer type and its corresponding text
-// content.
+// readHeaderFooter returns the content of each header/footer type of the target Word Document. The
+// return value textHeader is a map of each header type and its corresponding text content; the
+// return value textFooter is a map of each footer type and its corresponding text content.
 //
-// The ZIP archive, files, of the Word Document XML documents is traversed to search for the
-// appropriate XML documents, which are then individually read from to obtain the headers/footers
-// of the target Word Document.
+// The ZIP archive, files, of the Word Document files is traversed to search for the appropriate
+// XML documents, which are then individually read from to obtain the headers/footers of the target
+// Word Document.
 //
 // Raises any errors encountered while reading the Word Documents headers and footers.
 func readHeaderFooter(files []*zip.File) (textHeader map[string]string, textFooter map[string]string, err error) {
@@ -82,12 +80,11 @@ func buildHeaderFooter(files []*zip.File) (textHeaderFooter map[string]string, e
 	return
 }
 
-// readLinks returns the text content of the hyperlinks of the target Word Document. The return
-// value text is the text content of all referenced hyperlinks of the target Word Document.
+// readLinks returns the content of the hyperlinks of the target Word Document. The return value
+// text is the text content of all referenced hyperlinks of the target Word Document.
 //
-// The ZIP archive, files, of the Word Document XML Documents is traversed to search for the
-// appropriate XML document, which is then read from to obtain the hyperlinks of the target Word
-// Document.
+// The ZIP archive, files, of the Word Document files is traversed to search for the appropriate
+// XML document, which is then read from to obtain the hyperlinks of the target Word Document.
 //
 // Raises any errors encountered while reading the Word Document text content.
 func readLinks(files []*zip.File) (text string, err error) {
