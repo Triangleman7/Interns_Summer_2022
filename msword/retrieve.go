@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// retrieveWordDoc parses through the Word Document ZIP archive (files) to find the
+// retrieveWordDoc parses through the Word Document ZIP archive (files) to search for the
 // XML document "word/document.xml", which contains the formatting for the body text contained in
 // the Word Document.
 //
@@ -15,16 +15,13 @@ import (
 //
 // An error (err) is raised if the target XML document cannot be found in the ZIP archive.
 func retrieveWordDoc(files []*zip.File) (file *zip.File, err error) {
+	// Traverse ZIP archive to search for XML document
 	for _, f := range files {
-		if f.Name == "word/document.xml" {
-			file = f
-			break
-		}
+		if f.Name == "word/document.xml" { return f, err }
 	}
 
-	if file == nil {
-		err = errors.New("document.xml file not found")
-	}
+	// Target XML document not found
+	err = errors.New("word/document.xml not found")
 	return
 }
 
@@ -43,15 +40,17 @@ func retrieveWordDoc(files []*zip.File) (file *zip.File, err error) {
 //
 // An error (err) is raised if the target XML documents cannot be found in the ZIP archive.
 func retrieveHeaderFooterDoc(files []*zip.File) (headers []*zip.File, footers []*zip.File, err error) {
+	// Traverse ZIP archive to search for header/footer XML documents
 	for _, f := range files {
 		if strings.Contains(f.Name, "header") { headers = append(headers, f) }
 		if strings.Contains(f.Name, "footer") { footers = append(footers, f) }
 	}
 
-	// No header XML documents or footer XML documents found
+	// No header or footer XML documents found
 	if len(headers) == 0 && len(footers) == 0 {
 		err = errors.New("headers[1-3].xml file not found and footers[1-3].xml file not found")
 	}
+
 	return
 }
 
@@ -64,16 +63,13 @@ func retrieveHeaderFooterDoc(files []*zip.File) (headers []*zip.File, footers []
 //
 // An error (err) is raised if the target XML document cannot be found in the ZIP archive.
 func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
+	// Traverse ZIP archive to search for XML document
 	for _, f := range files {
-		if f.Name == "word/_rels/document.xml.rels" {
-			file = f
-			break
-		}
+		if f.Name == "word/_rels/document.xml.rels" { return f, err }
 	}
 
-	if file == nil {
-		err = errors.New("document.xml.rels file not found")
-	}
+	// Target XML document not found
+	err = errors.New("word/_relse/document.xml.rels file not found")
 	return
 }
 
@@ -84,8 +80,11 @@ func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
 // returned.
 func retrieveImageFilenames(files []*zip.File) (map[string]string, error) {
 	images := make(map[string]string)
+
+	// Traverse ZIP archive to search for image files
 	for _, f := range files {
 		if strings.HasPrefix(f.Name, "word/media/") { images[f.Name] = "" }
 	}
+
 	return images, nil
 }
