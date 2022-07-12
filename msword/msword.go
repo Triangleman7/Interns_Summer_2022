@@ -20,77 +20,79 @@ type ZipData interface {
 }
 
 type ZipFile struct {
-	// data is a reader for the ZIP archive.
-	data *zip.ReadCloser
+	// Data is a reader for the ZIP archive.
+	Data *zip.ReadCloser
 }
 
 func (d ZipFile) files() []*zip.File {
-	return d.data.File
+	return d.Data.File
 }
 
 func (d ZipFile) close() error {
-	return d.data.Close()
+	return d.Data.Close()
 }
 
 // ReplaceDocx represents a Word Document, the document ZIP archive, and the document contents.
 type ReplaceDocx struct {
-	// zipReader is a reader of the Word Document ZIP archive.
-	zipReader ZipData
+	// ZipReader is a reader of the Word Document ZIP archive.
+	ZipReader ZipData
 
-	// content is the text content of the body of the Word Document.
-	content   string
+	// Content is the text content of the body of the Word Document.
+	Content   string
 
-	// links is the text content of the hyperlinks of the Word Document.
-	links     string
+	// Links is the text content of the hyperlinks of the Word Document.
+	Links     string
 
-	// headers is a map of header style names to the corresponding text content of the Word
+	// Headers is a map of header style names to the corresponding text content of the Word
 	// Document.
-	headers   map[string]string
+	Headers   map[string]string
 
-	// footers is a map of footer style names to the corresponding text content of the Word
+	// Footers is a map of footer style names to the corresponding text content of the Word
 	// Document.
-	footers   map[string]string
+	Footers   map[string]string
 
-	// images is a map of the filenames of the images of the Word Document to empty strings.
-	images    map[string]string
+	// Images is a map of the filenames of the images of the Word Document to the filename of its
+	// replacement file. The file extension of the two files must match.
+	Images    map[string]string
 }
 
 // Docx represents a Word Document, the document ZIP archive files, and the document contents.
 type Docx struct {
-	// files is an array of individual files contained in the ZIP archive.
-	files   []*zip.File
+	// Files is an array of individual files contained in the ZIP archive.
+	Files   []*zip.File
 
-	// content is the text content of the body of the Word Document.
-	content string
+	// Content is the text content of the body of the Word Document.
+	Content string
 
 	// links is the text content of the hyperlinks of the Word Document.
-	links   string
+	Links   string
 
-	// headers is a map of header style names to the corresponding text content of the Word
+	// Headers is a map of header style names to the corresponding text content of the Word
 	// Document.
-	headers map[string]string
+	Headers map[string]string
 
-	// footers is a map of footer style names to the corresponding text content of the Word
+	// Footers is a map of footer style names to the corresponding text content of the Word
 	// Document.
-	footers map[string]string
+	Footers map[string]string
 
-	// images is a map of the filenames of the images of the Word Document to empty strings.
-	images  map[string]string
+	// Images is a map of the filenames of the images of the Word Document to the filename of its
+	// replacement file. The file extension of the two files must match.
+	Images  map[string]string
 }
 
 // Close closes the ZIP archive of the Word Document d.
 func (r *ReplaceDocx) Close() error {
-	return r.zipReader.close()
+	return r.ZipReader.close()
 }
 
 // GetContent returns the content of the Word Document (d) body.
 func (d *Docx) GetContent() string {
-	return d.content
+	return d.Content
 }
 
 // SetContent sets the content of the Word Document (d) body to content.
 func (d *Docx) SetContent(content string) {
-	d.content = content
+	d.Content = content
 }
 
 // ReadDocxFile reads the Word Document specified by path. The Word Document is read by opening the
@@ -101,7 +103,7 @@ func ReadDocxFile(path string) (*ReplaceDocx, error) {
 	reader, err := zip.OpenReader(path)
 	if err != nil { return nil, err }
 
-	zipData := ZipFile{data: reader}
+	zipData := ZipFile{Data: reader}
 	return ReadDocx(zipData)
 }
 
@@ -119,7 +121,7 @@ func ReadDocx(reader ZipData) (*ReplaceDocx, error) {
 
 	headers, footers, _ := readHeaderFooter(reader.files())
 	images, _ := retrieveImageFilenames(reader.files())
-	return &ReplaceDocx{zipReader: reader, content: content, links: links, headers: headers, footers: footers, images: images}, nil
+	return &ReplaceDocx{ZipReader: reader, Content: content, Links: links, Headers: headers, Footers: footers, Images: images}, nil
 }
 
 // streamToByte returns an array of the bytes contained in the file reader.

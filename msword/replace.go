@@ -12,95 +12,94 @@ import (
 // returned.
 func (r *ReplaceDocx) Editable() *Docx {
 	return &Docx{
-		files:   r.zipReader.files(),
-		content: r.content,
-		links:   r.links,
-		headers: r.headers,
-		footers: r.footers,
-		images:  r.images,
+		Files:   r.ZipReader.files(),
+		Content: r.Content,
+		Links:   r.Links,
+		Headers: r.Headers,
+		Footers: r.Footers,
+		Images:  r.Images,
 	}
 }
 
-// ReplaceRaw replaces the first num instances of oldString found in the content of the Word
-// Document (d) body with newString.
-func (d *Docx) ReplaceRaw(oldString string, newString string, num int) {
-	d.content = strings.Replace(d.content, oldString, newString, num)
+// ReplaceRaw replaces the first num instances of old found in the content of the Word Document (d)
+// body with new.
+func (d *Docx) ReplaceRaw(old string, new string, num int) {
+	d.Content = strings.Replace(d.Content, old, new, num)
 }
 
-// Replace replaces the first num instances of oldString found in the content of the Word Document
-// (d) body with newString.
+// Replace replaces the first num instances of old found in the content of the Word Document (d)
+// body with new.
 //
 // Raises any errors encountered while replacing the body of the Word Document body (while encoding
-// oldString/newString).
-func (d *Docx) Replace(oldString string, newString string, num int) (err error) {
-	oldString, err = encode(oldString)
+// old/new).
+func (d *Docx) Replace(old string, new string, num int) (err error) {
+	old, err = encode(old)
 	if err != nil { return err }
 
-	newString, err = encode(newString)
+	new, err = encode(new)
 	if err != nil { return err }
 
-	d.content = strings.Replace(d.content, oldString, newString, num)
+	d.Content = strings.Replace(d.Content, old, new, num)
 
 	return nil
 }
 
-// ReplaceLink replaces the first num instances of oldString found in the content of the Word
-// Document (d) hyperlinks with newString.
+// ReplaceLink replaces the first num instances of old found in the content of the Word Document
+// (d) hyperlinks with new.
 //
 // Raises any errors encountered while replacing the content of the Word Document hyperlinks (while
-// encoding oldString/newString).
-func (d *Docx) ReplaceLink(oldString string, newString string, num int) (err error) {
-	oldString, err = encode(oldString)
+// encoding old/new).
+func (d *Docx) ReplaceLink(old string, new string, num int) (err error) {
+	old, err = encode(old)
 	if err != nil { return err }
 
-	newString, err = encode(newString)
+	new, err = encode(new)
 	if err != nil { return err }
 
-	d.links = strings.Replace(d.links, oldString, newString, num)
+	d.Links = strings.Replace(d.Links, old, new, num)
 
 	return nil
 }
 
-// ReplaceHeader replaces all instances of oldString found in the content of the Word Document (d)
-// headers with newString.
-func (d *Docx) ReplaceHeader(oldString string, newString string) (err error) {
-	return replaceHeaderFooter(d.headers, oldString, newString)
+// ReplaceHeader replaces all instances of old found in the content of the Word Document (d)
+// headers with new.
+func (d *Docx) ReplaceHeader(old string, new string) (err error) {
+	return replaceHeaderFooter(d.Headers, old, new)
 }
 
-// ReplaceFooter replaces all instances of oldString found in the content of the Word Document (d)
-// footers with newString.
-func (d *Docx) ReplaceFooter(oldString string, newString string) (err error) {
-	return replaceHeaderFooter(d.footers, oldString, newString)
+// ReplaceFooter replaces all instances of old found in the content of the Word Document (d)
+// footers with new.
+func (d *Docx) ReplaceFooter(old string, new string) (err error) {
+	return replaceHeaderFooter(d.Footers, old, new)
 }
 
-// ReplaceImage replaces all instances of oldImage found in the Word Document (d) images with
-// newImage.
+// ReplaceImage replaces all instances of old found in the Word Document (d) images with new.
 //
-// Raises an error if oldImage cannot be found in the Word Document images
-func (d *Docx) ReplaceImage(oldImage string, newImage string) (err error) {
-	_, exists := d.images[oldImage]
+// Raises an error if old cannot be found in the Word Document images.
+func (d *Docx) ReplaceImage(old string, new string) (err error) {
+	_, exists := d.Images[old]
 	if exists {
-		d.images[oldImage] = newImage
+		d.Images[old] = new
 		return
 	}
 
-	return fmt.Errorf("old image: %q, file not found", oldImage)
+	return fmt.Errorf("old image: %q, file not found", old)
 }
 
-// replaceHeaderFooter replaces all instances of oldString found in the content of the Word
-// Document (d) headers/footers (headerFooter) with newString.
+// replaceHeaderFooter replaces all instances of old found in the content of the Word
+// Document (d) headers/footers (headerFooter) with new.
 //
 // Raises any errors encountered while replacing the content of the Word Document headers/footers
-// (while encoding oldString/newString).
-func replaceHeaderFooter(headerFooter map[string]string, oldString string, newString string) (err error) {
-	oldString, err = encode(oldString)
+// (while encoding old/new).
+func replaceHeaderFooter(headerFooter map[string]string, old string, new string) (err error) {
+	old, err = encode(old)
 	if err != nil { return err }
 
-	newString, err = encode(newString)
+	new, err = encode(new)
 	if err != nil { return err }
 
 	for k, _ := range headerFooter {
-		headerFooter[k] = strings.Replace(headerFooter[k], oldString, newString, -1)
+		headerFooter[k] = strings.Replace(headerFooter[k], old, new, -1)
 	}
 
 	return nil

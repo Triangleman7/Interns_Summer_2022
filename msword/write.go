@@ -34,7 +34,7 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 	w := zip.NewWriter(ioWriter)
 
 	// Iterate through ZIP archive Word Document XML files
-	for _, file := range d.files {
+	for _, file := range d.Files {
 		var writer io.Writer
 		var readCloser io.ReadCloser
 
@@ -48,22 +48,23 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 
 		if file.Name == "word/document.xml" {
 			// Write content of Word Document body to appropriate XML document
-			writer.Write([]byte(d.content))
+			writer.Write([]byte(d.Content))
 		} else if file.Name == "word/_rels/document.xml.rels" {
 			// Write content of Word Document hyperlinks to appropriate XML document
-			writer.Write([]byte(d.links))
-		} else if strings.Contains(file.Name, "header") && d.headers[file.Name] != "" {
+			writer.Write([]byte(d.Links))
+		} else if strings.Contains(file.Name, "header") && d.Headers[file.Name] != "" {
 			// Write content of Word Document headers to appropriate XML document
-			writer.Write([]byte(d.headers[file.Name]))
-		} else if strings.Contains(file.Name, "footer") && d.footers[file.Name] != "" {
+			writer.Write([]byte(d.Headers[file.Name]))
+		} else if strings.Contains(file.Name, "footer") && d.Footers[file.Name] != "" {
 			// Write content of Word Document footers to appropriate XML document
-			writer.Write([]byte(d.footers[file.Name]))
-		} else if strings.HasPrefix(file.Name, "word/media/") && d.images[file.Name] != "" {
+			writer.Write([]byte(d.Footers[file.Name]))
+		} else if strings.HasPrefix(file.Name, "word/media/") && d.Images[file.Name] != "" {
 			// Write content of Word Document image to appropriate directory
-			newImage, err := os.Open(d.images[file.Name])
+			var new *os.File
+			new, err = os.Open(d.Images[file.Name])
 			if err != nil { return err }
-			writer.Write(streamToByte(newImage))
-			newImage.Close()
+			writer.Write(streamToByte(new))
+			new.Close()
 		} else {
 			// Write content of miscellaneous file to appropriate file
 			writer.Write(streamToByte(readCloser))
