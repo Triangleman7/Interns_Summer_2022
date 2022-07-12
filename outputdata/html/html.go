@@ -1,11 +1,8 @@
 package html
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
-
-	"github.com/Triangleman7/Interns_Summer_2022/outputdata"
 )
 
 func ReadTemplate(path string) (error, string) {
@@ -21,16 +18,9 @@ func ReadTemplate(path string) (error, string) {
 	return nil, content
 }
 
-func WriteHTML (targetpath string, templatepath string, mode os.FileMode, content string) {
+func WriteHTML(targetpath string, mode os.FileMode, content string) {
 	var err error
 
-	err = outputdata.AssertTemplateMatch(targetpath, templatepath)
-	if err != nil { panic(err) }
-
-	var template string
-	err, template = ReadTemplate(templatepath)
-	if err != nil { panic(err) }
-
-	err = ioutil.WriteFile(targetpath, []byte(fmt.Sprintf(template, content)), mode)
+	err = ioutil.WriteFile(targetpath, []byte(content), mode)
 	if err != nil { panic(err) }
 }

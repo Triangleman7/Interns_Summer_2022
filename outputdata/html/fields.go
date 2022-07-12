@@ -3,14 +3,21 @@ package html
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 )
 
-func Image(res *string, src string) {
+func Image(key string, output *string, src string) {
+	var field string = fmt.Sprintf("{%v}", key)
+
 	var tag string = fmt.Sprintf("<img src=\"%v\">", filepath.Join("..", src))
-	*res += fmt.Sprintf("%v\n", tag)
+
+	*output = strings.ReplaceAll(*output, field, tag)
 }
 
-func Paragraph(res *string, content string) {
+func Paragraph(key string, output *string, content string) {
+	var field string = fmt.Sprintf("{%v}", key)
+
 	var tag string = fmt.Sprintf("<p>%v</p>", content)
-	*res += fmt.Sprintf("%v\n", tag)
+
+	*output = strings.ReplaceAll(*output, field, tag)
 }

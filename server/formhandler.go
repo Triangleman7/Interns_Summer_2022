@@ -12,9 +12,6 @@ import (
 
 func HandleFormPrimary(w http.ResponseWriter, r *http.Request) {
 	var err error
-	
-	var outDOC []byte
-	var outHTML string
 
 	// Parse form submission
 	err = r.ParseMultipartForm(0);
@@ -46,14 +43,18 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) {
 	var docpath string = filepath.Join(OUTPUTDIRECTORY, "form-primary.doc")
 
 	// Construct DOC output
+	var outDOC []byte
 	doc.Paragraph(&outDOC, fvTextField)
 	doc.Image(&outDOC, uploadpath)
 
 	// Construct HTML output
-	html.Paragraph(&outHTML, fvTextField)
-	html.Image(&outHTML, uploadpath)
+	var outHTML string
+	err, outHTML = html.ReadTemplate("outputdata/templates/template.html")
+	if err != nil { panic(err) }
+	html.Paragraph("primary-text", &outHTML, fvTextField)
+	html.Image("primary-image", &outHTML, uploadpath)
 
 	// Write output to corresponding files
 	doc.WriteDOC(docpath, "outputdata/templates/template.doc", PERMISSIONBITS, outDOC)
-	html.WriteHTML(htmlpath, "outputdata/templates/template.html", PERMISSIONBITS, outHTML)
+	html.WriteHTML(htmlpath, PERMISSIONBITS, outHTML)
 }
