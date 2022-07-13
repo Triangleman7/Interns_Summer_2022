@@ -46,7 +46,7 @@ func main() {
 
 	var fs http.Handler
 	fs = http.FileServer(http.Dir("ui"))
-	http.Handle("/ui/", http.StripPrefix("/ui/", fs))
+	http.Handle("/client/", http.StripPrefix("/client/", fs))
 	fs = http.FileServer(http.Dir("temp"))
 	http.Handle("/temp/", http.StripPrefix("/temp/", fs))
 
@@ -54,5 +54,7 @@ func main() {
 	fmt.Printf("Listening on Localhost (Port %v)\n\n", server.PORT)
 
 	err = http.ListenAndServe(fmt.Sprintf(":%v", server.PORT), nil)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 }

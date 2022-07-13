@@ -17,12 +17,16 @@ func DirectorySetup(dirpath string, permissions os.FileMode) {
 
 	// Create an empty output directory
 	var err error = os.Mkdir(dirpath, permissions)
-	if err != nil { panic(err) }
+	if err != nil {
+		panic(err)
+	}
 }
 
 func DirectoryTeardown(dirpath string) {
 	var err error = os.RemoveAll(dirpath)
-	if err != nil { panic(err) }
+	if err != nil {
+		panic(err)
+	}
 }
 
 func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +40,7 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 
 	case "GET":
 		// Reply with root HTML document
-		http.ServeFile(w, r, "ui/index.html")
+		http.ServeFile(w, r, "client/index.html")
 
 	case "POST":
 		// Handle form submission: <form name="primary">
