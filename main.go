@@ -44,8 +44,9 @@ func main() {
 	// Register handler functions
 	http.HandleFunc("/", server.ProcessRootResponse)
 
+	// Serve necessary directories
 	var fs http.Handler
-	fs = http.FileServer(http.Dir("ui"))
+	fs = http.FileServer(http.Dir("client"))
 	http.Handle("/client/", http.StripPrefix("/client/", fs))
 	fs = http.FileServer(http.Dir("temp"))
 	http.Handle("/temp/", http.StripPrefix("/temp/", fs))

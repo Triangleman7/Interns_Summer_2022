@@ -1,27 +1,25 @@
 package server
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 )
 
-func FormatValue(input string, method string) (error, string) {
-	var err error
-
+func FormatValue(input string, method string) (output string, err error) {
 	switch method {
 	// 'No Operation'
 	case "":
-		return nil, input
+		output = input
 	// 'Lowercase'
 	case "lower":
-		return nil, strings.ToLower(input)
+		output = strings.ToLower(input)
 	// 'Uppercase'
 	case "upper":
-		return nil, strings.ToUpper(input)
+		output = strings.ToUpper(input)
 	// Failsafe; Theoretically should not be possible
 	default:
-		err = errors.New(fmt.Sprintf("Unexpected value received: '%v'", input))
-		return err, ""
+		err = fmt.Errorf("unexpected value received: '%v'", input)
 	}
+
+	return
 }

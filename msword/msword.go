@@ -38,34 +38,10 @@ type ReplaceDocx struct {
 	ZipReader ZipData
 
 	// Content is the text content of the body of the Word Document.
-	Content   string
-
-	// Links is the text content of the hyperlinks of the Word Document.
-	Links     string
-
-	// Headers is a map of header style names to the corresponding text content of the Word
-	// Document.
-	Headers   map[string]string
-
-	// Footers is a map of footer style names to the corresponding text content of the Word
-	// Document.
-	Footers   map[string]string
-
-	// Images is a map of the filenames of the images of the Word Document to the filename of its
-	// replacement file. The file extension of the two files must match.
-	Images    map[string]string
-}
-
-// Docx represents a Word Document, the document ZIP archive files, and the document contents.
-type Docx struct {
-	// Files is an array of individual files contained in the ZIP archive.
-	Files   []*zip.File
-
-	// Content is the text content of the body of the Word Document.
 	Content string
 
-	// links is the text content of the hyperlinks of the Word Document.
-	Links   string
+	// Links is the text content of the hyperlinks of the Word Document.
+	Links string
 
 	// Headers is a map of header style names to the corresponding text content of the Word
 	// Document.
@@ -77,7 +53,31 @@ type Docx struct {
 
 	// Images is a map of the filenames of the images of the Word Document to the filename of its
 	// replacement file. The file extension of the two files must match.
-	Images  map[string]string
+	Images map[string]string
+}
+
+// Docx represents a Word Document, the document ZIP archive files, and the document contents.
+type Docx struct {
+	// Files is an array of individual files contained in the ZIP archive.
+	Files []*zip.File
+
+	// Content is the text content of the body of the Word Document.
+	Content string
+
+	// links is the text content of the hyperlinks of the Word Document.
+	Links string
+
+	// Headers is a map of header style names to the corresponding text content of the Word
+	// Document.
+	Headers map[string]string
+
+	// Footers is a map of footer style names to the corresponding text content of the Word
+	// Document.
+	Footers map[string]string
+
+	// Images is a map of the filenames of the images of the Word Document to the filename of its
+	// replacement file. The file extension of the two files must match.
+	Images map[string]string
 }
 
 // Close closes the ZIP archive of the Word Document d.
@@ -101,7 +101,9 @@ func (d *Docx) SetContent(content string) {
 // Raises any errors encountered while opening the ZIP archive.
 func ReadDocxFile(path string) (*ReplaceDocx, error) {
 	reader, err := zip.OpenReader(path)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	zipData := ZipFile{Data: reader}
 	return ReadDocx(zipData)
@@ -114,10 +116,14 @@ func ReadDocxFile(path string) (*ReplaceDocx, error) {
 // Raises any errors encountered while reading the contents of the Word Document ZIP archive.
 func ReadDocx(reader ZipData) (*ReplaceDocx, error) {
 	content, err := readText(reader.files())
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	links, err := readLinks(reader.files())
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	headers, footers, _ := readHeaderFooter(reader.files())
 	images, _ := retrieveImageFilenames(reader.files())

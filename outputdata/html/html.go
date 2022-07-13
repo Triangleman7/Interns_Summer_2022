@@ -5,22 +5,21 @@ import (
 	"os"
 )
 
-func ReadTemplate(path string) (error, string) {
-	var err error
+func ReadTemplate(path string) (content string, err error) {
 	var reader []byte
-	var content string
 
 	reader, err = ioutil.ReadFile(path)
-	if err != nil { panic(err) }
+	if err != nil {
+		return
+	}
 
 	content = string(reader)
 
-	return nil, content
+	return
 }
 
-func WriteHTML(targetpath string, mode os.FileMode, content string) {
-	var err error
-
+func WriteHTML(targetpath string, mode os.FileMode, content string) (err error) {
 	err = ioutil.WriteFile(targetpath, []byte(content), mode)
-	if err != nil { panic(err) }
+
+	return
 }

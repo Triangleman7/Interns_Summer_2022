@@ -34,10 +34,14 @@ func (d *Docx) ReplaceRaw(old string, new string, num int) {
 // old/new).
 func (d *Docx) Replace(old string, new string, num int) (err error) {
 	old, err = encode(old)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	new, err = encode(new)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	d.Content = strings.Replace(d.Content, old, new, num)
 
@@ -51,10 +55,14 @@ func (d *Docx) Replace(old string, new string, num int) (err error) {
 // encoding old/new).
 func (d *Docx) ReplaceLink(old string, new string, num int) (err error) {
 	old, err = encode(old)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	new, err = encode(new)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	d.Links = strings.Replace(d.Links, old, new, num)
 
@@ -93,12 +101,16 @@ func (d *Docx) ReplaceImage(old string, new string) (err error) {
 // (while encoding old/new).
 func replaceHeaderFooter(headerFooter map[string]string, old string, new string) (err error) {
 	old, err = encode(old)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
 	new, err = encode(new)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 
-	for k, _ := range headerFooter {
+	for k := range headerFooter {
 		headerFooter[k] = strings.Replace(headerFooter[k], old, new, -1)
 	}
 
@@ -106,6 +118,7 @@ func replaceHeaderFooter(headerFooter map[string]string, old string, new string)
 }
 
 const NEWLINE = "<w:br/>"
+
 // To get Microsoft Word to recognize a tab character, the previous text element first has to be
 // closed off. Thus, if there are multiple consecutive tabs, there are empty <w:t></w:t> in
 // between, but it still seems to work correctly in the output document, certainly better than with
@@ -118,23 +131,25 @@ const TAB = "</w:t><w:tab/><w:t>"
 // with the corresponding XML representation of the character. The resultant string is then
 // returned.
 //
-// Raises any errors encountered while 
+// Raises any errors encountered while
 func encode(s string) (output string, err error) {
 	// Create a new XML encoding
 	var b bytes.Buffer
 	enc := xml.NewEncoder(bufio.NewWriter(&b))
 	err = enc.Encode(s)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 
 	output = b.String()
 	// Remove <string> tag so that the tag name ("string") is not replaced
-	output = strings.Replace(output, "<string>", "", 1)				// opening string tag
-	output = strings.Replace(output, "</string>", "", 1)			// closing string tag
+	output = strings.Replace(output, "<string>", "", 1)  // opening string tag
+	output = strings.Replace(output, "</string>", "", 1) // closing string tag
 	// Replace special characters
-	output = strings.Replace(output, "&#xD;&#xA;", NEWLINE, -1)		// `\r\n` - Newline (Windows)
-	output = strings.Replace(output, "&#xD;", NEWLINE, -1)			// `\r` - Newline (OS X, earlier version)
-	output = strings.Replace(output, "&#xA;", NEWLINE, -1)			// `\n` - Newline (Unix/Linux/OS X)
-	output = strings.Replace(output, "&#x9;", TAB, -1)				// `\t` - Tab
-	
+	output = strings.Replace(output, "&#xD;&#xA;", NEWLINE, -1) // `\r\n` - Newline (Windows)
+	output = strings.Replace(output, "&#xD;", NEWLINE, -1)      // `\r` - Newline (OS X, earlier version)
+	output = strings.Replace(output, "&#xA;", NEWLINE, -1)      // `\n` - Newline (Unix/Linux/OS X)
+	output = strings.Replace(output, "&#x9;", TAB, -1)          // `\t` - Tab
+
 	return
 }

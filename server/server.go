@@ -1,7 +1,7 @@
 package server
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 	"os"
 )
@@ -30,6 +30,8 @@ func DirectoryTeardown(dirpath string) {
 }
 
 func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
+	var err error
+
 	// Assert URL path directs to the root address
 	if r.URL.Path != "/" {
 		http.Error(w, "404 not found.", http.StatusNotFound)
@@ -44,9 +46,13 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 
 	case "POST":
 		// Handle form submission: <form name="primary">
-		HandleFormPrimary(w, r)
+		err = HandleFormPrimary(w, r)
 
 	default:
-		fmt.Fprintf(w, "Only GET and POST requests supported")
+		err = errors.New("only GET and POST requests supported")
+	}
+
+	if err != nil {
+		panic(err)
 	}
 }
