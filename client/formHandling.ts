@@ -1,23 +1,27 @@
+const formPrimary: HTMLFormElement = document.forms[<any>"primary"];
+formPrimary.addEventListener("submit", processFormPrimary);
+
 /**
  * Processes input on submission of `<form name='primary'>` element.
  */
-function processFormPrimary() {
-    // Get corresopnding <form> element from DOM
-    let element: HTMLFormElement = document.forms[<any>"primary"];     // TS expects numerical index; <any> type assertion used to use index with `name` attribute value
+function processFormPrimary(event: Event) {
+    // Disable default action
+    event.preventDefault();
 
-    // Get value of text field
-    let textFieldValue: string = element["primary-text"].value;
+    // Configure a POST request
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/");
 
-    // Get value of dropdown menu
-    let menuValue: string = element["primary-text-operation"].value;
+    // Prepare form data
+    let data = new FormData(formPrimary);
 
-    // Get value of file upload field
-    let fileUploadValue: string = element["primary-image"].value;
+    // Set request headers
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
-    // Debugging
-    console.log(`<form name="primary">: Text Field value = "${textFieldValue}"`);
-    console.log(`<form name="primary">: Dropdown Menu value = "${menuValue}"`);
-    console.log(`<form name="primary">: File Upload value = ${fileUploadValue}`);
+    // Send request
+    xhr.send(data);
 
-    return true;
+    // Listen for 'load' event
+    xhr.onload = () => { console.log(xhr.responseText); }
 }

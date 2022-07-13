@@ -3,11 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title>Interns Summer 2022</title>
-
-        <script src="/client/formHandling.js"></script>
     </head>
     <body>
-        <form id="primary" method="POST" enctype="multipart/form-data" action="/" onsubmit="processFormPrimary()">
+        <form id="primary" method="POST" enctype="multipart/form-data" action="/">
             <input name="primary-text" type="text">
             <select name="primary-text-operation">
                 <option value="">No Operation</option>
@@ -17,5 +15,7 @@
             <input name="primary-image" type="file" accept="image/jpeg">
             <input name="primary-submit" type="submit" value="Process">
         </form>
+
+        <script src="/client/formHandling.js"></script>
     </body>
 </html>
