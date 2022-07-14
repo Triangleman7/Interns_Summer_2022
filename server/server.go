@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"os"
 )
@@ -13,6 +14,9 @@ var TEMPDIRECTORY string = "temp/"
 var PERMISSIONBITS os.FileMode = 0755
 
 func DirectorySetup(dirpath string, permissions os.FileMode) {
+	log.Printf("Setting up directory at %v", dirpath)
+
+	// Remove target directory
 	DirectoryTeardown(dirpath)
 
 	// Create an empty output directory
@@ -20,13 +24,17 @@ func DirectorySetup(dirpath string, permissions os.FileMode) {
 	if err != nil {
 		panic(err)
 	}
+	log.Printf("Directory created at %v", dirpath)
 }
 
 func DirectoryTeardown(dirpath string) {
+	log.Printf("Tearing down directory at %v", dirpath)
+
 	var err error = os.RemoveAll(dirpath)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+	log.Printf("Directory removed at %v", dirpath)
 }
 
 func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
@@ -38,6 +46,7 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("Received request: %s", r.Method)
 	switch r.Method {
 
 	case "GET":
@@ -53,6 +62,6 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 }
