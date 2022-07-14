@@ -1,10 +1,21 @@
+/**
+ * Handles events that are triggered when the submit action of a form is invoked.
+ */
+
+// Get element 'form#primary' from HTML DOM
 const formPrimary: HTMLFormElement = document.forms[<any>"primary"];
-formPrimary.addEventListener("submit", processFormPrimary);
+// Listen for form submission events performed on element 'form#primary'
+formPrimary.addEventListener("submit", handleFormPrimary);
 
 /**
- * Processes input on submission of `<form name='primary'>` element.
+ * Handles submission of form element 'form#primary'.
+ * Sends to the server a POST request containing the data from each input field.
+ * 
+ * Disables the default action performed by the browser on form submission.
+ * 
+ * @param {SubmitEvent} event   Internally passed event received on form submission invocation.
  */
-function processFormPrimary(event: Event) {
+function handleFormPrimary(event: SubmitEvent) {
     // Disable default action
     event.preventDefault();
 
