@@ -15,10 +15,6 @@ function processFormPrimary(event: Event) {
     // Prepare form data
     let data = new FormData(formPrimary);
 
-    // Set request headers
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-
     // Send request
     xhr.send(data);
 
