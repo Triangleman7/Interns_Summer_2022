@@ -9,6 +9,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"io"
+	"log"
 )
 
 type ZipData interface {
@@ -100,10 +101,13 @@ func (d *Docx) SetContent(content string) {
 //
 // Raises any errors encountered while opening the ZIP archive.
 func ReadDocxFile(path string) (*ReplaceDocx, error) {
+	log.Printf("Reading Word Document: %s", path)
+
 	reader, err := zip.OpenReader(path)
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Opened Word Document ZIP archive: %s", path)
 
 	zipData := ZipFile{Data: reader}
 	return ReadDocx(zipData)
@@ -115,18 +119,24 @@ func ReadDocxFile(path string) (*ReplaceDocx, error) {
 //
 // Raises any errors encountered while reading the contents of the Word Document ZIP archive.
 func ReadDocx(reader ZipData) (*ReplaceDocx, error) {
+	log.Print("Reading Word Document ZIP archive")
+
 	content, err := readText(reader.files())
 	if err != nil {
 		return nil, err
 	}
+	log.Print("Read Word Document body text")
 
 	links, err := readLinks(reader.files())
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Read Word Document hyperlinks")
 
 	headers, footers, _ := readHeaderFooter(reader.files())
+	log.Printf("Read Word Document headers/footers")
 	images, _ := retrieveImageFilenames(reader.files())
+	log.Printf("Read Word Document images")
 	return &ReplaceDocx{ZipReader: reader, Content: content, Links: links, Headers: headers, Footers: footers, Images: images}, nil
 }
 

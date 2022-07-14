@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -33,6 +34,8 @@ func (d *Docx) ReplaceRaw(old string, new string, num int) {
 // Raises any errors encountered while replacing the body of the Word Document body (while encoding
 // old/new).
 func (d *Docx) Replace(old string, new string, num int) (err error) {
+	log.Printf("Body text replacement: %s => %s (%d)", old, new, num)
+
 	old, err = encode(old)
 	if err != nil {
 		return err
@@ -44,6 +47,7 @@ func (d *Docx) Replace(old string, new string, num int) (err error) {
 	}
 
 	d.Content = strings.Replace(d.Content, old, new, num)
+	log.Printf("Successfully performed %d replacements", num)
 
 	return nil
 }
@@ -54,6 +58,8 @@ func (d *Docx) Replace(old string, new string, num int) (err error) {
 // Raises any errors encountered while replacing the content of the Word Document hyperlinks (while
 // encoding old/new).
 func (d *Docx) ReplaceLink(old string, new string, num int) (err error) {
+	log.Printf("Hyperlink replacement: %s => %s (%d)", old, new, num)
+
 	old, err = encode(old)
 	if err != nil {
 		return err
@@ -65,6 +71,7 @@ func (d *Docx) ReplaceLink(old string, new string, num int) (err error) {
 	}
 
 	d.Links = strings.Replace(d.Links, old, new, num)
+	log.Printf("Successfully performed %d replacements", num)
 
 	return nil
 }
@@ -85,13 +92,16 @@ func (d *Docx) ReplaceFooter(old string, new string) (err error) {
 //
 // Raises an error if old cannot be found in the Word Document images.
 func (d *Docx) ReplaceImage(old string, new string) (err error) {
+	log.Printf("Image replacement: %s => %s", old, new)
 	_, exists := d.Images[old]
-	if exists {
-		d.Images[old] = new
-		return
+	if !exists {
+		return fmt.Errorf("old image: %q, file not found", old)
 	}
 
-	return fmt.Errorf("old image: %q, file not found", old)
+	d.Images[old] = new
+	
+	log.Print("Succesfully performed replacement")
+	return nil
 }
 
 // replaceHeaderFooter replaces all instances of old found in the content of the Word
@@ -100,6 +110,7 @@ func (d *Docx) ReplaceImage(old string, new string) (err error) {
 // Raises any errors encountered while replacing the content of the Word Document headers/footers
 // (while encoding old/new).
 func replaceHeaderFooter(headerFooter map[string]string, old string, new string) (err error) {
+	log.Printf("Header/Footer text replacement: %s => %s", old, new)
 	old, err = encode(old)
 	if err != nil {
 		return err
@@ -114,6 +125,7 @@ func replaceHeaderFooter(headerFooter map[string]string, old string, new string)
 		headerFooter[k] = strings.Replace(headerFooter[k], old, new, -1)
 	}
 
+	log.Print("Successfully performed replacements")
 	return nil
 }
 
@@ -133,6 +145,8 @@ const TAB = "</w:t><w:tab/><w:t>"
 //
 // Raises any errors encountered while
 func encode(s string) (output string, err error) {
+	log.Printf("Encoding %s", s)
+
 	// Create a new XML encoding
 	var b bytes.Buffer
 	enc := xml.NewEncoder(bufio.NewWriter(&b))
@@ -151,5 +165,6 @@ func encode(s string) (output string, err error) {
 	output = strings.Replace(output, "&#xA;", NEWLINE, -1)      // `\n` - Newline (Unix/Linux/OS X)
 	output = strings.Replace(output, "&#x9;", TAB, -1)          // `\t` - Tab
 
+	log.Printf("Successfully encoded %s: %s", s, output)
 	return
 }
