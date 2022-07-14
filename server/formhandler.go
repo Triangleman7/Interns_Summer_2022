@@ -49,7 +49,7 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	// Output DOCX
 	var docxpath string = filepath.Join(OUTPUTDIRECTORY, "form-primary.docx")
 	var reader *msword.ReplaceDocx
-	reader, err = msword.ReadDocxFile("outputdata/template/template.docx")
+	reader, err = msword.ReadDocxFile("outputdata/templates/template.docx")
 	if err != nil {
 		return
 	}

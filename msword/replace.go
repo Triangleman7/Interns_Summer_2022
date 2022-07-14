@@ -34,7 +34,7 @@ func (d *Docx) ReplaceRaw(old string, new string, num int) {
 // Raises any errors encountered while replacing the body of the Word Document body (while encoding
 // old/new).
 func (d *Docx) Replace(old string, new string, num int) (err error) {
-	log.Printf("Body text replacement: %s => %s (%d)", old, new, num)
+	log.Printf("Body text replacement: \"%s\" => \"%s\" (%d)", old, new, num)
 
 	old, err = encode(old)
 	if err != nil {
@@ -58,7 +58,7 @@ func (d *Docx) Replace(old string, new string, num int) (err error) {
 // Raises any errors encountered while replacing the content of the Word Document hyperlinks (while
 // encoding old/new).
 func (d *Docx) ReplaceLink(old string, new string, num int) (err error) {
-	log.Printf("Hyperlink replacement: %s => %s (%d)", old, new, num)
+	log.Printf("Hyperlink replacement: \"%s\" => \"%s\" (%d)", old, new, num)
 
 	old, err = encode(old)
 	if err != nil {
@@ -110,7 +110,7 @@ func (d *Docx) ReplaceImage(old string, new string) (err error) {
 // Raises any errors encountered while replacing the content of the Word Document headers/footers
 // (while encoding old/new).
 func replaceHeaderFooter(headerFooter map[string]string, old string, new string) (err error) {
-	log.Printf("Header/Footer text replacement: %s => %s", old, new)
+	log.Printf("Header/Footer text replacement: \"%s\" => \"%s\"", old, new)
 	old, err = encode(old)
 	if err != nil {
 		return err
@@ -145,7 +145,7 @@ const TAB = "</w:t><w:tab/><w:t>"
 //
 // Raises any errors encountered while
 func encode(s string) (output string, err error) {
-	log.Printf("Encoding %s", s)
+	log.Printf("Encoding \"%s\"", s)
 
 	// Create a new XML encoding
 	var b bytes.Buffer
@@ -165,6 +165,6 @@ func encode(s string) (output string, err error) {
 	output = strings.Replace(output, "&#xA;", NEWLINE, -1)      // `\n` - Newline (Unix/Linux/OS X)
 	output = strings.Replace(output, "&#x9;", TAB, -1)          // `\t` - Tab
 
-	log.Printf("Successfully encoded %s: %s", s, output)
+	log.Printf("Successfully encoded \"%s\": \"%s\"", s, output)
 	return
 }

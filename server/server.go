@@ -47,6 +47,7 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("Received request: %s", r.Method)
+	log.Printf("Request headers: %v", r.Header)
 	switch r.Method {
 
 	case "GET":
