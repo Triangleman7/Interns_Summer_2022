@@ -95,11 +95,11 @@ func (d *Docx) ReplaceImage(old string, new string) (err error) {
 	log.Printf("Image replacement: %s => %s", old, new)
 	_, exists := d.Images[old]
 	if !exists {
-		return fmt.Errorf("old image: %q, file not found", old)
+		return fmt.Errorf("file (old image) not found: %s", old)
 	}
 
 	d.Images[old] = new
-	
+
 	log.Print("Succesfully performed replacement")
 	return nil
 }

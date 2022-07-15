@@ -15,7 +15,9 @@ func (d *Docx) WriteToFile(path string) (err error) {
 	// Create target file at path
 	var target *os.File
 	target, err = os.Create(path)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 	log.Printf("Destination file created: %s", path)
 
 	// Write document contents to target file
@@ -44,12 +46,16 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 
 		// Create target file within the ZIP archive
 		writer, err = w.Create(file.Name)
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		log.Printf("Destination file created in ZIP archive: %s", file.Name)
 
 		// Open the target file
 		readCloser, err = file.Open()
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		log.Printf("Opened origin file: %s", file.Name)
 
 		if file.Name == "word/document.xml" {
@@ -68,7 +74,9 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 			// Write content of Word Document image to appropriate directory
 			var new *os.File
 			new, err = os.Open(d.Images[file.Name])
-			if err != nil { return err }
+			if err != nil {
+				return err
+			}
 			writer.Write(streamToByte(new))
 			new.Close()
 		} else {

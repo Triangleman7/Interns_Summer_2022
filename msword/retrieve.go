@@ -17,7 +17,9 @@ import (
 func retrieveWordDoc(files []*zip.File) (file *zip.File, err error) {
 	// Traverse ZIP archive to search for XML document
 	for _, f := range files {
-		if f.Name == "word/document.xml" { return f, err }
+		if f.Name == "word/document.xml" {
+			return f, err
+		}
 	}
 
 	// Target XML document not found
@@ -36,7 +38,9 @@ func retrieveWordDoc(files []*zip.File) (file *zip.File, err error) {
 func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
 	// Traverse ZIP archive to search for XML document
 	for _, f := range files {
-		if f.Name == "word/_rels/document.xml.rels" { return f, err }
+		if f.Name == "word/_rels/document.xml.rels" {
+			return f, err
+		}
 	}
 
 	// Target XML document not found
@@ -47,7 +51,7 @@ func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
 // retrieveHeaderFooterDoc parses through the Word Document ZIP archive (files) to find the XML
 // documents that contain the formatting for the headers and footers contained in the Word
 // Document.
-// 
+//
 // The target XML documents have filenames that ahere to the following regular expressions:
 // - ^(headers|footers)\d\.xml$
 //
@@ -61,8 +65,12 @@ func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
 func retrieveHeaderFooterDoc(files []*zip.File) (headers []*zip.File, footers []*zip.File, err error) {
 	// Traverse ZIP archive to search for header/footer XML documents
 	for _, f := range files {
-		if strings.Contains(f.Name, "header") { headers = append(headers, f) }
-		if strings.Contains(f.Name, "footer") { footers = append(footers, f) }
+		if strings.Contains(f.Name, "header") {
+			headers = append(headers, f)
+		}
+		if strings.Contains(f.Name, "footer") {
+			footers = append(footers, f)
+		}
 	}
 
 	// No header or footer XML documents found
@@ -83,7 +91,9 @@ func retrieveImageFilenames(files []*zip.File) (map[string]string, error) {
 
 	// Traverse ZIP archive to search for image files
 	for _, f := range files {
-		if strings.HasPrefix(f.Name, "word/media/") { images[f.Name] = "" }
+		if strings.HasPrefix(f.Name, "word/media/") {
+			images[f.Name] = ""
+		}
 	}
 
 	return images, nil
