@@ -47,7 +47,7 @@ func (d *Docx) Replace(old string, new string, num int) (err error) {
 	}
 
 	d.Content = strings.Replace(d.Content, old, new, num)
-	log.Printf("Successfully performed %d replacements", num)
+	log.Printf("Updated body text: %v", d.Content)
 
 	return nil
 }
@@ -71,7 +71,7 @@ func (d *Docx) ReplaceLink(old string, new string, num int) (err error) {
 	}
 
 	d.Links = strings.Replace(d.Links, old, new, num)
-	log.Printf("Successfully performed %d replacements", num)
+	log.Printf("Updated hyperlinks: %v", d.Links)
 
 	return nil
 }
@@ -79,13 +79,17 @@ func (d *Docx) ReplaceLink(old string, new string, num int) (err error) {
 // ReplaceHeader replaces all instances of old found in the content of the Word Document (d)
 // headers with new.
 func (d *Docx) ReplaceHeader(old string, new string) (err error) {
-	return replaceHeaderFooter(d.Headers, old, new)
+	err = replaceHeaderFooter(d.Headers, old, new)
+	log.Printf("Update headers: %v", d.Headers)
+	return
 }
 
 // ReplaceFooter replaces all instances of old found in the content of the Word Document (d)
 // footers with new.
 func (d *Docx) ReplaceFooter(old string, new string) (err error) {
-	return replaceHeaderFooter(d.Footers, old, new)
+	err = replaceHeaderFooter(d.Footers, old, new)
+	log.Printf("Updated footers: %v", d.Footers)
+	return
 }
 
 // ReplaceImage replaces all instances of old found in the Word Document (d) images with new.
@@ -99,8 +103,8 @@ func (d *Docx) ReplaceImage(old string, new string) (err error) {
 	}
 
 	d.Images[old] = new
+	log.Printf("Update images: %v", d.Images)
 
-	log.Print("Succesfully performed replacement")
 	return nil
 }
 
@@ -125,7 +129,6 @@ func replaceHeaderFooter(headerFooter map[string]string, old string, new string)
 		headerFooter[k] = strings.Replace(headerFooter[k], old, new, -1)
 	}
 
-	log.Print("Successfully performed replacements")
 	return nil
 }
 
