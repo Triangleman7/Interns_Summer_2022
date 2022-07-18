@@ -72,13 +72,16 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 			writer.Write([]byte(d.Footers[file.Name]))
 		} else if strings.HasPrefix(file.Name, "word/media/") && d.Images[file.Name] != "" {
 			// Write content of Word Document image to appropriate directory
+			log.Printf("Replacing image %s: %s", file.Name, d.Images[file.Name])
 			var new *os.File
 			new, err = os.Open(d.Images[file.Name])
+			log.Printf("Opened new image: %s", d.Images[file.Name])
 			if err != nil {
 				return err
 			}
 			writer.Write(streamToByte(new))
 			new.Close()
+			log.Printf("Contents of new image written: %s", d.Images[file.Name])
 		} else {
 			// Write content of miscellaneous file to appropriate file
 			writer.Write(streamToByte(readCloser))
