@@ -60,7 +60,10 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	var outDOCX *msword.Docx = reader.Editable()
 	docx.Paragraph("primary-text", outDOCX, fvTextField)
 	docx.Image(1, outDOCX, uploadpath)
-	docx.WriteDOCX(docxpath, outDOCX)
+	err = docx.WriteDOCX(docxpath, outDOCX)
+	if err != nil {
+		return
+	}
 	log.Printf("DOCX output written to %s", docxpath)
 
 	// Output HTML
@@ -72,8 +75,12 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 	html.Paragraph("primary-text", &outHTML, fvTextField)
 	html.Image("primary-image", &outHTML, uploadpath)
-	html.WriteHTML(htmlpath, outHTML)
+	err = html.WriteHTML(htmlpath, outHTML)
+	if err != nil {
+		return
+	}
 	log.Printf("HTML output written to %s", htmlpath)
 
+	log.Print("Successfully wrote all output to out/")
 	return
 }

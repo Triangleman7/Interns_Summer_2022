@@ -19,13 +19,16 @@ func ReadTemplate(path string) (content string, err error) {
 func WriteHTML(path string, content string) (err error) {
 	var file *os.File
 
-	file, err = os.Open(path)
+	file, err = os.Create(path)
 	if err != nil {
 		return
 	}
 	defer file.Close()
 
-	file.Write([]byte(content))
+	_, err = file.Write([]byte(content))
+	if err != nil {
+		return
+	}
 
 	return
 }
