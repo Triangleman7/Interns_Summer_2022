@@ -69,7 +69,7 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 	html.Paragraph("primary-text", &outHTML, fvTextField)
 	html.Image("primary-image", &outHTML, uploadpath)
-	html.WriteHTML(htmlpath, PERMISSIONBITS, outHTML)
+	html.WriteHTML(htmlpath, outHTML)
 	log.Printf("HTML output written to %s", htmlpath)
 
 	return

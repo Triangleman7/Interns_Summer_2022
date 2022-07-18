@@ -13,13 +13,19 @@ func ReadTemplate(path string) (content string, err error) {
 		return
 	}
 
-	content = string(reader)
-
-	return
+	return string(reader), nil
 }
 
-func WriteHTML(targetpath string, mode os.FileMode, content string) (err error) {
-	err = ioutil.WriteFile(targetpath, []byte(content), mode)
+func WriteHTML(path string, content string) (err error) {
+	var file *os.File
+
+	file, err = os.Open(path)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	file.Write([]byte(content))
 
 	return
 }
