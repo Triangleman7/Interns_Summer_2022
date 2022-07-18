@@ -1,3 +1,4 @@
+// Package outputdata/html handles writing HTML Document (.HTML) output.
 package html
 
 import (
@@ -5,6 +6,10 @@ import (
 	"os"
 )
 
+// ReadTemplate reads the template HTML Document located at path and returns the content of the
+// HTML Document (content).
+//
+// Raises any errors encountered while reading the HTML Document.
 func ReadTemplate(path string) (content string, err error) {
 	var reader []byte
 
@@ -16,6 +21,11 @@ func ReadTemplate(path string) (content string, err error) {
 	return string(reader), nil
 }
 
+// WriteHTML writes content, the content of the output HTML Document, an HTML Document in the local
+// file system at path.
+//
+// Raises any errors encountered while writing the Word Document object contents to the target
+// file.
 func WriteHTML(path string, content string) (err error) {
 	var file *os.File
 
