@@ -11,6 +11,9 @@ import (
 	"github.com/Triangleman7/Interns_Summer_2022/outputdata/html"
 )
 
+// HandleFormPrimary handles form submission to form#primary.
+//
+// Raises any errors encountered while handling the form or procesing form input.
 func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	log.Print("Handling form submission to form#primary")
 
@@ -21,7 +24,7 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 	log.Print("Parsed form submission")
 
-	// Process <input name="primary-text"> form field
+	// Process element input[name="primary-text"]
 	var vTextField, vMenu, fvTextField string
 	vTextField = r.FormValue("primary-text")
 	vMenu = r.FormValue("primary-text-operation")
@@ -31,15 +34,15 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 	log.Print("Processed <input name=\"primary-text\"> field")
 
-	// Process <input name="primary-image"> form field
+	// Process element input[name="primary-image"]
 	var file multipart.File
 	var header *multipart.FileHeader
-	var uploadpath string
 	file, header, err = r.FormFile("primary-image")
 	if err != nil {
 		return
 	}
 	defer file.Close()
+	var uploadpath string
 	uploadpath, err = UploadFile(file, header)
 	if err != nil {
 		return

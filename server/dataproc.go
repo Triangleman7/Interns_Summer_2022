@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+// FormatValue applies to input the string operation corresponding to method. The modified string
+// is returned as output.
+//
+// Supported values for method:
+// - "": Performs no operation to input
+// - "lower": Applies lowercase casing to input
+// - "upper": Applies uppercase casing to input
+// An error is raised if an unexpected value for method is passed.
 func FormatValue(input string, method string) (output string, err error) {
 	switch method {
 	// 'No Operation'
@@ -17,9 +25,9 @@ func FormatValue(input string, method string) (output string, err error) {
 	// 'Uppercase'
 	case "upper":
 		output = strings.ToUpper(input)
-	// Failsafe; Theoretically should not be possible
+	// Invalid value passed
 	default:
-		err = fmt.Errorf("unexpected value received: '%v'", input)
+		err = fmt.Errorf("unexpected value for method passed: '%v'", input)
 		return
 	}
 

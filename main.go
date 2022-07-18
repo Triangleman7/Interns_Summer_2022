@@ -4,32 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/Triangleman7/Interns_Summer_2022/server"
 )
-
-func SetupCloseHandler() {
-	channel := make(chan os.Signal)
-
-	// Notify chanel if an interrupt from the OS is received
-	signal.Notify(channel, os.Interrupt, syscall.SIGTERM)
-
-	go func() {
-		// Listen for interrupt from the OS
-		<-channel
-		log.Print("Detected OS interrupt")
-
-		// Tear down the temporary directory
-		server.DirectoryTeardown(server.TEMPDIRECTORY)
-
-		// Exit the program
-		log.Print("Terminating program (status code 0)")
-		os.Exit(0)
-	}()
-}
 
 func main() {
 	log.Print("Starting program")
@@ -37,13 +14,13 @@ func main() {
 	var err error
 
 	// Set up temporary directory
-	server.DirectorySetup(server.TEMPDIRECTORY, server.PERMISSIONBITS)
+	server.DirectorySetup(server.TEMPDIRECTORY, server.FILEMODE)
 
 	// Set up output directory
-	server.DirectorySetup(server.OUTPUTDIRECTORY, server.PERMISSIONBITS)
+	server.DirectorySetup(server.OUTPUTDIRECTORY, server.FILEMODE)
 
 	// Create a listener on a new goroutine to handle OS interrupts
-	SetupCloseHandler()
+	server.SetupCloseHandler()
 
 	// Register handler functions
 	http.HandleFunc("/", server.ProcessRootResponse)

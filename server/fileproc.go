@@ -8,6 +8,10 @@ import (
 	"path/filepath"
 )
 
+// UploadFile saves the contents of file to the local file system, at the path determined by header
+// (header.Filename).
+//
+// Raises any errors encountered while copying the file contents to the local file system.
 func UploadFile(file multipart.File, header *multipart.FileHeader) (path string, err error) {
 	log.Printf("Uploading origin file to local file system: %s", header.Filename)
 
@@ -21,10 +25,10 @@ func UploadFile(file multipart.File, header *multipart.FileHeader) (path string,
 	if err != nil {
 		return
 	}
+	defer destination.Close()
 	log.Printf("Destination file created: %s", path)
 
 	// Copy received file contents to target file in local directory
-	defer destination.Close()
 	_, err = io.Copy(destination, file)
 	if err != nil {
 		return
