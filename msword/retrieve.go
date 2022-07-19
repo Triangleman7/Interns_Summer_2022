@@ -2,7 +2,9 @@ package msword
 
 import (
 	"archive/zip"
-	"errors"
+	"fmt"
+	"log"
+	"regexp"
 	"strings"
 )
 
@@ -15,15 +17,19 @@ import (
 //
 // An error (err) is raised if the target XML document cannot be found in the ZIP archive.
 func retrieveWordDoc(files []*zip.File) (file *zip.File, err error) {
+	var filename string = "word/document.xml"
+	log.Printf("Searching for file in ZIP archive: %s", filename)
+
 	// Traverse ZIP archive to search for XML document
 	for _, f := range files {
-		if f.Name == "word/document.xml" {
+		if f.Name == filename {
+			log.Printf("Found file in ZIP archive: %s", f.Name)
 			return f, err
 		}
 	}
 
 	// Target XML document not found
-	err = errors.New("word/document.xml not found")
+	err = fmt.Errorf("could not find file in ZIP archive: %s", filename)
 	return
 }
 
@@ -36,15 +42,19 @@ func retrieveWordDoc(files []*zip.File) (file *zip.File, err error) {
 //
 // An error (err) is raised if the target XML document cannot be found in the ZIP archive.
 func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
+	var filename string = "word/_rels/document.xml.rels"
+	log.Printf("Searching for file in ZIP archive: %s", filename)
+
 	// Traverse ZIP archive to search for XML document
 	for _, f := range files {
-		if f.Name == "word/_rels/document.xml.rels" {
+		if f.Name == filename {
+			log.Printf("Found file in ZIP archive: %s", f.Name)
 			return f, err
 		}
 	}
 
 	// Target XML document not found
-	err = errors.New("word/_relse/document.xml.rels file not found")
+	err = fmt.Errorf("could not find file in ZIP archive: %s", filename)
 	return
 }
 
@@ -63,21 +73,36 @@ func retrieveLinkDoc(files []*zip.File) (file *zip.File, err error) {
 //
 // An error (err) is raised if the target XML documents cannot be found in the ZIP archive.
 func retrieveHeaderFooterDoc(files []*zip.File) (headers []*zip.File, footers []*zip.File, err error) {
+	var regex *regexp.Regexp
+	regex, err = regexp.Compile(`(headers|footers)\d+\.xml`)
+	if err != nil {
+		return
+	}
+	log.Printf("Searching for files in ZIP archive: %v", regex)
+
 	// Traverse ZIP archive to search for header/footer XML documents
 	for _, f := range files {
-		if strings.Contains(f.Name, "header") {
-			headers = append(headers, f)
+		var submatch []string = regex.FindStringSubmatch(f.Name)
+		if len(submatch) == 0 {
+			continue
 		}
-		if strings.Contains(f.Name, "footer") {
+
+		switch submatch[1] {
+		// Header XML document
+		case "header":
+			log.Printf("Found header file in ZIP archive: %s", submatch[1])
+			headers = append(headers, f)
+		// Footer XML document
+		case "footer":
+			log.Printf("Found footer file in ZIP archive: %s", submatch[1])
 			footers = append(footers, f)
 		}
 	}
 
 	// No header or footer XML documents found
 	if len(headers) == 0 && len(footers) == 0 {
-		err = errors.New("headers[1-3].xml file not found and footers[1-3].xml file not found")
+		err = fmt.Errorf("could not find files in ZIP archive: %v", regex)
 	}
-
 	return
 }
 
@@ -87,12 +112,16 @@ func retrieveHeaderFooterDoc(files []*zip.File) (headers []*zip.File, footers []
 // A map of the filenames of all images found in the ZIP archive mapped to empty string is
 // returned.
 func retrieveImageFilenames(files []*zip.File) (map[string]string, error) {
-	images := make(map[string]string)
+	var dirname string = "word/media"
+	log.Printf("Searching for files in ZIP archive directory: %s", dirname)
 
 	// Traverse ZIP archive to search for image files
+	images := make(map[string]string)
 	for _, f := range files {
-		if strings.HasPrefix(f.Name, "word/media/") {
-			images[f.Name] = ""
+		var filename string = f.Name
+		if strings.HasPrefix(filename, dirname) {
+			log.Printf("Found image file in ZIP archive: %s", filename)
+			images[filename] = ""
 		}
 	}
 
