@@ -1,8 +1,9 @@
-// Package msword handles Microsoft Word Documents.
-//
-// The code in this package has been adapted from the github.com/nguyenthenguyen/docx package
-// (GitHub: https://github.com/nguyenthenguyen/docx;
-// Go Packaging Index: https://pkg.go.dev/github.com/nguyenthenguyen/docx).
+/* Package msword handles Microsoft Word Documents.
+
+The code in this package has been adapted from the github.com/nguyenthenguyen/docx package:
+- GitHub: https://github.com/nguyenthenguyen/docx
+- Go Package Index: https://pkg.go.dev/github.com/nguyenthenguyen/docx
+*/
 package msword
 
 import (

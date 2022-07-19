@@ -1,4 +1,6 @@
-// Package outputdata/docx handles writing Word Document (.DOCX) output.
+/*
+Package outputdata/docx handles writing Word Document (.DOCX) output.
+*/
 package docx
 
 import (

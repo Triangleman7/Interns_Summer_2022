@@ -1,4 +1,6 @@
-// Package outputdata/html handles writing HTML Document (.HTML) output.
+/*
+Package outputdata/html handles writing HTML Document (.HTML) output.
+*/
 package html
 
 import (

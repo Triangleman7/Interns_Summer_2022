@@ -1,4 +1,6 @@
-// Package server provides support for hosting, running, and handling a local server
+/*
+Package server provides support for hosting, running, and handling a local server
+*/
 package server
 
 import (
