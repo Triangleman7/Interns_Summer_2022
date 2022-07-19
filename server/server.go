@@ -15,8 +15,9 @@ import (
 const (
 	PORT int = 8080		// the localhost port served
 
-	OUTPUTDIRECTORY string = "out/"		// the parent directory of all output files generated at runtime
-	TEMPDIRECTORY string = "temp/"		// the parent directory of temporary files generated at runtime
+	OUTPUTDIRECTORY string = "out/"							// holds all output files generated at runtime
+	TEMPLATEDIRECTORY string = "outputdata/templates"		// holds all output template files
+	TEMPDIRECTORY string = "temp/"							// holds all temporary files generated at runtime
 
 	FILEMODE os.FileMode = 0755		// the program-specific defualt permission bits
 )

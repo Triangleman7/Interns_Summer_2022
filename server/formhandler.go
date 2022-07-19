@@ -11,10 +11,27 @@ import (
 	"github.com/Triangleman7/Interns_Summer_2022/outputdata/html"
 )
 
+type FormOutput struct {
+	TemplateDOCX string		// Filename of template DOCX file
+	TemplateHTML string		// Filename of template HTML file
+
+	OutDOCX string		// Filename of output DOCX file
+	OutHTML string		// Filename of output HTML file
+}
+
+type FormPrimary struct {
+	Output FormOutput		// Output specifications
+
+	PrimaryImage string				// {primary-image}
+	PrimaryText string				// {primary-text}
+}
+
 // HandleFormPrimary handles form submission to form#primary.
 //
 // Raises any errors encountered while handling the form or procesing form input.
 func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
+	var form FormPrimary
+	form.Output = FormOutput{"template.docx", "template.html", "form-primary.docx", "form-primary.html"}
 	log.Print("Handling form submission to form#primary")
 
 	// Parse form submission
@@ -25,10 +42,9 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	log.Print("Parsed form submission")
 
 	// Process element input[name="primary-text"]
-	var vTextField, vMenu, fvTextField string
-	vTextField = r.FormValue("primary-text")
-	vMenu = r.FormValue("primary-text-operation")
-	fvTextField, err = FormatValue(vTextField, vMenu)
+	var primaryText string = r.FormValue("primary-text")
+	var primaryTextOperation string = r.FormValue("primary-text-operation")
+	form.PrimaryText, err = FormatValue(primaryText, primaryTextOperation)
 	if err != nil {
 		return
 	}
@@ -42,45 +58,71 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 		return
 	}
 	defer file.Close()
-	var uploadpath string
-	uploadpath, err = UploadFile(file, header)
+	form.PrimaryImage, err = UploadFile(file, header)
 	if err != nil {
 		return
 	}
 	log.Print("Processed <input name=\"primary-image\"> field")
 
-	// Output DOCX
-	var docxpath string = filepath.Join(OUTPUTDIRECTORY, "form-primary.docx")
+	// Write output
+	err = FormPrimaryDOCX(form)
+	if err != nil {
+		return
+	}
+	err = FormPrimaryHTML(form)
+	if err != nil {
+		return
+	}
+	log.Printf("Successfully wrote all output: %s", OUTPUTDIRECTORY)
+
+	return
+}
+
+func FormPrimaryDOCX(form FormPrimary) (err error) {
+	var templatepath = filepath.Join(TEMPLATEDIRECTORY, form.Output.TemplateDOCX)
+	var outpath = filepath.Join(OUTPUTDIRECTORY, form.Output.OutDOCX)
+
 	var reader *msword.ReplaceDocx
-	reader, err = msword.ReadDocxFile("outputdata/templates/template.docx")
+	reader, err = msword.ReadDocxFile(templatepath)
 	if err != nil {
 		return
 	}
 	defer reader.Close()
+
 	var outDOCX *msword.Docx = reader.Editable()
-	docx.Paragraph("primary-text", outDOCX, fvTextField)
-	docx.Image(1, outDOCX, uploadpath)
-	err = docx.WriteDOCX(docxpath, outDOCX)
+
+	docx.Image(outDOCX, 1, form.PrimaryImage)
+	docx.Paragraph(outDOCX, "primary-text", form.PrimaryText)
+
+	err = docx.WriteDOCX(outpath, outDOCX)
 	if err != nil {
 		return
 	}
-	log.Printf("DOCX output written to %s", docxpath)
 
-	// Output HTML
-	var htmlpath string = filepath.Join(OUTPUTDIRECTORY, "form-primary.html")
+	log.Printf("DOCX output written to %s", outpath)
+
+	return
+}
+
+func FormPrimaryHTML(form FormPrimary) (err error) {
+	var outpath = filepath.Join(OUTPUTDIRECTORY, form.Output.OutHTML)
+	var templatepath = filepath.Join(TEMPLATEDIRECTORY, form.Output.TemplateHTML)
+
 	var outHTML string
-	outHTML, err = html.ReadTemplate("outputdata/templates/template.html")
+	outHTML, err = html.ReadTemplate(templatepath)
 	if err != nil {
 		return
 	}
-	html.Paragraph("primary-text", &outHTML, fvTextField)
-	html.Image("primary-image", &outHTML, uploadpath)
-	err = html.WriteHTML(htmlpath, outHTML)
-	if err != nil {
-		return
-	}
-	log.Printf("HTML output written to %s", htmlpath)
 
-	log.Print("Successfully wrote all output to out/")
+	html.Image(&outHTML, "primary-image", form.PrimaryImage)
+	html.Paragraph(&outHTML, "primary-text", form.PrimaryText)
+
+	err = html.WriteHTML(outpath, outHTML)
+	if err != nil {
+		return
+	}
+
+	log.Printf("HTML output written to %s", outpath)
+
 	return
 }
