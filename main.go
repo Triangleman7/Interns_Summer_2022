@@ -33,15 +33,15 @@ func main() {
 	var serveDirectories []string = []string{"client", "temp"}
 	for _, directory := range serveDirectories {
 		var fs http.Handler = http.FileServer(http.Dir(directory))
-		var prefix string = fmt.Sprintf("/%v/", directory)
+		var prefix string = fmt.Sprintf("/%s/", directory)
 		http.Handle(prefix, http.StripPrefix(prefix, fs))
-		log.Printf("Served %v/ directory (%v)", directory, prefix)
+		log.Printf("Served %s/ directory (%s)", directory, prefix)
 	}
 
 	// Debugging
-	log.Printf("Listening on Localhost (Port %v)", server.PORT)
+	log.Printf("Listening on Localhost (Port %d)", server.PORT)
 
-	err = http.ListenAndServe(fmt.Sprintf(":%v", server.PORT), nil)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", server.PORT), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
