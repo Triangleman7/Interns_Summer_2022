@@ -143,7 +143,7 @@ func ReadDocx(reader ZipData) (*ReplaceDocx, error) {
 
 // streamToByte returns an array of the bytes contained in the file reader.
 func streamToByte(stream io.Reader) []byte {
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(stream)
-	return buf.Bytes()
+	buffer := new(bytes.Buffer)
+	buffer.ReadFrom(stream)
+	return buffer.Bytes()
 }

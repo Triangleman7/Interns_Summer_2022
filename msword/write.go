@@ -13,16 +13,16 @@ import (
 // Raises any errors encountered while writing the Word Document contents.
 func (d *Docx) WriteToFile(path string) (err error) {
 	// Create target file at path
-	var target *os.File
-	target, err = os.Create(path)
+	var file *os.File
+	file, err = os.Create(path)
 	if err != nil {
 		return
 	}
+	defer file.Close()
 	log.Printf("Destination file created: %s", path)
 
 	// Write document contents to target file
-	defer target.Close()
-	err = d.Write(target)
+	err = d.Write(file)
 
 	log.Printf("Word Document contents successfully written to %s", path)
 	return
@@ -36,23 +36,23 @@ func (d *Docx) WriteToFile(path string) (err error) {
 //
 // Raises any errors encountered while writing the Word Document contents.
 func (d *Docx) Write(ioWriter io.Writer) (err error) {
-	w := zip.NewWriter(ioWriter)
+	var zipWriter *zip.Writer = zip.NewWriter(ioWriter)
 	log.Print("Created ZIP archive writer")
 
 	// Iterate through ZIP archive Word Document XML files
 	for _, file := range d.Files {
 		var writer io.Writer
-		var readCloser io.ReadCloser
+		var closer io.ReadCloser
 
 		// Create target file within the ZIP archive
-		writer, err = w.Create(file.Name)
+		writer, err = zipWriter.Create(file.Name)
 		if err != nil {
 			return err
 		}
 		log.Printf("Destination file created in ZIP archive: %s", file.Name)
 
 		// Open the target file
-		readCloser, err = file.Open()
+		closer, err = file.Open()
 		if err != nil {
 			return err
 		}
@@ -84,12 +84,12 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 			log.Printf("Contents of new image written: %s", d.Images[file.Name])
 		} else {
 			// Write content of miscellaneous file to appropriate file
-			writer.Write(streamToByte(readCloser))
+			writer.Write(streamToByte(closer))
 		}
 
 		log.Printf("File contents successfully written to ZIP archive: %s", file.Name)
 	}
-	w.Close()
+	zipWriter.Close()
 	log.Print("Closed ZIP archive writer")
 
 	log.Print("Word Document files sueccessfully written to ZIP archive")
