@@ -28,7 +28,7 @@ const (
 //
 // Raises any errors encountered while creating the new directory.
 func DirectorySetup(dirpath string, mode os.FileMode) {
-	log.Printf("Setting up directory at %v", dirpath)
+	log.Printf("Setting up directory at %s", dirpath)
 
 	// Remove target directory
 	DirectoryTeardown(dirpath)
@@ -38,7 +38,7 @@ func DirectorySetup(dirpath string, mode os.FileMode) {
 	if err != nil {
 		panic(err)
 	}
-	log.Printf("Directory created at %v", dirpath)
+	log.Printf("Directory created at %s", dirpath)
 }
 
 // DirectoryTeardown removes the directory at dirpath and all its contents, regardless of whether
@@ -46,13 +46,13 @@ func DirectorySetup(dirpath string, mode os.FileMode) {
 //
 // Raises any errors encountered while removing the directory.
 func DirectoryTeardown(dirpath string) {
-	log.Printf("Tearing down directory at %v", dirpath)
+	log.Printf("Tearing down directory at %s", dirpath)
 
 	var err error = os.RemoveAll(dirpath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Directory removed at %v", dirpath)
+	log.Printf("Directory removed at %s", dirpath)
 }
 
 // SetupCloseHandler cleans up the local file system, called when the program is about to be
