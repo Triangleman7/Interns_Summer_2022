@@ -12,18 +12,18 @@ import (
 )
 
 type FormOutput struct {
-	TemplateDOCX string		// Filename of template DOCX file
-	TemplateHTML string		// Filename of template HTML file
+	TemplateDOCX string // Filename of template DOCX file
+	TemplateHTML string // Filename of template HTML file
 
-	OutDOCX string		// Filename of output DOCX file
-	OutHTML string		// Filename of output HTML file
+	OutDOCX string // Filename of output DOCX file
+	OutHTML string // Filename of output HTML file
 }
 
 type FormPrimary struct {
-	Output FormOutput		// Output specifications
+	Output FormOutput // Output specifications
 
-	PrimaryImage string				// {primary-image}
-	PrimaryText string				// {primary-text}
+	PrimaryImage string // {primary-image}
+	PrimaryText  string // {primary-text}
 }
 
 // HandleFormPrimary handles form submission to form#primary.

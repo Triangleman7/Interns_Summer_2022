@@ -11,9 +11,21 @@ import (
 //
 // Raises any errors encountered while replacing the old image in the document with the new image.
 func Image(document *msword.Docx, key int, src string) (err error) {
-	var field string = fmt.Sprintf("word/media/image%d.jpg", key)
+	var field string
 
+	// Using .jpg file extension
+	field = fmt.Sprintf("word/media/image%d.jpg", key)
 	err = document.ReplaceImage(field, src)
+	if err == nil {
+		return
+	}
+
+	// Using .jpeg file extension
+	field = fmt.Sprintf("word/media/image%d.jpeg", key)
+	err = document.ReplaceImage(field, src)
+	if err == nil {
+		return
+	}
 
 	return
 }
