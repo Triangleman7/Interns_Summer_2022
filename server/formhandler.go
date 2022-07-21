@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -12,11 +13,35 @@ import (
 )
 
 type FormOutput struct {
-	TemplateDOCX string // Filename of template DOCX file
-	TemplateHTML string // Filename of template HTML file
+	Name string // Field element 'name' attribute
+}
 
-	OutDOCX string // Filename of output DOCX file
-	OutHTML string // Filename of output HTML file
+// TemplateDOCX returns the path (relative to the root directory) to the template DOCX file for the
+// form f.
+func (f FormOutput) TemplateDOCX() (path string) {
+	var filename string = fmt.Sprintf("%s.docx", f.Name)
+	return filepath.Join(TEMPLATEDIRECTORY, filename)
+}
+
+// TemplateHTML returns the path (relative to the root directory) to the template HTML file for the
+// form f.
+func (f FormOutput) TemplateHTML() (path string) {
+	var filename string = fmt.Sprintf("%s.html", f.Name)
+	return filepath.Join(TEMPLATEDIRECTORY, filename)
+}
+
+// OutDOCX returns the path (relative to the root directory) to the output DOCX file for the form
+// f.
+func (f FormOutput) OutDOCX() (path string) {
+	var filename string = fmt.Sprintf("%s.docx", f.Name)
+	return filepath.Join(OUTPUTDIRECTORY, filename)
+}
+
+// OutHTML returns the path (relative to the root directory) to the output HTML file for the form
+// f.
+func (f FormOutput) OutHTML() (path string) {
+	var filename string = fmt.Sprintf("%s.html", f.Name)
+	return filepath.Join(OUTPUTDIRECTORY, filename)
 }
 
 type FormPrimary struct {
@@ -31,7 +56,7 @@ type FormPrimary struct {
 // Raises any errors encountered while handling the form or procesing form input.
 func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	var form FormPrimary
-	form.Output = FormOutput{"template.docx", "template.html", "form-primary.docx", "form-primary.html"}
+	form.Output = FormOutput{"form-primary"}
 	log.Print("Handling form submission to form#primary")
 
 	// Parse form submission
@@ -79,8 +104,8 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 }
 
 func FormPrimaryDOCX(form FormPrimary) (err error) {
-	var templatepath = filepath.Join(TEMPLATEDIRECTORY, form.Output.TemplateDOCX)
-	var outpath = filepath.Join(OUTPUTDIRECTORY, form.Output.OutDOCX)
+	var templatepath = form.Output.TemplateDOCX()
+	var outpath = form.Output.OutDOCX()
 
 	var reader *msword.ReplaceDocx
 	reader, err = msword.ReadDocxFile(templatepath)
@@ -105,8 +130,8 @@ func FormPrimaryDOCX(form FormPrimary) (err error) {
 }
 
 func FormPrimaryHTML(form FormPrimary) (err error) {
-	var outpath = filepath.Join(OUTPUTDIRECTORY, form.Output.OutHTML)
-	var templatepath = filepath.Join(TEMPLATEDIRECTORY, form.Output.TemplateHTML)
+	var templatepath = form.Output.TemplateHTML()
+	var outpath = form.Output.OutHTML()
 
 	var outHTML string
 	outHTML, err = html.ReadTemplate(templatepath)
