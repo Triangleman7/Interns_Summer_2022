@@ -4,19 +4,18 @@
         <meta charset="UTF-8">
         <link rel="icon" href="/client/images/favicon.ico"/>
         <title>Interns Summer 2022</title>
+        <script type="text/javascript" src="/client/scripts/formHandling.js" defer></script>
     </head>
     <body>
         <form id="primary" method="POST" enctype="multipart/form-data" action="/">
-            <input name="primary-text" type="text">
+            <input type="text" name="primary-text">
             <select name="primary-text-operation">
                 <option value="">No Operation</option>
                 <option value="lower">Lowercase</option>
                 <option value="upper">Uppercase</option>
             </select>
-            <input name="primary-image" type="file" accept="image/jpeg">
-            <input name="primary-submit" type="submit" value="Process">
+            <input type="file" name="primary-image" accept="image/jpeg">
+            <input type="submit" name="primary-submit" value="Process">
         </form>
-
-        <script src="/client/formHandling.js"></script>
     </body>
 </html>
