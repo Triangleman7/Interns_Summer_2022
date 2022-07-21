@@ -80,7 +80,7 @@ func (d *Docx) ReplaceLink(old string, new string, num int) (err error) {
 // headers with new.
 func (d *Docx) ReplaceHeader(old string, new string) (err error) {
 	err = replaceHeaderFooter(d.Headers, old, new)
-	log.Printf("Update headers: %v", d.Headers)
+	log.Printf("Updated headers: %v", d.Headers)
 	return
 }
 
@@ -103,7 +103,7 @@ func (d *Docx) ReplaceImage(old string, new string) (err error) {
 	}
 
 	d.Images[old] = new
-	log.Printf("Update images: %v", d.Images)
+	log.Printf("Updated images: %v", d.Images)
 
 	return nil
 }
@@ -151,14 +151,14 @@ func encode(s string) (output string, err error) {
 	log.Printf("Encoding \"%s\"", s)
 
 	// Create a new XML encoding
-	var b bytes.Buffer
-	enc := xml.NewEncoder(bufio.NewWriter(&b))
+	var buffer bytes.Buffer
+	enc := xml.NewEncoder(bufio.NewWriter(&buffer))
 	err = enc.Encode(s)
 	if err != nil {
 		return
 	}
 
-	output = b.String()
+	output = buffer.String()
 	// Remove <string> tag so that the tag name ("string") is not replaced
 	output = strings.Replace(output, "<string>", "", 1)  // opening string tag
 	output = strings.Replace(output, "</string>", "", 1) // closing string tag

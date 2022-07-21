@@ -4,7 +4,7 @@
 
 // Get element 'form#primary' from HTML DOM
 const formPrimary: HTMLFormElement = document.forms[<any>"primary"];
-// Listen for form submission events performed on element 'form#primary'
+// Attach listener for form submission events performed on element 'form#primary'
 formPrimary.addEventListener("submit", handleFormPrimary);
 
 /**

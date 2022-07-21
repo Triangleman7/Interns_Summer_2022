@@ -1,35 +1,16 @@
+/*
+
+ */
+
 package main
 
 import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/Triangleman7/Interns_Summer_2022/server"
 )
-
-func SetupCloseHandler() {
-	channel := make(chan os.Signal)
-
-	// Notify chanel if an interrupt from the OS is received
-	signal.Notify(channel, os.Interrupt, syscall.SIGTERM)
-
-	go func() {
-		// Listen for interrupt from the OS
-		<-channel
-		log.Print("Detected OS interrupt")
-
-		// Tear down the temporary directory
-		server.DirectoryTeardown(server.TEMPDIRECTORY)
-
-		// Exit the program
-		log.Print("Terminating program (status code 0)")
-		os.Exit(0)
-	}()
-}
 
 func main() {
 	log.Print("Starting program")
@@ -37,13 +18,13 @@ func main() {
 	var err error
 
 	// Set up temporary directory
-	server.DirectorySetup(server.TEMPDIRECTORY, server.PERMISSIONBITS)
+	server.DirectorySetup(server.TEMPDIRECTORY, server.FILEMODE)
 
 	// Set up output directory
-	server.DirectorySetup(server.OUTPUTDIRECTORY, server.PERMISSIONBITS)
+	server.DirectorySetup(server.OUTPUTDIRECTORY, server.FILEMODE)
 
 	// Create a listener on a new goroutine to handle OS interrupts
-	SetupCloseHandler()
+	server.SetupCloseHandler()
 
 	// Register handler functions
 	http.HandleFunc("/", server.ProcessRootResponse)
@@ -52,15 +33,15 @@ func main() {
 	var serveDirectories []string = []string{"client", "temp"}
 	for _, directory := range serveDirectories {
 		var fs http.Handler = http.FileServer(http.Dir(directory))
-		var prefix string = fmt.Sprintf("/%v/", directory)
+		var prefix string = fmt.Sprintf("/%s/", directory)
 		http.Handle(prefix, http.StripPrefix(prefix, fs))
-		log.Printf("Served %v/ directory (%v)", directory, prefix)
+		log.Printf("Served %s/ directory (%s)", directory, prefix)
 	}
 
 	// Debugging
-	log.Printf("Listening on Localhost (Port %v)", server.PORT)
+	log.Printf("Listening on Localhost (Port %d)", server.PORT)
 
-	err = http.ListenAndServe(fmt.Sprintf(":%v", server.PORT), nil)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", server.PORT), nil)
 	if err != nil {
 		log.Fatal(err)
 	}

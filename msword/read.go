@@ -15,21 +15,21 @@ import (
 // Raises any errors encountered while reading the Word Document text content.
 func readText(files []*zip.File) (text string, err error) {
 	// Get Word Document body XML document
-	var documentFile *zip.File
-	documentFile, err = retrieveWordDoc(files)
+	var file *zip.File
+	file, err = retrieveWordDoc(files)
 	if err != nil {
 		return text, err
 	}
 
 	// Read target XML document
-	var documentReader io.ReadCloser
-	documentReader, err = documentFile.Open()
+	var reader io.ReadCloser
+	reader, err = file.Open()
 	if err != nil {
 		return text, err
 	}
 
 	// Get text content of Word Document body
-	text, err = wordDocToString(documentReader)
+	text, err = wordDocToString(reader)
 
 	return
 }
@@ -43,21 +43,21 @@ func readText(files []*zip.File) (text string, err error) {
 // Raises any errors encountered while reading the Word Document text content.
 func readLinks(files []*zip.File) (text string, err error) {
 	// Get Word Document hyperlinks XML document
-	var documentFile *zip.File
-	documentFile, err = retrieveLinkDoc(files)
+	var file *zip.File
+	file, err = retrieveLinkDoc(files)
 	if err != nil {
 		return text, err
 	}
 
 	// Read target XML document
-	var documentReader io.ReadCloser
-	documentReader, err = documentFile.Open()
+	var reader io.ReadCloser
+	reader, err = file.Open()
 	if err != nil {
 		return text, err
 	}
 
 	// Get text content of Word Document hyperlinks
-	text, err = wordDocToString(documentReader)
+	text, err = wordDocToString(reader)
 
 	return
 }
@@ -73,19 +73,19 @@ func readLinks(files []*zip.File) (text string, err error) {
 // Raises any errors encountered while reading the Word Documents headers and footers.
 func readHeaderFooter(files []*zip.File) (textHeader map[string]string, textFooter map[string]string, err error) {
 	// Get Word Document header/footer XML documents
-	h, f, err := retrieveHeaderFooterDoc(files)
+	headers, footers, err := retrieveHeaderFooterDoc(files)
 	if err != nil {
 		return map[string]string{}, map[string]string{}, err
 	}
 
 	// Compile headers from Word Document header XML documents
-	textHeader, err = buildHeaderFooter(h)
+	textHeader, err = buildHeaderFooter(headers)
 	if err != nil {
 		return map[string]string{}, map[string]string{}, err
 	}
 
 	// Compile footers from Word Document footer XML documents
-	textFooter, err = buildHeaderFooter(f)
+	textFooter, err = buildHeaderFooter(footers)
 	if err != nil {
 		return map[string]string{}, map[string]string{}, err
 	}
@@ -104,15 +104,15 @@ func buildHeaderFooter(files []*zip.File) (textHeaderFooter map[string]string, e
 	// (Each iteration equates to processing one type of header/footer)
 	for _, element := range files {
 		// Read Word Document header/footer XML document
-		var documentReader io.ReadCloser
-		documentReader, err = element.Open()
+		var reader io.ReadCloser
+		reader, err = element.Open()
 		if err != nil {
 			return
 		}
 
 		// Get text content of header/footer
 		var text string
-		text, err = wordDocToString(documentReader)
+		text, err = wordDocToString(reader)
 		if err != nil {
 			return
 		}
@@ -126,14 +126,15 @@ func buildHeaderFooter(files []*zip.File) (textHeaderFooter map[string]string, e
 
 // wordDocToString reads the contents of reader, which wraps the contents of the XML document that
 // contains the formatting for an aspect of the target Word Document. The contents of the XML
-// Document are casted to type 'string' and returned.
+// Document are casted to type 'string' and returned (content).
 //
 // Raises any errors encountered while reading from reader.
-func wordDocToString(reader io.Reader) (string, error) {
-	b, err := ioutil.ReadAll(reader)
+func wordDocToString(reader io.Reader) (content string, err error) {
+	var raw []byte
+	raw, err = ioutil.ReadAll(reader)
 	if err != nil {
 		return "", err
 	}
 
-	return string(b), nil
+	return string(raw), nil
 }
