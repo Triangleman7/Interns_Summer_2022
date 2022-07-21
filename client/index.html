@@ -7,13 +7,14 @@
         <script src="/ui/inputHandling.js"></script>
     </head>
     <body>
-        <form name="primary" method="POST" action="/" onsubmit="processFormPrimary()">
+        <form name="primary" method="POST" enctype="multipart/form-data" action="/" onsubmit="processFormPrimary()">
             <input name="primary-text" type="text">
             <select name="primary-text-operation" id="select-text-operation">
                 <option value="">No Operation</option>
                 <option value="lower">Lowercase</option>
                 <option value="upper">Uppercase</option>
             </select>
+            <input name="primary-image" type="file" accept="image/jpeg">
             <input value="Process" type="submit">
         </form>
     </body>

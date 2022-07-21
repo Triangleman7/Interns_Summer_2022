@@ -2,32 +2,30 @@ package server
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
-	"strings"
-
-	"github.com/Triangleman7/Interns_Summer_2022/outputdata"
+	"os"
 )
 
 var PORT int = 8080
 
-func formatValue(input string, method string) (error, string) {
-	var err error
+var OUTPUTDIRECTORY string = "out/"
+var TEMPDIRECTORY string = "temp/"
+var PERMISSIONBITS os.FileMode = 0755
 
-	switch method {
-	// 'No Operation'
-	case "":
-		return nil, input
-	// 'Lowercase'
-	case "lower":
-		return nil, strings.ToLower(input)
-	// 'Uppercase'
-	case "upper":
-		return nil, strings.ToUpper(input)
-	// Failsafe, but should not be possible
-	default:
-		err = errors.New(fmt.Sprintf("Unexpected value received: '%v'", input))
-		return err, ""
+func DirectorySetup(dirpath string, permissions os.FileMode) {
+	DirectoryTeardown(dirpath)
+
+	// Create an empty output directory
+	var err error = os.Mkdir(dirpath, permissions)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func DirectoryTeardown(dirpath string) {
+	var err error = os.RemoveAll(dirpath)
+	if err != nil {
+		panic(err)
 	}
 }
 
@@ -44,33 +42,17 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 
 	case "GET":
 		// Reply with root HTML document
-		http.ServeFile(w, r, "ui/index.html")
+		http.ServeFile(w, r, "client/index.html")
 
 	case "POST":
-		var res string
-
-		// Catch errors thrown while parsing form submission
-		err = r.ParseForm();
-		if err != nil { panic(err) }
-
-		// Get values from form submission
-		var valueTextField string = r.FormValue("primary-text")
-		var valueMenu string = r.FormValue("primary-text-operation")
-
-		// Format value of text field
-		err, res = formatValue(valueTextField, valueMenu)
-		if err != nil { panic(err) }
-
-		// Debugging
-		fmt.Fprintf(w, "<form name=\"primary\">: Text Field value = \"%v\"\n", valueTextField)
-		fmt.Fprintf(w, "<form name=\"primary\">: Dropdown Menu value = \"%v\"\n", valueMenu)
-		fmt.Fprintf(w, "\tFormatted: \"%v\"\n", res)
-
-		// Write formatted value of text field to output files
-		outputdata.WriteOutput("primary-text.html", "outputdata/templates/template.html", res)
-		outputdata.WriteOutput("primary-text.doc", "outputdata/templates/template.doc", res)
+		// Handle form submission: <form name="primary">
+		err = HandleFormPrimary(w, r)
 
 	default:
-		fmt.Fprintf(w, "Only GET and POST requests supported")
+		err = errors.New("only GET and POST requests supported")
+	}
+
+	if err != nil {
+		panic(err)
 	}
 }
