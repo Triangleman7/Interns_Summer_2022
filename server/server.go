@@ -101,7 +101,8 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 
 	case "POST":
 		// Handle form submission to element form#primary
-		err = HandleFormPrimary(w, r)
+		var form FormPrimary
+		err = form.handle(w, r)
 
 	default:
 		err = errors.New("only GET and POST requests supported")

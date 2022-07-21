@@ -11,16 +11,14 @@ import (
 // object (document).
 //
 // Raises any errors encountered while reading the Word Document.
-func ReadTemplate(path string) (document *msword.Docx, err error) {
-	var reader *msword.ReplaceDocx
-
+func ReadTemplate(path string) (reader *msword.ReplaceDocx, document *msword.Docx, err error) {
 	reader, err = msword.ReadDocxFile(path)
 	if err != nil {
 		return
 	}
-	defer reader.Close()
 
-	return reader.Editable(), nil
+	document = reader.Editable()
+	return
 }
 
 // WriteDOCX writes the Word Document object document to a Word Document in the local file system

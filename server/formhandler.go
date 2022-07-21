@@ -12,51 +12,54 @@ import (
 	"github.com/Triangleman7/Interns_Summer_2022/outputdata/html"
 )
 
-type FormOutput struct {
+type FormOutput interface {
+	handle(http.ResponseWriter, *http.Request) error // Handles submissions to the form element
+
+	outputDOCX() error // Outputs to a Word Document (.docx)
+	outputHTML() error // Outputs to an HTML Document (.html)
+}
+
+type Form struct {
 	Name string // Field element 'name' attribute
 }
 
 // TemplateDOCX returns the path (relative to the root directory) to the template DOCX file for the
 // form f.
-func (f FormOutput) TemplateDOCX() (path string) {
+func (f Form) TemplateDOCX() (path string) {
 	var filename string = fmt.Sprintf("%s.docx", f.Name)
 	return filepath.Join(TEMPLATEDIRECTORY, filename)
 }
 
 // TemplateHTML returns the path (relative to the root directory) to the template HTML file for the
 // form f.
-func (f FormOutput) TemplateHTML() (path string) {
+func (f Form) TemplateHTML() (path string) {
 	var filename string = fmt.Sprintf("%s.html", f.Name)
 	return filepath.Join(TEMPLATEDIRECTORY, filename)
 }
 
 // OutDOCX returns the path (relative to the root directory) to the output DOCX file for the form
 // f.
-func (f FormOutput) OutDOCX() (path string) {
+func (f Form) OutDOCX() (path string) {
 	var filename string = fmt.Sprintf("%s.docx", f.Name)
 	return filepath.Join(OUTPUTDIRECTORY, filename)
 }
 
 // OutHTML returns the path (relative to the root directory) to the output HTML file for the form
 // f.
-func (f FormOutput) OutHTML() (path string) {
+func (f Form) OutHTML() (path string) {
 	var filename string = fmt.Sprintf("%s.html", f.Name)
 	return filepath.Join(OUTPUTDIRECTORY, filename)
 }
 
 type FormPrimary struct {
-	Output FormOutput // Output specifications
+	form Form // Output specifications
 
-	PrimaryImage string // {primary-image}
-	PrimaryText  string // {primary-text}
+	primaryImage string // {primary-image}
+	primaryText  string // {primary-text}
 }
 
-// HandleFormPrimary handles form submission to form#primary.
-//
-// Raises any errors encountered while handling the form or procesing form input.
-func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
-	var form FormPrimary
-	form.Output = FormOutput{"form-primary"}
+func (f FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error) {
+	f.form = Form{"form-primary"}
 	log.Print("Handling form submission to form#primary")
 
 	// Parse form submission
@@ -69,7 +72,7 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	// Process element input[name="primary-text"]
 	var primaryText string = r.FormValue("primary-text")
 	var primaryTextOperation string = r.FormValue("primary-text-operation")
-	form.PrimaryText, err = FormatValue(primaryText, primaryTextOperation)
+	f.primaryText, err = FormatValue(primaryText, primaryTextOperation)
 	if err != nil {
 		return
 	}
@@ -83,18 +86,18 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 		return
 	}
 	defer file.Close()
-	form.PrimaryImage, err = UploadFile(file, header)
+	f.primaryImage, err = UploadFile(file, header)
 	if err != nil {
 		return
 	}
 	log.Print("Processed <input name=\"primary-image\"> field")
 
 	// Write output
-	err = FormPrimaryDOCX(form)
+	err = f.outputDOCX()
 	if err != nil {
 		return
 	}
-	err = FormPrimaryHTML(form)
+	err = f.outputHTML()
 	if err != nil {
 		return
 	}
@@ -103,18 +106,20 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	return
 }
 
-func FormPrimaryDOCX(form FormPrimary) (err error) {
-	var templatepath = form.Output.TemplateDOCX()
-	var outpath = form.Output.OutDOCX()
+func (f FormPrimary) outputDOCX() (err error) {
+	var templatepath = f.form.TemplateDOCX()
+	var outpath = f.form.OutDOCX()
 
+	var reader *msword.ReplaceDocx
 	var outDOCX *msword.Docx
-	outDOCX, err = docx.ReadTemplate(templatepath)
+	reader, outDOCX, err = docx.ReadTemplate(templatepath)
 	if err != nil {
 		return
 	}
+	defer reader.Close()
 
-	docx.Image(outDOCX, 1, form.PrimaryImage)
-	docx.Paragraph(outDOCX, "primary-text", form.PrimaryText)
+	docx.Image(outDOCX, 1, f.primaryImage)
+	docx.Paragraph(outDOCX, "primary-text", f.primaryText)
 
 	err = docx.WriteDOCX(outpath, outDOCX)
 	if err != nil {
@@ -126,9 +131,9 @@ func FormPrimaryDOCX(form FormPrimary) (err error) {
 	return
 }
 
-func FormPrimaryHTML(form FormPrimary) (err error) {
-	var templatepath = form.Output.TemplateHTML()
-	var outpath = form.Output.OutHTML()
+func (f FormPrimary) outputHTML() (err error) {
+	var templatepath = f.form.TemplateHTML()
+	var outpath = f.form.OutHTML()
 
 	var outHTML string
 	outHTML, err = html.ReadTemplate(templatepath)
@@ -136,8 +141,8 @@ func FormPrimaryHTML(form FormPrimary) (err error) {
 		return
 	}
 
-	html.Image(&outHTML, "primary-image", form.PrimaryImage)
-	html.Paragraph(&outHTML, "primary-text", form.PrimaryText)
+	html.Image(&outHTML, "primary-image", f.primaryImage)
+	html.Paragraph(&outHTML, "primary-text", f.primaryText)
 
 	err = html.WriteHTML(outpath, outHTML)
 	if err != nil {
