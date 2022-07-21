@@ -52,7 +52,7 @@ func (f Form) OutHTML() (path string) {
 }
 
 type FormPrimary struct {
-	form Form // Output specifications
+	form Form
 
 	primaryImage string // {primary-image}
 	primaryText  string // {primary-text}
