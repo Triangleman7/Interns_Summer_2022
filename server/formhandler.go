@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 
 	"github.com/Triangleman7/Interns_Summer_2022/msword"
-	"github.com/Triangleman7/Interns_Summer_2022/outputdata/docx"
-	"github.com/Triangleman7/Interns_Summer_2022/outputdata/html"
+	"github.com/Triangleman7/Interns_Summer_2022/server/docx"
+	"github.com/Triangleman7/Interns_Summer_2022/server/html"
 )
 
 type FormOutput interface {

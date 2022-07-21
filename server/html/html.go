@@ -8,6 +8,8 @@ import (
 	"os"
 )
 
+const RELROOT = "../" // Relative path to the project root directory
+
 // ReadTemplate reads the template HTML Document located at path and returns the content of the
 // HTML Document (content).
 //

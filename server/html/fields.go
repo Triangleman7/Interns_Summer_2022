@@ -12,7 +12,7 @@ import (
 func Image(output *string, key string, src string) {
 	var field string = fmt.Sprintf("{%v}", key)
 
-	var tag string = fmt.Sprintf("<img src=\"%v\">", filepath.Join("..", src))
+	var tag string = fmt.Sprintf("<img src=\"%v\">", filepath.Join(RELROOT, src))
 
 	*output = strings.ReplaceAll(*output, field, tag)
 }
