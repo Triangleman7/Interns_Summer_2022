@@ -37,7 +37,7 @@ func (f *Form) SetupOutput(name string) {
 
 	DirectorySetup(f.OutDir(), FILEMODE)
 
-	var subdirs []string = []string{"images", "scripts"}
+	var subdirs []string = []string{"images"}
 	for _, sd := range subdirs {
 		DirectorySetup(filepath.Join(f.OutDir(), sd), FILEMODE)
 	}
@@ -86,11 +86,6 @@ func (f *Form) OutCSS() (path string) {
 // OutImages returns the path to the output images/ directory.
 func (f *Form) OutImages() (path string) {
 	return f.GetOut("images/")
-}
-
-// OutScripts returns the path to the output scripts/ directory.
-func (f *Form) OutScripts() (path string) {
-	return f.GetOut("scripts/")
 }
 
 type FormPrimary struct {
