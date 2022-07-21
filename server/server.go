@@ -102,6 +102,7 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		// Handle form submission to element form#primary
 		var form FormPrimary
+		form.form.SetupOutput("form-primary")
 		err = form.handle(w, r)
 
 	default:
