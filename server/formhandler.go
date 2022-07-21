@@ -107,14 +107,11 @@ func FormPrimaryDOCX(form FormPrimary) (err error) {
 	var templatepath = form.Output.TemplateDOCX()
 	var outpath = form.Output.OutDOCX()
 
-	var reader *msword.ReplaceDocx
-	reader, err = msword.ReadDocxFile(templatepath)
+	var outDOCX *msword.Docx
+	outDOCX, err = docx.ReadTemplate(templatepath)
 	if err != nil {
 		return
 	}
-	defer reader.Close()
-
-	var outDOCX *msword.Docx = reader.Editable()
 
 	docx.Image(outDOCX, 1, form.PrimaryImage)
 	docx.Paragraph(outDOCX, "primary-text", form.PrimaryText)
