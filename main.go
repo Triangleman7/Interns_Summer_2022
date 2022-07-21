@@ -20,16 +20,20 @@ func SetupCloseHandler() {
 	go func() {
 		// Listen for interrupt from the OS
 		<-channel
+		log.Print("Detected OS interrupt")
 
 		// Tear down the temporary directory
 		server.DirectoryTeardown(server.TEMPDIRECTORY)
 
 		// Exit the program
+		log.Print("Terminating program (status code 0)")
 		os.Exit(0)
 	}()
 }
 
 func main() {
+	log.Print("Starting program")
+
 	var err error
 
 	// Set up temporary directory
@@ -45,14 +49,16 @@ func main() {
 	http.HandleFunc("/", server.ProcessRootResponse)
 
 	// Serve necessary directories
-	var fs http.Handler
-	fs = http.FileServer(http.Dir("client"))
-	http.Handle("/client/", http.StripPrefix("/client/", fs))
-	fs = http.FileServer(http.Dir("temp"))
-	http.Handle("/temp/", http.StripPrefix("/temp/", fs))
+	var serveDirectories []string = []string{"client", "temp"}
+	for _, directory := range serveDirectories {
+		var fs http.Handler = http.FileServer(http.Dir(directory))
+		var prefix string = fmt.Sprintf("/%v/", directory)
+		http.Handle(prefix, http.StripPrefix(prefix, fs))
+		log.Printf("Served %v/ directory (%v)", directory, prefix)
+	}
 
 	// Debugging
-	fmt.Printf("Listening on Localhost (Port %v)\n\n", server.PORT)
+	log.Printf("Listening on Localhost (Port %v)", server.PORT)
 
 	err = http.ListenAndServe(fmt.Sprintf(":%v", server.PORT), nil)
 	if err != nil {

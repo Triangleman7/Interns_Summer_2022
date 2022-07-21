@@ -3,6 +3,7 @@ package msword
 import (
 	"archive/zip"
 	"io"
+	"log"
 	"os"
 	"strings"
 )
@@ -14,12 +15,16 @@ func (d *Docx) WriteToFile(path string) (err error) {
 	// Create target file at path
 	var target *os.File
 	target, err = os.Create(path)
-	if err != nil { return }
+	if err != nil {
+		return
+	}
+	log.Printf("Destination file created: %s", path)
 
 	// Write document contents to target file
 	defer target.Close()
 	err = d.Write(target)
 
+	log.Printf("Word Document contents successfully written to %s", path)
 	return
 }
 
@@ -32,6 +37,7 @@ func (d *Docx) WriteToFile(path string) (err error) {
 // Raises any errors encountered while writing the Word Document contents.
 func (d *Docx) Write(ioWriter io.Writer) (err error) {
 	w := zip.NewWriter(ioWriter)
+	log.Print("Created ZIP archive writer")
 
 	// Iterate through ZIP archive Word Document XML files
 	for _, file := range d.Files {
@@ -40,11 +46,17 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 
 		// Create target file within the ZIP archive
 		writer, err = w.Create(file.Name)
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
+		log.Printf("Destination file created in ZIP archive: %s", file.Name)
 
 		// Open the target file
 		readCloser, err = file.Open()
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
+		log.Printf("Opened origin file: %s", file.Name)
 
 		if file.Name == "word/document.xml" {
 			// Write content of Word Document body to appropriate XML document
@@ -60,18 +72,26 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 			writer.Write([]byte(d.Footers[file.Name]))
 		} else if strings.HasPrefix(file.Name, "word/media/") && d.Images[file.Name] != "" {
 			// Write content of Word Document image to appropriate directory
+			log.Printf("Replacing image %s: %s", file.Name, d.Images[file.Name])
 			var new *os.File
 			new, err = os.Open(d.Images[file.Name])
-			if err != nil { return err }
+			log.Printf("Opened new image: %s", d.Images[file.Name])
+			if err != nil {
+				return err
+			}
 			writer.Write(streamToByte(new))
 			new.Close()
+			log.Printf("Contents of new image written: %s", d.Images[file.Name])
 		} else {
 			// Write content of miscellaneous file to appropriate file
 			writer.Write(streamToByte(readCloser))
 		}
+
+		log.Printf("File contents successfully written to ZIP archive: %s", file.Name)
 	}
-
 	w.Close()
+	log.Print("Closed ZIP archive writer")
 
+	log.Print("Word Document files sueccessfully written to ZIP archive")
 	return
 }

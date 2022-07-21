@@ -3,19 +3,19 @@
     <head>
         <meta charset="UTF-8">
         <title>Interns Summer 2022</title>
-
-        <script src="/ui/inputHandling.js"></script>
     </head>
     <body>
-        <form name="primary" method="POST" enctype="multipart/form-data" action="/" onsubmit="processFormPrimary()">
+        <form id="primary" method="POST" enctype="multipart/form-data" action="/">
             <input name="primary-text" type="text">
-            <select name="primary-text-operation" id="select-text-operation">
+            <select name="primary-text-operation">
                 <option value="">No Operation</option>
                 <option value="lower">Lowercase</option>
                 <option value="upper">Uppercase</option>
             </select>
             <input name="primary-image" type="file" accept="image/jpeg">
-            <input value="Process" type="submit">
+            <input name="primary-submit" type="submit" value="Process">
         </form>
+
+        <script src="/client/formHandling.js"></script>
     </body>
 </html>
