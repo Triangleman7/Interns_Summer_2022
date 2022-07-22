@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/Triangleman7/Interns_Summer_2022/msword"
+	"github.com/Triangleman7/Interns_Summer_2022/resources/msword"
 	"github.com/Triangleman7/Interns_Summer_2022/server/docx"
 	"github.com/Triangleman7/Interns_Summer_2022/server/html"
 )
