@@ -11,8 +11,9 @@
     <body>
         <form id="primary" method="POST" enctype="multipart/form-data" action="/">
             <div class="image-upload">
-                <label for="image-upload">Image</label>
-                <input type="file" name="image-upload" accept="image/jpeg">
+                <label>
+                    <input type="file" name="image-upload" accept="image/jpeg">
+                </label>
                 <div class="popup" onmouseover="popupImageUpload.show()" onmouseleave="popupImageUpload.hide()">
                     <img class="info" src="/client/images/info-icon.png">
                     <span id="primary-image-upload" class="popuptext">
@@ -31,25 +32,27 @@
                 </div>
             </div>
             <div class="caption-text">
-                <label for="caption-text">Image Caption</label>
-                <input type="text" name="caption-text" placeholder="Enter an image caption">
+                <label>
+                    <input type="text" name="caption-text" placeholder="Enter an image caption">
+                </label>
             </div>
-            <div class="caption-casing">
-                <label for="caption-casing">Caption Casing</label>
-                <select name="caption-casing">
-                    <option value="">No Operation</option>
-                    <option value="lower">Lowercase</option>
-                    <option value="upper">Uppercase</option>
-                    <option value="camel">Camel Case</option>
-                    <option value="dot">Dot Case</option>
-                    <option value="kebab">Kebab Case</option>
-                    <option value="opposite">Opposite Case</option>
-                    <option value="pascal">Pascal Case</option>
-                    <option value="sarcastic">Sarcastic Case</option>
-                    <option value="snake">Snake Case</option>
-                    <option value="start">Start Case</option>
-                    <option value="train">Train Case</option>
-                </select>
+            <div class="caption-operation">
+                <label>
+                    <select name="caption-casing">
+                        <option value="">No Operation</option>
+                        <option value="lower">Lowercase</option>
+                        <option value="upper">Uppercase</option>
+                        <option value="camel">Camel Case</option>
+                        <option value="dot">Dot Case</option>
+                        <option value="kebab">Kebab Case</option>
+                        <option value="opposite">Opposite Case</option>
+                        <option value="pascal">Pascal Case</option>
+                        <option value="sarcastic">Sarcastic Case</option>
+                        <option value="snake">Snake Case</option>
+                        <option value="start">Start Case</option>
+                        <option value="train">Train Case</option>
+                    </select>
+                </label>
                 <div class="popup" onmouseover="popupCaptionCasing.show()" onmouseleave="popupCaptionCasing.hide()">
                     <img class="info" src="/client/images/info-icon.png">
                     <span id="primary-caption-casing" class="popuptext">
@@ -71,7 +74,6 @@
                 </div>
             </div>
             <div class="form-submit">
-                <label for="form-submit"></label>
                 <input type="submit" name="submit-form" value="Process">
                 <div class="popup" onmouseover="popupFormSubmit.show()" onmouseleave="popupFormSubmit.hide()">
                     <img class="info" src="/client/images/info-icon.png">
