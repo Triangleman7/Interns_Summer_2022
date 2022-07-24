@@ -9,23 +9,35 @@
     </head>
     <body>
         <form id="primary" method="POST" enctype="multipart/form-data" action="/">
-            <input type="file" name="primary-image" accept="image/jpeg">
-            <input type="text" name="primary-text">
-            <select name="primary-text-operation">
-                <option value="">No Operation</option>
-                <option value="lower">Lowercase</option>
-                <option value="upper">Uppercase</option>
-                <option value="camel">Camel Case</option>
-                <option value="dot">Dot Case</option>
-                <option value="kebab">Kebab Case</option>
-                <option value="opposite">Opposite Case</option>
-                <option value="pascal">Pascal Case</option>
-                <option value="sarcastic">Sarcastic Case</option>
-                <option value="snake">Snake Case</option>
-                <option value="start">Start Case</option>
-                <option value="train">Train Case</option>
-            </select>
-            <input type="submit" name="primary-submit" value="Process">
+            <div class="primary-image">
+                <label for="primary-image">Image</label>
+                <input type="file" name="primary-image" accept="image/jpeg">
+            </div>
+            <div class="primary-text">
+                <label for="primary-text">Image Caption</label>
+                <input type="text" name="primary-text">
+            </div>
+            <div class="primary-text-operation">
+                <label for="primary-text-casing">Caption Casing</label>
+                <select name="primary-text-casing">
+                    <option value="">No Operation</option>
+                    <option value="lower">Lowercase</option>
+                    <option value="upper">Uppercase</option>
+                    <option value="camel">Camel Case</option>
+                    <option value="dot">Dot Case</option>
+                    <option value="kebab">Kebab Case</option>
+                    <option value="opposite">Opposite Case</option>
+                    <option value="pascal">Pascal Case</option>
+                    <option value="sarcastic">Sarcastic Case</option>
+                    <option value="snake">Snake Case</option>
+                    <option value="start">Start Case</option>
+                    <option value="train">Train Case</option>
+                </select>
+            </div>
+            <div class="primary-submit">
+                <label for="primary-submit"></label>
+                <input type="submit" name="primary-submit" value="Process">
+            </div>
         </form>
     </body>
 </html>
