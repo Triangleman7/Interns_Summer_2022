@@ -23,6 +23,10 @@ img.info {
     display: inline-block;
     cursor: pointer;
 }
+
+.popup ul {
+    list-style: disc;
+}
   
 /* The actual popup (appears on top) */
 .popup .popuptext {
@@ -36,6 +40,7 @@ img.info {
     border-radius: 10px;
     transform: translateX(-50%);
     background-color: $popup-bg-color;
+    font-size: 12pt;
     color: $popup-color;
     text-align: left;
 }
@@ -59,14 +64,13 @@ img.info {
     animation: popupFadeIn 1s
 }
 
-.popuptext .file-ext {
-    font-family: 'Courier New', Courier, monospace;
-}
-
-.popuptext .file-type {
+.popuptext .key {
     font-weight: bold;
 }
-  
+
+.popuptext .value {
+    font-family: 'Courier New', Courier, monospace;
+}
 /* Add animation (fade in the popup) */
 @-webkit-keyframes popupFadeIn {
     from {opacity: 0;}
