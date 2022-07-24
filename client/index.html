@@ -73,6 +73,22 @@
             <div class="form-submit">
                 <label for="form-submit"></label>
                 <input type="submit" name="submit-form" value="Process">
+                <div class="popup" onmouseover="popupFormSubmit.show()" onmouseleave="popupFormSubmit.hide()">
+                    <img class="info" src="/client/images/info-icon.png">
+                    <span id="primary-form-submit" class="popuptext">
+                        Output Documents
+                        <ul>
+                            <span class="key">DOCX</span>
+                            :
+                            <span class="value">out/form-primary/index.docx</span>
+                        </ul>
+                        <ul>
+                            <span class="key">HTML</span>
+                            :
+                            <span class="value">out/form-primary/index.html</span>
+                        </ul>
+                    </span>
+                </div>
             </div>
         </form>
     </body>

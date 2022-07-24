@@ -54,3 +54,4 @@ class Popup {
 
 const popupImageUpload = new Popup("primary-image-upload");
 const popupCaptionCasing = new Popup("primary-caption-casing");
+const popupFormSubmit = new Popup("primary-form-submit");
