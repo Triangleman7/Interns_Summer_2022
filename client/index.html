@@ -10,12 +10,12 @@
     </head>
     <body>
         <form id="primary" method="POST" enctype="multipart/form-data" action="/">
-            <div class="primary-image">
-                <label for="primary-image">Image</label>
-                <input type="file" name="primary-image" accept="image/jpeg">
-                <div class="popup" onmouseover="popupPrimaryImage.show()" onmouseleave="popupPrimaryImage.hide()">
+            <div class="image-upload">
+                <label for="image-upload">Image</label>
+                <input type="file" name="image-upload" accept="image/jpeg">
+                <div class="popup" onmouseover="popupImageUplaod.show()" onmouseleave="popupImageUplaod.hide()">
                     <img class="info" src="/client/images/info-icon.png">
-                    <span id="popup-primary-image" class="popuptext">
+                    <span id="popup-image-upload" class="popuptext">
                         Supported File Types
                         <ul>
                             <li>
@@ -30,13 +30,13 @@
                     </span>
                 </div>
             </div>
-            <div class="primary-text">
-                <label for="primary-text">Image Caption</label>
-                <input type="text" name="primary-text" placeholder="Enter an image caption">
+            <div class="caption-text">
+                <label for="caption-text">Image Caption</label>
+                <input type="text" name="caption-text" placeholder="Enter an image caption">
             </div>
-            <div class="primary-text-casing">
-                <label for="primary-text-casing">Caption Casing</label>
-                <select name="primary-text-casing">
+            <div class="caption-casing">
+                <label for="caption-casing">Caption Casing</label>
+                <select name="caption-casing">
                     <option value="">No Operation</option>
                     <option value="lower">Lowercase</option>
                     <option value="upper">Uppercase</option>
@@ -51,9 +51,9 @@
                     <option value="train">Train Case</option>
                 </select>
             </div>
-            <div class="primary-submit">
-                <label for="primary-submit"></label>
-                <input type="submit" name="primary-submit" value="Process">
+            <div class="form-submit">
+                <label for="form-submit"></label>
+                <input type="submit" name="submit-form" value="Process">
             </div>
         </form>
     </body>

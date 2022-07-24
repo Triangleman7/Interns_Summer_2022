@@ -52,4 +52,4 @@ class Popup {
     }
 }
 
-const popupPrimaryImage = new Popup("popup-primary-image");
+const popupImageUpload = new Popup("primary-image-upload");
