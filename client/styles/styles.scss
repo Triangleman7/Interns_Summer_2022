@@ -1,0 +1,79 @@
+/* || General */
+
+ol, ul {
+    list-style: none;
+}
+
+/* || Info popup */
+
+$img-width: 15px;
+$img-height: 15px;
+
+$popup-bg-color: #555;
+$popup-color: #fff;
+
+img.info {
+    width: $img-width;
+    height: $img-height;
+}
+
+/* Popup container */
+.popup {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+  
+/* The actual popup (appears on top) */
+.popup .popuptext {
+    visibility: hidden;
+    position: absolute;
+    top: 125%;
+    left: 50%;
+    z-index: absolute;
+    width: 300px;
+    padding: 10px;
+    border-radius: 10px;
+    transform: translateX(-50%);
+    background-color: $popup-bg-color;
+    color: $popup-color;
+    text-align: left;
+}
+  
+/* Popup arrow */
+.popup .popuptext::after {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent $popup-bg-color transparent;
+    margin-left: -5px;
+    content: "";
+}
+  
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+    visibility: visible;
+    -webkit-animation: popupFadeIn 1s;
+    animation: popupFadeIn 1s
+}
+
+.popuptext .file-ext {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.popuptext .file-type {
+    font-weight: bold;
+}
+  
+/* Add animation (fade in the popup) */
+@-webkit-keyframes popupFadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+  
+@keyframes popupFadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+} 

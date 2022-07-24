@@ -5,17 +5,34 @@
         <link rel="icon" href="/client/images/favicon.ico"/>
         <title>Interns Summer 2022</title>
         <script type="text/javascript" src="/client/scripts/forms.js" defer></script>
-        <link rel="stylesheet" type="text/css" src="/client/styles/styles.css">
+        <script type="text/javascript" src="/client/scripts/popups.js" defer></script>
+        <link rel="stylesheet" type="text/css" href="/client/styles/styles.css">
     </head>
     <body>
         <form id="primary" method="POST" enctype="multipart/form-data" action="/">
             <div class="primary-image">
                 <label for="primary-image">Image</label>
                 <input type="file" name="primary-image" accept="image/jpeg">
+                <div class="popup" onmouseover="popupPrimaryImage.show()" onmouseleave="popupPrimaryImage.hide()">
+                    <img class="info" src="/client/images/info-icon.png">
+                    <span id="popup-primary-image" class="popuptext">
+                        Supported File Types
+                        <ul>
+                            <li>
+                                <span class="file-type">JPEG</span>
+                                (
+                                <span class="file-ext">*.jpeg</span>
+                                ,
+                                <span class="file-ext">*.jpg</span>
+                                )
+                            </li>
+                        </ul>
+                    </span>
+                </div>
             </div>
             <div class="primary-text">
                 <label for="primary-text">Image Caption</label>
-                <input type="text" name="primary-text">
+                <input type="text" name="primary-text" placeholder="Enter an image caption">
             </div>
             <div class="primary-text-casing">
                 <label for="primary-text-casing">Caption Casing</label>
