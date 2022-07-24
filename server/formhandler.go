@@ -111,10 +111,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	// Process element input[name="primary-text"]
 	var primaryText string = r.FormValue("primary-text")
 	var primaryTextOperation string = r.FormValue("primary-text-operation")
-	f.primaryText, err = FormatValue(primaryText, primaryTextOperation)
-	if err != nil {
-		return
-	}
+	f.primaryText = FormatValue(primaryText, primaryTextOperation)
 	log.Print("Processed <input name=\"primary-text\"> field")
 
 	// Process element input[name="primary-image"]
