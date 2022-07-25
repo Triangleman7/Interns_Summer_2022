@@ -2,6 +2,9 @@
 Regression tests for **client/index.html**.
 """
 
+import subprocess
+import urllib.request
+
 from playwright.sync_api import sync_playwright
 import pytest
 
@@ -44,10 +47,16 @@ class TestIndex:
         """
         :type page: playwright.sync_api._generated.Page
         """
+        self.process = subprocess.Popen(["make", "run"], stdout=PIPE, stderr=PIPE)
+        self.stdout, self.stderr = process.communicate()
+
+        self.page = page
         page.goto(URL)
 
     def teardown(self, page):
         """
         :type page: playwright.sync_api._generated.Page
         """
-        page.close()
+        self.page.close()
+
+        self.process.terminate()
