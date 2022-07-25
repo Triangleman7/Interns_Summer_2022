@@ -78,6 +78,7 @@ class TestRun:
 
     def teardown(self):
         self.process.terminate()
+        assert self.stderr == 0
 
     def test_out(self):
         """
