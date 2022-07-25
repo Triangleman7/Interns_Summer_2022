@@ -68,6 +68,18 @@ header.main nav.main > ul > li {
     padding: 0 25px;
 }
 
+header.main nav.main > ul > li > a {
+    display: inline-block;
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    font-family: Helvetica, 'Open Sans', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    color: #5f6a72;
+    text-decoration: none;
+}
+
 header.main nav.top {
     float: right;
     padding-top: 10px;
