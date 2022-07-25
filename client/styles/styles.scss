@@ -28,6 +28,14 @@ ol, ul {
     list-style: none;
 }
 
+#site {
+    max-width: 1500px;
+    height: 100%;
+    min-height: 100%;
+    margin: 0 auto -35px;
+    background-color: #fff;
+}
+
 /* || Info popup */
 
 $img-width: 15px;
