@@ -40,10 +40,10 @@ ol, ul {
     background-color: #fff;
 }
 
-.container::after, .wrap::after {
-    display: table;
-    clear: both;
-    content: "";
+.container, .wrap {
+    width: 960px;
+    padding: 0 5px;
+    margin: 0 auto;
 }
 
 /* || Header */
@@ -189,6 +189,147 @@ input {
     background-color: #0698d9;
 }
 
+/* || Main content */
+
+$main-content-background-color: #fff;
+
+.bfd {
+    padding: 100px 0;
+    background-color: $main-content-background-color;
+    font-size: 16px;
+}
+
+.bfd h2 {
+    font-family: inherit;
+    font-size: 2.75rem;
+    color: #333333;
+    font-weight: lighter;
+    line-height: 1.2em;
+}
+
+.bfd h4 {
+    padding-top: 1rem;
+    font-family: inherit;
+    font-size: 1.375rem;
+    font-weight: bold;
+    color: #008bac;
+    line-height: 1.2em;
+}
+
+.block.copy-large {
+    clear: both;
+    display: block;
+}
+
+.block.fade-bottom {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-color: $main-content-background-color;
+}
+
+.block.fade-bottom .row {
+    position: relative;
+}
+
+.col {
+    float: left;
+    position: relative;
+    padding: 0 5px;
+}
+
+.col, .row {
+    min-height: 0;
+}
+
+.copy-styles {
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.copy-styles h4 {
+    margin-bottom: 5px;
+}
+
+.row {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* || Form */
+
+$form-ph-text-color: #ccc;
+$form-text-color: #495057;
+$form-bg-color: #fff;
+
+$btn-hover-text-color: darken(white, 10%);
+$btn-hover-bg-color: rgb(50,50,60);
+
+$form-field-height: 3.5rem;
+
+.bfd .bfd-form-group {
+    padding-top: 1rem;
+    margin: 1rem 0 1.75rem 0;
+}
+
+.bfd .bfd-form-group input, .bfd .bfd-form-group textarea {
+    font-family: inherit;
+  }
+
+.bfd .bfd-form-group label {
+    font-family: inherit;
+    font-size: 1em;
+    font-weight: bolder;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.bfd .bfd-form-group input::placeholder {
+    color: $form-ph-text-color;
+    opacity: 1;
+}
+
+.bfd .bfd-form-group input, .bfd .bfd-form-group textarea {
+    font-family: inherit;
+}
+
+.bfd .form-control {
+    display: block;
+    width: 100%;
+    height: 3.5rem;
+    padding: 1rem;
+    border-radius: 2px;
+    background-color: $form-bg-color;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: $form-text-color;
+}
+
+.bfd input[type='file'] {
+    line-height: auto;
+}
+
+.bfd input[type='submit'] {
+    background-color: #009bdf;
+    color: $form-bg-color;
+    font-size: 0.75rem;
+    display: block;
+    padding: 2rem;
+    width: 100%;
+    text-transform: uppercase;
+    border: none;
+    font-weight: bold;
+    transition: all 250ms;
+    cursor: pointer;
+}
+
+.bfd input[type='text'], .bfd select {
+    border: 1px solid rgba(25, 25, 25, 0.32);
+    background-clip: padding-box;
+    color: $form-text-color;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
 /* || Info popup */
 
 $img-width: 15px;
@@ -217,13 +358,13 @@ img.info {
 .popup .popuptext {
     visibility: hidden;
     position: absolute;
-    top: 125%;
-    left: 50%;
-    z-index: absolute;
+    right: 125%;
+    top: 50%;
+    z-index: 1;
     width: 300px;
-    padding: 10px;
+    padding: 10px 25px;
     border-radius: 10px;
-    transform: translateX(-50%);
+    transform: translateY(-50%);
     background-color: $popup-bg-color;
     font-size: 12pt;
     color: $popup-color;
@@ -233,12 +374,12 @@ img.info {
 /* Popup arrow */
 .popup .popuptext::after {
     position: absolute;
-    bottom: 100%;
-    left: 50%;
+    bottom: 50%;
+    left: 100%;
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent $popup-bg-color transparent;
-    margin-left: -5px;
+    border-color: transparent transparent transparent $popup-bg-color;
+    margin-bottom: -2px;
     content: "";
 }
   
