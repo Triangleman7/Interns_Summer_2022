@@ -29,7 +29,11 @@ footer, header, menu, nav, section {
 }
 
 hr {
-    border: 1px solid;
+    border: 2px solid;
+}
+
+hr.section-divider {
+    border: 4px double;
 }
 
 ol, ul {
