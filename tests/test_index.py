@@ -60,3 +60,28 @@ class TestIndex:
         self.page.close()
 
         self.process.terminate()
+
+    def test_nav_top(self, page):
+        """
+        `header.main nav.top`
+
+        :type page: playwright.sync_api._generated.Page
+        """
+        css = "header.main nav.top"
+
+        # Check uniqueness of `css`
+        assert len(page.query_selector_all(css)) == 1
+        element = page.query_selector(css)
+
+        # Iterate through items in the navigation bar
+        for idx, elem in enumerate(element.query_selector_all("ul > li")):
+            # Check properties of child `a` element
+            assert len(elem.query_selector_all("a")) == 1
+            a = elem.query_selector("a")
+            assert a.text_content(), idx
+
+            # Check validity of `href` attribute value
+            href = a.get_attribute("href")
+            assert href is not None
+            with urllib.request.urlopen(href) as response:
+                assert response.code == 200
