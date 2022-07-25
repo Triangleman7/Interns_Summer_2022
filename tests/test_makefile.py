@@ -1,5 +1,5 @@
 """
-Tests the commands defined in **makefile**.
+Regression tests for the commands defined in **makefile**.
 """
 
 import os
@@ -48,7 +48,7 @@ class TestBuild:
     )
     def test_js(self, directory: str):
         """
-        Tests for successful compilation/transpilation of TypeScript files into JavaScripts files.
+        Tests for successful compilation/transpilation of TypeScript files into JavaScript files.
 
         :param directory: The project directory to walk
         """
@@ -71,6 +71,42 @@ class TestClean:
     def setup(self):
         os.system("make build")
 
-    def test(self):
         code: int = os.system("make clean")
         assert code == 0
+
+    def test_out(self):
+        """
+        Tests for successful remove of project Go package binary file.
+        """
+        assert not (os.path.exists("main.exe") or os.path.exists("main.out"))
+
+    @pytest.mark.parametrize(
+        "directory",
+        ["client/styles", "server/templates/"]
+    )
+    def test_css(self, directory: str):
+        """
+        Tests for successful removal of compiled/transpiled CSS files from SASS/SCSS files.
+
+        :param directory: The project directory to walk
+        """
+        for root, _, files in os.walk(directory):
+            for file in files:
+                fname, fext = os.path.splitext(file)
+                assert fext != ".css", f"Persistent *.css file discovered at {os.path.join(root, file)}"
+                assert fext != ".css.map", f"Persistent *.css.map file discovered at {os.path.join(root, file)}"
+
+    @pytest.mark.parametrize(
+        "directory",
+        ["client/styles", "server/templates/"]
+    )
+    def test_js(self, directory: str):
+        """
+        Tests for successful removal of compiled/transpiled JavaScript files from TypeScript files.
+
+        :param directory: The project directory to walk
+        """
+        for root, _, files in os.walk(directory):
+            for file in files:
+                fname, fext = os.path.splitext(file)
+                assert fext != ".js", f"Persistent *.js file discovered at {os.path.join(root, file)}"
