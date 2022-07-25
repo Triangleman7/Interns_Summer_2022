@@ -2,11 +2,9 @@ package server
 
 import (
 	"log"
+	"regexp"
 	"strings"
 	"unicode"
-
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 func lowercase(str string) (s string) {
@@ -80,8 +78,18 @@ func snakecase(str string) (s string) {
 }
 
 func startcase(str string) (s string) {
-	var c cases.Caser = cases.Title(language.AmericanEnglish)
-	return c.String(str)
+	var regex *regexp.Regexp
+	regex, _ = regexp.Compile(`\b\w+\s*`)
+	for _, w := range regex.FindAllString(str, -1) {
+		for i, c := range w {
+			if i == 0 {
+				s += string(unicode.ToUpper(c))
+			} else {
+				s += string(unicode.ToLower(c))
+			}
+		}
+	}
+	return s
 }
 
 func traincase(str string) (s string) {
