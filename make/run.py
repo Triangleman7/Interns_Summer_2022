@@ -6,7 +6,7 @@ import os
 import subprocess
 import sys
 
-from . import BINARY_NAME, SCRIPTS, STYLES, TEMPLATES
+from .constants import BINARY_NAME, SCRIPTS, STYLES, TEMPLATES
 
 
 def main():

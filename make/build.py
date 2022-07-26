@@ -4,7 +4,7 @@ Imitates the `$ make build` command.
 
 import os
 
-from . import BINARY_NAME, SCRIPTS, STYLES, TEMPLATES
+from .constants import BINARY_NAME, SCRIPTS, STYLES, TEMPLATES
 
 
 def main():
