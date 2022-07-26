@@ -2,9 +2,7 @@
  * Handles events that are triggered when the submit action of a form is invoked.
  */
 
-// Get element 'form#primary' from HTML DOM
 const formPrimary: HTMLFormElement = document.forms[<any>"primary"];
-// Attach listener for form submission events performed on element 'form#primary'
 formPrimary.addEventListener("submit", handleFormPrimary);
 
 /**
@@ -31,4 +29,18 @@ function handleFormPrimary(event: SubmitEvent) {
 
     // Listen for 'load' event
     xhr.onload = () => { console.log(xhr.responseText); }
+}
+
+
+const formSearch: HTMLFormElement = document.forms[<any>"primary"];
+formSearch.addEventListener("submit", handleFormSearch);
+
+/**
+ * Handles submission of form element 'form.search'.
+ * 
+ * Disables the default action performed by the browser on form submission.
+ */
+function handleFormSearch(event: SubmitEvent) {
+    // Disable default action
+    event.preventDefault();
 }
