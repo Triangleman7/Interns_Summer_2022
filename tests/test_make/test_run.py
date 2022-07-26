@@ -1,32 +1,37 @@
 """
-Regression tests for :py:mod:`make.build`.
+Regression tests for :py:mod:`make.run`.
 """
 
 import os
+import subprocess
+import urllib.request
 
 import pytest
 
 from .. import URL
-from make import build
+from make import run
 from make import constants
 
 
-class TestBuild:
+class TestRun:
     """
-    Regression tests for the `$ python -m make build` command.
+    Regression tests for the `$ python -m make run` command.
     """
     def setup(self):
-        code = os.system("python -m make build")
-        assert code == 0
+        self.process = subprocess.Popen(
+            ["python" "-m" "make" "run"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        self.stdout, self.stderr = process.communicate()
 
     def teardown(self):
-        code = os.system("python -m make clean")
+        self.process.terminate()
+        assert self.stderr == 0
 
     def test_out(self):
         """
         Tests for successful compilation of project Go package into a binary file.
         """
-        assert os.path.exists(constants.BINARY_NAME)
+        assert constants.BINARY_NAME.exists()
 
     @pytest.mark.parametrize(
         "directory",
@@ -66,3 +71,9 @@ class TestBuild:
                     assert os.path.exists(
                         os.path.join(root, f"{fname}.js")
                     ), f"No *.js file corresponding to {os.path.join(root, file)}"
+
+    def test_localhost(self):
+        """
+        """
+        with urllib.request.urlopen(URL) as response:
+            assert response.code == 200
