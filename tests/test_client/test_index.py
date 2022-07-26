@@ -8,10 +8,11 @@ import urllib.request
 from playwright.sync_api import sync_playwright
 import pytest
 
-from . import URL
+from .. import URL
+
 
 @pytest.fixture(scope="module")
-def page(self, request):
+def page(request):
     """
     Initializes an automated browser corresponding to the browser type determined by
     `request.param`. Yields a webpage belonging to the appropriate browser.
