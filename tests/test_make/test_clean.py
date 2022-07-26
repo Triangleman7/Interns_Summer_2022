@@ -45,7 +45,7 @@ class TestClean:
 
     @pytest.mark.parametrize(
         "directory",
-        [constants.STYLES, constants.TEMPLATES]
+        [constants.SCRIPTS]
     )
     def test_js(self, directory: str):
         """

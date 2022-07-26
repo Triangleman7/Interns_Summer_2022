@@ -19,7 +19,9 @@ class TestRun:
     """
     def setup(self):
         self.process = subprocess.Popen(
-            ["python" "-m" "make" "run"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            ["python" "-m" "make" "run"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
         )
         self.stdout, self.stderr = process.communicate()
 

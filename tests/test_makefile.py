@@ -51,7 +51,7 @@ class TestBuild:
 
     @pytest.mark.parametrize(
         "directory",
-        ["client/styles", "server/templates/"]
+        ["client/scripts"]
     )
     def test_js(self, directory: str):
         """
@@ -111,7 +111,7 @@ class TestRun:
 
     @pytest.mark.parametrize(
         "directory",
-        ["client/styles", "server/templates/"]
+        ["client/scripts"]
     )
     def test_js(self, directory: str):
         """
@@ -168,7 +168,7 @@ class TestClean:
 
     @pytest.mark.parametrize(
         "directory",
-        ["client/styles", "server/templates/"]
+        ["client/scripts"]
     )
     def test_js(self, directory: str):
         """
