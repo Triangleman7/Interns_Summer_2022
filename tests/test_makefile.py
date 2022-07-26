@@ -13,7 +13,7 @@ from . import URL
 
 class TestBuild:
     """
-    Tests the `$ make build` command.
+    Regression tests for the `$ make build` command.
     """
     def setup(self):
         code = os.system("make build")
@@ -70,7 +70,7 @@ class TestBuild:
 
 class TestRun:
     """
-    Tests the `$ make run` command.
+    Regression tests for the `$ make run` command.
     """
     def setup(self):
         self.process = subprocess.Popen(
@@ -136,7 +136,7 @@ class TestRun:
 
 class TestClean:
     """
-    Tests the `$ make clean` command.
+    Regression tests for the `$ make clean` command.
     """
     def setup(self):
         os.system("make build")
