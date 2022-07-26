@@ -11,7 +11,7 @@ def main():
     # Compile/Transpile TypeScript source files
     for file in SCRIPTS.glob("*.ts"):
         os.system(f"tsc {file}")
-    
+
     # Compile/Transpile SASS/SCSS source files
     os.system(f"sass {STYLES}/:{STYLES}/")
     os.system(f"sass {TEMPLATES}/:{TEMPLATES}/")
