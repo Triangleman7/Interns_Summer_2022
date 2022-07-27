@@ -92,6 +92,6 @@ func (d *Docx) Write(ioWriter io.Writer) (err error) {
 	zipWriter.Close()
 	log.Print("Closed ZIP archive writer")
 
-	log.Print("Word Document files sueccessfully written to ZIP archive")
+	log.Print("Word Document files successfully written to ZIP archive")
 	return
 }

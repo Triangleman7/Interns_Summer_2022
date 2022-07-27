@@ -15,9 +15,9 @@ import (
 const (
 	PORT int = 8080 // the localhost port served
 
-	OUTPUTDIRECTORY   string = "out/"                 // holds all output files generated at runtime
-	TEMPLATEDIRECTORY string = "outputdata/templates" // holds all output template files
-	TEMPDIRECTORY     string = "temp/"                // holds all temporary files generated at runtime
+	OUTPUTDIRECTORY   string = "out/"             // holds all output files generated at runtime
+	TEMPLATEDIRECTORY string = "server/templates" // holds all output template files
+	TEMPDIRECTORY     string = "temp/"            // holds all temporary files generated at runtime
 
 	FILEMODE os.FileMode = 0755 // the program-specific defualt permission bits
 )
@@ -101,7 +101,8 @@ func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
 
 	case "POST":
 		// Handle form submission to element form#primary
-		err = HandleFormPrimary(w, r)
+		var form FormPrimary
+		err = form.handle(w, r)
 
 	default:
 		err = errors.New("only GET and POST requests supported")
