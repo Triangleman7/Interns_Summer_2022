@@ -3,6 +3,7 @@ Regression tests for :py:mod:`make.clean`.
 """
 
 import os
+import pathlib
 import subprocess
 
 import pytest
@@ -39,9 +40,9 @@ class TestClean:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                assert fext != ".css", f"Persistent *.css file discovered at {os.path.join(root, file)}"
-                assert fext != ".css.map", f"Persistent *.css.map file discovered at {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                assert path.suffix != ".css", f"Persistent *.css file discovered at {path}"
+                assert path.suffix != ".css.map", f"Persistent *.css.map file discovered at {path}"
 
     @pytest.mark.parametrize(
         "directory",
@@ -55,5 +56,5 @@ class TestClean:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                assert fext != ".js", f"Persistent *.js file discovered at {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                assert path.suffix != ".js", f"Persistent *.js file discovered at {path}"

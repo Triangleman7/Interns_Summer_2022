@@ -3,6 +3,7 @@ Regression tests for :py:mod:`make.run`.
 """
 
 import os
+import pathlib
 import subprocess
 import urllib.request
 
@@ -44,14 +45,14 @@ class TestRun:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                if fext == ".sass" or fext == ".scss":
-                    assert os.path.exists(
-                        os.path.join(root, f"{fname}.css")
-                    ), f"No *.css file corresponding to {os.path.join(root, file)}"
-                    assert os.path.exists(
-                        os.path.join(root, f"{fname}.css.map")
-                    ), f"No *.css.map file corresponding to {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                if path.suffix == ".sass" or path.suffix == ".scss":
+                    assert pathlib.Path(
+                        root, f"{path.stem}.css"
+                    ).exists(), f"No *.css file corresponding to {path}"
+                    assert pathlib.Path(
+                        root, f"{path.stem}.css.map"
+                    ).exists(), f"No *.css.map file corresponding to {path}"
 
     @pytest.mark.parametrize(
         "directory",
@@ -65,11 +66,11 @@ class TestRun:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                if fext == ".ts":
-                    assert os.path.exists(
-                        os.path.join(root, f"{fname}.js")
-                    ), f"No *.js file corresponding to {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                if path.suffix == ".ts":
+                    assert pathlib.Path(
+                        root, f"{path.stem}.js"
+                    ).exists(), f"No *.js file corresponding to {path}"
 
     def test_localhost(self):
         """

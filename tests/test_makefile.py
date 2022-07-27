@@ -2,7 +2,9 @@
 Regression tests for the commands defined in **makefile**.
 """
 
+import logging
 import os
+import pathlib
 import subprocess
 import urllib.request
 
@@ -17,10 +19,12 @@ class TestBuild:
     """
     def setup(self):
         process = subprocess.run(["make", "build"], shell=True)
+        logging.debug(process.stdout)
         assert process.returncode == 0
 
     def teardown(self):
         process = subprocess.run(["make", "clean"], shell=True)
+        logging.debug(process.stdout)
         assert process.returncode == 0
 
     def test_out(self):
@@ -41,14 +45,15 @@ class TestBuild:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                if fext == ".sass" or fext == ".scss":
-                    assert os.path.exists(
-                        os.path.join(root, f"{fname}.css")
-                    ), f"No *.css file corresponding to {os.path.join(root, file)}"
-                    assert os.path.exists(
-                        os.path.join(root, f"{fname}.css.map")
-                    ), f"No *.css.map file corresponding to {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                if path.suffix == ".sass" or path.suffix == ".scss":
+                    assert pathlib.Path(
+                        root, f"{path.stem}.css"
+                    ), f"No *.css file corresponding to {path}"
+                    assert pathlib.Path(
+                        root, f"{path.stem}.css.map"
+                    ), f"No *.css.map file corresponding to {path}"
+
 
     @pytest.mark.parametrize(
         "directory",
@@ -62,11 +67,11 @@ class TestBuild:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                if fext == ".ts":
-                    assert os.path.exists(
-                        os.path.join(root, f"{fname}.js")
-                    ), f"No *.js file corresponding to {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                if path.suffix == ".ts":
+                    assert pathlib.Path(
+                        root, f"{path.stem}.js"
+                    ).exists(), f"No *.js file corresponding to {path}"
 
 
 class TestRun:
@@ -75,12 +80,14 @@ class TestRun:
     """
     def setup(self):
         self.process = subprocess.Popen(["make", "run"], shell=True)
+        logging.debug(self.process.stdout)
 
     def teardown(self):
         self.process.terminate()
         self.process.wait()
 
         process = subprocess.run(["make", "clean"], shell=True)
+        logging.debug(process.stdout)
         assert process.returncode == 0
 
     def test_out(self):
@@ -101,14 +108,14 @@ class TestRun:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                if fext == ".sass" or fext == ".scss":
-                    assert os.path.exists(
-                        os.path.join(root, f"{fname}.css")
-                    ), f"No *.css file corresponding to {os.path.join(root, file)}"
-                    assert os.path.exists(
-                        os.path.join(root, f"{fname}.css.map")
-                    ), f"No *.css.map file corresponding to {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                if path.suffix == ".sass" or path.suffix == ".scss":
+                    assert pathlib.Path(
+                        root, f"{path.stem}.css"
+                    ).exists(), f"No *.css file corresponding to {path}"
+                    assert pathlib.Path(
+                        root, f"{path.stem}.css.map"
+                    ).exists(), f"No *.css.map file corresponding to {path}"
 
     @pytest.mark.parametrize(
         "directory",
@@ -122,11 +129,11 @@ class TestRun:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                if fext == ".ts":
-                    assert os.path.exists(
-                        os.path.join(root, f"{fname}.js")
-                    ), f"No *.js file corresponding to {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                if path.suffix == ".ts":
+                    assert pathlib.Path(
+                        root, f"{path.stem}.js"
+                    ).exists(), f"No *.js file corresponding to {path}"
 
     def test_localhost(self):
         """
@@ -141,9 +148,11 @@ class TestClean:
     """
     def setup(self):
         process = subprocess.run(["make", "build"])
+        logging.debug(process.debug)
         assert process.returncode == 0
 
         process = subprocess.run(["make", "clean"])
+        logging.debug(process.debug)
         assert process.returncode == 0
 
     def test_out(self):
@@ -164,9 +173,9 @@ class TestClean:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                assert fext != ".css", f"Persistent *.css file discovered at {os.path.join(root, file)}"
-                assert fext != ".css.map", f"Persistent *.css.map file discovered at {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                assert path.suffix != ".css", f"Persistent *.css file discovered at {path}"
+                assert path.suffix != ".css.map", f"Persistent *.css.map file discovered at {path}"
 
     @pytest.mark.parametrize(
         "directory",
@@ -180,5 +189,5 @@ class TestClean:
         """
         for root, _, files in os.walk(directory):
             for file in files:
-                fname, fext = os.path.splitext(file)
-                assert fext != ".js", f"Persistent *.js file discovered at {os.path.join(root, file)}"
+                path = pathlib.Path(root, file)
+                assert path.suffix != ".js", f"Persistent *.js file discovered at {path}"
