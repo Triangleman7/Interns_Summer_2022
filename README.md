@@ -148,6 +148,14 @@ To run all regression tests for the project codebase, run the command:
 $ pytest tests/
 ```
 
+To generate an HTML code coverage report, run the command:
+
+```bash
+$ pytest --html=report.html --self-contained-html
+```
+
+See the [`pytest-html` Documentation](https://pytest-html.readthedocs.io/en/latest/index.html) for more information.
+
 ***
 
 # License
