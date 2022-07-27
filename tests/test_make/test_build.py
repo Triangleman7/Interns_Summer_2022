@@ -7,9 +7,17 @@ import pathlib
 
 import pytest
 
-from .. import URL
 from make import build
+from make import clean
 from make import constants
+
+
+def test_command():
+    """
+    Regression tests for the `$ python -m make build` command.
+    """
+    code = os.system("python -m make build")
+    assert code == 0
 
 
 class TestBuild:
@@ -17,11 +25,10 @@ class TestBuild:
     Regression tests for the `$ python -m make build` command.
     """
     def setup(self):
-        code = os.system("python -m make build")
-        assert code == 0
+        build.main()
 
     def teardown(self):
-        os.system("python -m make clean")
+        clean.main()
 
     def test_out(self):
         """

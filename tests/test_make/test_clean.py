@@ -6,9 +6,19 @@ import os
 
 import pytest
 
-from .. import URL
+from make import build
 from make import clean
 from make import constants
+
+
+def test_command():
+    """
+    Regression tests for the `$ python -m make clean` command.
+    """
+    build.main()
+
+    code = os.system("python -m make clean")
+    assert code == 0
 
 
 class TestClean:
@@ -16,10 +26,8 @@ class TestClean:
     Regression tests for the `$ make clean` command.
     """
     def setup(self):
-        os.system("pytHon -m make build")
-
-        code = os.system("python -m make clean")
-        assert code == 0
+        build.main()
+        clean.main()
 
     def test_out(self):
         """
