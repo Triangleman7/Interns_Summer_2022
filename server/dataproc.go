@@ -15,6 +15,17 @@ func uppercase(str string) (s string) {
 	return strings.ToUpper(str)
 }
 
+func alternatingcase(str string) (s string) {
+	for i, c := range str {
+		if i%2 == 0 {
+			s += string(unicode.ToUpper(c))
+		} else {
+			s += string(unicode.ToLower(c))
+		}
+	}
+	return
+}
+
 func camelcase(str string) (s string) {
 	for i, w := range strings.Split(startcase(str), " ") {
 		if i == 0 {
@@ -95,6 +106,9 @@ func FormatValue(input string, method string) (output string) {
 	// 'Uppercase'
 	case "upper":
 		output = uppercase(input)
+	// 'Alternating Case'
+	case "alternating":
+		output = alternatingcase(input)
 	// 'Camel Case'
 	case "camel":
 		output = camelcase(input)
