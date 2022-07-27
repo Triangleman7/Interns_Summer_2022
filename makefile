@@ -22,6 +22,6 @@ clean:
 	rm ${SCRIPTS}/*.js
 	rm ${STYLES}/*.css
 	rm ${STYLES}/*.css.map
-	rm ${TEMPLATES}/*.css
-	rm ${TEMPLATES}/*.css.map
+	rm ${TEMPLATES}/**/*.css
+	rm ${TEMPLATES}/**/*.css.map
 	rm ${BINARY_NAME}
