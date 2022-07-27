@@ -18,16 +18,16 @@ class TestRun:
     Regression tests for the `$ python -m make run` command.
     """
     def setup(self):
-        process = subprocess.run(["python", "-m", "make", "clean"], shell=True)
+        process = subprocess.run(["python", "-m", "make", "build"])
         assert process.returncode == 0
         
-        self.process = subprocess.Popen(["python", "-m", "make", "run"], shell=True)
+        self.process = subprocess.Popen(["python", "-m", "make", "run"])
 
     def teardown(self):
         self.process.terminate()
         self.process.wait()
 
-        process = subprocess.run(["python", "-m", "make", "clean"], shell=True)
+        process = subprocess.run(["python", "-m", "make", "clean"])
         assert process.returncode == 0
 
     def test_out(self):
