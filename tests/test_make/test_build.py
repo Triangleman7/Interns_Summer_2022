@@ -16,11 +16,11 @@ class TestBuild:
     Regression tests for the `$ python -m make build` command.
     """
     def setup(self):
-        process = subprocess.run(["python", "-m", "make", "build"], shell=True)
+        process = subprocess.run(["python", "-m", "make", "build"])
         process.returncode == 0
 
     def teardown(self):
-        process = subprocess.run(["python", "-m", "make", "clean"], shell=True)
+        process = subprocess.run(["python", "-m", "make", "clean"])
         process.returncode == 0
 
     def test_out(self):
