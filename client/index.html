@@ -4,19 +4,131 @@
         <meta charset="UTF-8">
         <link rel="icon" href="/client/images/favicon.ico"/>
         <title>Interns Summer 2022</title>
-        <script type="text/javascript" src="/client/scripts/formHandling.js" defer></script>
-        <link rel="stylesheet" type="text/css" src="/client/styles/styles.css">
+        <script type="text/javascript" src="/client/scripts/forms.js" defer></script>
+        <script type="text/javascript" src="/client/scripts/popups.js" defer></script>
+        <link rel="stylesheet" type="text/css" href="/client/styles/styles.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+
     </head>
     <body>
-        <form id="primary" method="POST" enctype="multipart/form-data" action="/">
-            <input type="text" name="primary-text">
-            <select name="primary-text-operation">
-                <option value="">No Operation</option>
-                <option value="lower">Lowercase</option>
-                <option value="upper">Uppercase</option>
-            </select>
-            <input type="file" name="primary-image" accept="image/jpeg">
-            <input type="submit" name="primary-submit" value="Process">
-        </form>
+        <div id="site">
+            <header class="main">
+                <div class="wrap header">
+                    <nav class="top">
+                        <ul>
+                            <li>
+                                <a href="https://github.com/Triangleman7/Interns_Summer_2022">GitHub Repository</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <form class="search">
+                        <div class="input-search input-wrap">
+                            <span class="icon magnify"></span>
+                            <input class="input-text" type="text" placeholder="Search">
+                        </div>
+                    </form>
+                    <h1 id="logo">
+                        <a href="https://boeing.com/">Boeing</a>
+                    </h1>
+                    <nav class="main">
+                        <ul>
+                            <li>
+                                <a href="https://github.com/Triangleman7/Interns_Summer_2022">GitHub Repository</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="clear both"></div>
+                </div>
+            </header>
+            <section>
+                <img src="/client/images/full-logo.jpg">
+            </section>
+            <section>
+                <form id="primary" method="POST" enctype="multipart/form-data" action="/">
+                    <div class="image-upload">
+                        <label>
+                            <input type="file" name="image-upload" accept="image/jpeg">
+                        </label>
+                        <div class="popup" onmouseover="popupImageUpload.show()" onmouseleave="popupImageUpload.hide()">
+                            <img class="info" src="/client/images/info-icon.png">
+                            <span id="primary-image-upload" class="popuptext">
+                                Supported File Types
+                                <ul>
+                                    <li>
+                                        <span class="key">JPEG</span>
+                                        (
+                                        <span class="value">*.jpeg</span>
+                                        ,
+                                        <span class="value">*.jpg</span>
+                                        )
+                                    </li>
+                                </ul>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="caption-text">
+                        <label>
+                            <input type="text" name="caption-text" placeholder="Enter an image caption">
+                        </label>
+                    </div>
+                    <div class="caption-operation">
+                        <label>
+                            <select name="caption-casing">
+                                <option value="">No Operation</option>
+                                <option value="lower">Lowercase</option>
+                                <option value="upper">Uppercase</option>
+                                <option value="camel">Camel Case</option>
+                                <option value="dot">Dot Case</option>
+                                <option value="kebab">Kebab Case</option>
+                                <option value="opposite">Opposite Case</option>
+                                <option value="pascal">Pascal Case</option>
+                                <option value="sarcastic">Sarcastic Case</option>
+                                <option value="snake">Snake Case</option>
+                                <option value="start">Start Case</option>
+                                <option value="train">Train Case</option>
+                            </select>
+                        </label>
+                        <div class="popup" onmouseover="popupCaptionCasing.show()" onmouseleave="popupCaptionCasing.hide()">
+                            <img class="info" src="/client/images/info-icon.png">
+                            <span id="primary-caption-casing" class="popuptext">
+                                Supported Cases
+                                <ul>
+                                    <li>lowercase</li>
+                                    <li>UPPERCASE</li>
+                                    <li>camelCase</li>
+                                    <li>dot.case</li>
+                                    <li>kebab-case</li>
+                                    <li>oPPOSITE cASE</li>
+                                    <li>PascalCase</li>
+                                    <li>sArCaStIc cAsE</li>
+                                    <li>snake_case</li>
+                                    <li>Start Case</li>
+                                    <li>Train-Case</li>
+                                </ul>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-submit">
+                        <input type="submit" name="submit-form" value="Process">
+                        <div class="popup" onmouseover="popupFormSubmit.show()" onmouseleave="popupFormSubmit.hide()">
+                            <img class="info" src="/client/images/info-icon.png">
+                            <span id="primary-form-submit" class="popuptext">
+                                Output Documents
+                                <ul>
+                                    <span class="key">DOCX</span>
+                                    :
+                                    <span class="value">out/form-primary/index.docx</span>
+                                </ul>
+                                <ul>
+                                    <span class="key">HTML</span>
+                                    :
+                                    <span class="value">out/form-primary/index.html</span>
+                                </ul>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
     </body>
 </html>

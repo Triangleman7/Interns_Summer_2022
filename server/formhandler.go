@@ -109,18 +109,14 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	log.Print("Parsed form submission")
 
 	// Process element input[name="primary-text"]
-	var primaryText string = r.FormValue("primary-text")
-	var primaryTextOperation string = r.FormValue("primary-text-operation")
-	f.primaryText, err = FormatValue(primaryText, primaryTextOperation)
-	if err != nil {
-		return
-	}
-	log.Print("Processed <input name=\"primary-text\"> field")
+	var primaryText string = r.FormValue("caption-text")
+	var primaryTextCasing string = r.FormValue("caption-casing")
+	f.primaryText = FormatValue(primaryText, primaryTextCasing)
 
 	// Process element input[name="primary-image"]
 	var file multipart.File
 	var header *multipart.FileHeader
-	file, header, err = r.FormFile("primary-image")
+	file, header, err = r.FormFile("image-upload")
 	if err != nil {
 		return
 	}
@@ -135,8 +131,6 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	if err != nil {
 		return
 	}
-
-	log.Print("Processed <input name=\"primary-image\"> field")
 
 	// Write output
 	err = f.outputDOCX()
@@ -169,7 +163,7 @@ func (f *FormPrimary) outputDOCX() (err error) {
 	defer reader.Close()
 
 	docx.Image(outDOCX, 1, f.primaryImage)
-	docx.Paragraph(outDOCX, "primary-text", f.primaryText)
+	docx.Paragraph(outDOCX, "caption-text", f.primaryText)
 
 	err = docx.WriteDOCX(outpath, outDOCX)
 	if err != nil {
@@ -191,8 +185,8 @@ func (f *FormPrimary) outputHTML() (err error) {
 		return
 	}
 
-	html.Image(&outHTML, "primary-image", f.primaryImage)
-	html.Paragraph(&outHTML, "primary-text", f.primaryText)
+	html.Image(&outHTML, "image-upload", f.primaryImage)
+	html.Paragraph(&outHTML, "caption-text", f.primaryText)
 
 	err = html.WriteHTML(outpath, outHTML)
 	if err != nil {
