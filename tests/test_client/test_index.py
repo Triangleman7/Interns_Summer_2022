@@ -2,6 +2,8 @@
 Regression tests for **client/index.html**.
 """
 
+import concurrent.futures
+import logging
 import subprocess
 import urllib.request
 
@@ -21,17 +23,19 @@ def page(request):
     """
     with sync_playwright() as play:
         if request.param == "chromium":
-            browser = play.chromium.launch()
+            browser = play.chromium.launch(headless=False)
         elif request.param == "firefox":
-            browser = play.firefox.launch()
+            browser = play.firefox.launch(headless=False)
         elif request.param == "webkit":
-            browser = play.webkit.launch()
+            browser = play.webkit.launch(headless=False)
         else:
             raise ValueError(f"Could not find matching browser for {request.param}")
 
         page = browser.new_page()
+        page.goto(URL)
         yield page
 
+        page.close()
         browser.close()
 
 
@@ -44,24 +48,6 @@ class TestIndex:
     """
     Automated browser testing for `/` (**client/index.html**)
     """
-    def setup(self, page):
-        """
-        :type page: playwright.sync_api._generated.Page
-        """
-        self.process = subprocess.Popen(["make", "run"], stdout=PIPE, stderr=PIPE)
-        self.stdout, self.stderr = process.communicate()
-
-        self.page = page
-        page.goto(URL)
-
-    def teardown(self, page):
-        """
-        :type page: playwright.sync_api._generated.Page
-        """
-        self.page.close()
-
-        self.process.terminate()
-
     def test_nav_top(self, page):
         """
         `header.main nav.top`
