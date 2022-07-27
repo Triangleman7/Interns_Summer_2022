@@ -2,7 +2,6 @@
 Regression tests for the commands defined in **makefile**.
 """
 
-import logging
 import os
 import pathlib
 import subprocess
@@ -19,12 +18,10 @@ class TestBuild:
     """
     def setup(self):
         process = subprocess.run(["make", "build"], shell=True)
-        logging.debug(process.stdout)
         assert process.returncode == 0
 
     def teardown(self):
         process = subprocess.run(["make", "clean"], shell=True)
-        logging.debug(process.stdout)
         assert process.returncode == 0
 
     def test_out(self):
@@ -79,15 +76,16 @@ class TestRun:
     Regression tests for the `$ make run` command.
     """
     def setup(self):
+        process = subprocess.run(["make", "build"], shell = True)
+        assert process.returncode == 0
+
         self.process = subprocess.Popen(["make", "run"], shell=True)
-        logging.debug(self.process.stdout)
 
     def teardown(self):
         self.process.terminate()
         self.process.wait()
 
         process = subprocess.run(["make", "clean"], shell=True)
-        logging.debug(process.stdout)
         assert process.returncode == 0
 
     def test_out(self):
@@ -148,11 +146,9 @@ class TestClean:
     """
     def setup(self):
         process = subprocess.run(["make", "build"])
-        logging.debug(process.debug)
         assert process.returncode == 0
 
         process = subprocess.run(["make", "clean"])
-        logging.debug(process.debug)
         assert process.returncode == 0
 
     def test_out(self):
