@@ -19,15 +19,11 @@ class TestRun:
     """
     def setup(self):
         self.process = subprocess.Popen(
-            ["python" "-m" "make" "run"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            ["python", "-m", "make", "run"], shell=True
         )
-        self.stdout, self.stderr = process.communicate()
 
     def teardown(self):
         self.process.terminate()
-        assert self.stderr == 0
 
     def test_out(self):
         """
