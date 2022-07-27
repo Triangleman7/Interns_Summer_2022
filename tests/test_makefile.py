@@ -76,7 +76,7 @@ class TestRun:
         self.process = subprocess.Popen(
             ["make", "run"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
-        self.stdout, self.stderr = process.communicate()
+        self.stdout, self.stderr = self.process.communicate()
 
     def teardown(self):
         self.process.terminate()
