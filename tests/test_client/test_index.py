@@ -3,14 +3,14 @@ Regression tests for **client/index.html**.
 """
 
 import concurrent.futures
-import logging
-import subprocess
 import urllib.request
 
 from playwright.sync_api import sync_playwright
 import pytest
 
 from .. import URL
+from make import clean
+from make import run
 
 
 @pytest.fixture(scope="module")
@@ -48,6 +48,16 @@ class TestIndex:
     """
     Automated browser testing for `/` (**client/index.html**)
     """
+    def setup(self):
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            self.future = executor.submit(run.main)
+
+    def teardown(self):
+        if not self.future.cancelled():
+            self.future.cancel()
+
+        clean.main()
+
     def test_nav_top(self, page):
         """
         `header.main nav.top`
@@ -71,4 +81,4 @@ class TestIndex:
             href = a.get_attribute("href")
             assert href is not None
             with urllib.request.urlopen(href) as response:
-                assert response.code == 200
+                assert response.code == 200, href
