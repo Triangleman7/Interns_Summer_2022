@@ -4,20 +4,11 @@ Regression tests for :py:mod:`make.build`.
 
 import os
 import pathlib
+import subprocess
 
 import pytest
 
-from make import build
-from make import clean
 from make import constants
-
-
-def test_command():
-    """
-    Regression tests for the `$ python -m make build` command.
-    """
-    code = os.system("python -m make build")
-    assert code == 0
 
 
 class TestBuild:
@@ -25,10 +16,12 @@ class TestBuild:
     Regression tests for the `$ python -m make build` command.
     """
     def setup(self):
-        build.main()
+        process = subprocess.run(["python", "-m", "make", "build"], shell=True)
+        process.returncode == 0
 
     def teardown(self):
-        clean.main()
+        process = subprocess.run(["python", "-m", "make", "clean"], shell=True)
+        process.returncode == 0
 
     def test_out(self):
         """

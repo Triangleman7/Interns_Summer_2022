@@ -3,22 +3,11 @@ Regression tests for :py:mod:`make.clean`.
 """
 
 import os
+import subprocess
 
 import pytest
 
-from make import build
-from make import clean
 from make import constants
-
-
-def test_command():
-    """
-    Regression tests for the `$ python -m make clean` command.
-    """
-    build.main()
-
-    code = os.system("python -m make clean")
-    assert code == 0
 
 
 class TestClean:
@@ -26,8 +15,11 @@ class TestClean:
     Regression tests for the `$ make clean` command.
     """
     def setup(self):
-        build.main()
-        clean.main()
+        process = subprocess.run(["python", "-m", "main", "build"], shell=True)
+        assert process.returncode == 0
+
+        process = subprocess.run(["python", "-m", "make", "clean"], shell=True)
+        assert process.returncode == 0
 
     def test_out(self):
         """

@@ -2,15 +2,13 @@
 Regression tests for **client/index.html**.
 """
 
-import concurrent.futures
+import subprocess
 import urllib.request
 
 from playwright.sync_api import sync_playwright
 import pytest
 
 from .. import URL
-from make import clean
-from make import run
 
 
 @pytest.fixture(scope="module")
@@ -49,14 +47,14 @@ class TestIndex:
     Automated browser testing for `/` (**client/index.html**)
     """
     def setup(self):
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            self.future = executor.submit(run.main)
+        self.process = subprocess.Popen(["make", "run"], shell=True)
 
     def teardown(self):
-        if not self.future.cancelled():
-            self.future.cancel()
+        self.process.terminate()
+        self.process.wait()
 
-        clean.main()
+        process = subprocess.run(["make clean"], shell=True)
+        assert process.returncode == 0
 
     def test_nav_top(self, page):
         """

@@ -2,26 +2,14 @@
 Regression tests for :py:mod:`make.run`.
 """
 
-import concurrent.futures
 import os
+import subprocess
 import urllib.request
 
 import pytest
 
 from .. import URL
-from make import clean
 from make import constants
-from make import run
-
-
-def test_command():
-    """
-    Regression test for the `$ python -m make clean` command.
-    """
-    code = os.system("python -m make run")
-    assert code == 0
-
-    clean.main()
 
 
 class TestRun:
@@ -29,14 +17,14 @@ class TestRun:
     Regression tests for the `$ python -m make run` command.
     """
     def setup(self):
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            self.future = executor.submit(run.main)
+        self.process = subprocess.Popen(["python", "-m", "make", "run"], shell=True)
 
     def teardown(self):
-        if not self.future.cancelled():
-            self.future.cancel()
+        self.process.terminate()
+        self.process.wait()
 
-        clean.main()
+        process = subprocess.run(["python", "-m", "make", "clean"], shell=True)
+        assert process.returncode == 0
 
     def test_out(self):
         """
