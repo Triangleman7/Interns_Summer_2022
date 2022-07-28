@@ -88,7 +88,7 @@ class TestIndex:
         "query",
         []
     )
-    def test_search_form(self, page, query: str):
+    def test_form_search(self, page, query: str):
         """
         `header.main form.search`
 
@@ -113,3 +113,28 @@ class TestIndex:
         page.wait_for_event("submit")
         after_url = page.url
         assert before_url == after_url, query
+
+    def test_nav_main(self, page):
+        """
+        `header.main nav.main`
+
+        :type page: playwright.sync_api._generated.Page
+        """
+        css = "header.main nav.main"
+
+        # Check uniqueness of `css`
+        assert len(page.query_selector_all(css)) == 1
+        element = page.query_selector(css)
+
+        # Iterate through items in the navigation bar
+        for idx, elem in enumerate(element.query_selector_all("ul > li")):
+            # Check properties of child `a` element
+            assert len(elem.query_selector_all("a")) == 1
+            a = elem.query_selector("a")
+            assert a.text_content(), idx
+
+            # Check validity of `href` attribute value
+            href = a.get_attribute("href")
+            assert href is not None
+            with requests.get(href) as response:
+                assert response.status_code == 200, href
