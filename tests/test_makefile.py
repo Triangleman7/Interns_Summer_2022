@@ -5,9 +5,9 @@ Regression tests for the commands defined in **makefile**.
 import os
 import pathlib
 import subprocess
-import urllib.request
 
 import pytest
+import requests
 
 from . import URL
 
@@ -136,8 +136,8 @@ class TestRun:
     def test_localhost(self):
         """
         """
-        with urllib.request.urlopen(URL) as response:
-            assert response.code == 200
+        with requests.get(URL) as response:
+            assert response.status_code == 200
 
 
 class TestClean:

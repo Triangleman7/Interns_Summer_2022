@@ -5,9 +5,9 @@ Regression tests for :py:mod:`make.run`.
 import os
 import pathlib
 import subprocess
-import urllib.request
 
 import pytest
+import requests
 
 from .. import URL
 from make import constants
@@ -78,5 +78,5 @@ class TestRun:
     def test_localhost(self):
         """
         """
-        with urllib.request.urlopen(URL) as response:
-            assert response.code == 200
+        with requests.get(URL) as response:
+            assert response.status_code == 200
