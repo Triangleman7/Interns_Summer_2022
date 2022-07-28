@@ -11,6 +11,9 @@ import requests
 from .. import URL
 
 
+HEADLESS = True
+
+
 @pytest.fixture(scope="module")
 def page(request):
     """
@@ -21,11 +24,11 @@ def page(request):
     """
     with sync_playwright() as play:
         if request.param == "chromium":
-            browser = play.chromium.launch(headless=False)
+            browser = play.chromium.launch(headless=HEADLESS)
         elif request.param == "firefox":
-            browser = play.firefox.launch(headless=False)
+            browser = play.firefox.launch(headless=HEADLESS)
         elif request.param == "webkit":
-            browser = play.webkit.launch(headless=False)
+            browser = play.webkit.launch(headless=HEADLESS)
         else:
             raise ValueError(f"Could not find matching browser for {request.param}")
 
