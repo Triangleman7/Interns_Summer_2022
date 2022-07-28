@@ -10,13 +10,6 @@ build:
 	sass ${TEMPLATES}/:${TEMPLATES}/
 	go build -o ${BINARY_NAME} main.go
 
-run:
-	tsc ${SCRIPTS}/*.ts
-	sass ${STYLES}/:${STYLES}/
-	sass ${TEMPLATES}/:${TEMPLATES}/
-	go build -o ${BINARY_NAME} main.go
-	./${BINARY_NAME}
-
 clean:
 	go clean
 	rm ${SCRIPTS}/*.js
@@ -25,3 +18,13 @@ clean:
 	rm ${TEMPLATES}/**/*.css
 	rm ${TEMPLATES}/**/*.css.map
 	rm ${BINARY_NAME}
+
+run:
+	tsc ${SCRIPTS}/*.ts
+	sass ${STYLES}/:${STYLES}/
+	sass ${TEMPLATES}/:${TEMPLATES}/
+	go build -o ${BINARY_NAME} main.go
+	./${BINARY_NAME}
+
+test:
+	go test -v main.go

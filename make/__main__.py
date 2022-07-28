@@ -1,19 +1,20 @@
 """
-Runs an imitation of the `$ make (build|run|clean)` command.
+Runs an imitation of the `$ make (build|clean|run|test)` command.
 
 Usage:
-- `$ python -m make (build|run|clean)`
+- `$ python -m make (build|clean|run|test)`
 """
 
 import sys
 
-from . import build, clean, run
+from . import build, clean, run, test
 
 
 COMMANDS = {
     "build": build.main,
     "clean": clean.main,
-    "run": run.main
+    "run": run.main,
+    "test": test.main
 }
 
 
