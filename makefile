@@ -27,4 +27,7 @@ run:
 	./${BINARY_NAME}
 
 test:
-	go test -v main.go
+	go test -v ./resources/msword
+	go test -v ./server/
+	go test -v ./server/docx/
+	go test -v ./server/html/
