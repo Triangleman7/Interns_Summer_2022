@@ -3,10 +3,10 @@ Regression tests for **client/index.html**.
 """
 
 import subprocess
-import urllib.request
 
 from playwright.sync_api import sync_playwright
 import pytest
+import requests
 
 from .. import URL
 
@@ -47,13 +47,13 @@ class TestIndex:
     Automated browser testing for `/` (**client/index.html**)
     """
     def setup(self):
-        self.process = subprocess.Popen(["make", "run"], shell=True)
+        self.process = subprocess.Popen(["make", "run"])
 
     def teardown(self):
         self.process.terminate()
         self.process.wait()
 
-        process = subprocess.run(["make clean"], shell=True)
+        process = subprocess.run(["make", "clean"])
         assert process.returncode == 0
 
     def test_nav_top(self, page):
@@ -78,5 +78,5 @@ class TestIndex:
             # Check validity of `href` attribute value
             href = a.get_attribute("href")
             assert href is not None
-            with urllib.request.urlopen(href) as response:
-                assert response.code == 200, href
+            with requests.get(href) as response:
+                assert response.status_code == 200, href
