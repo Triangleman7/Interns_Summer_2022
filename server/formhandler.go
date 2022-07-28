@@ -1,37 +1,104 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
 
-	"github.com/Triangleman7/Interns_Summer_2022/msword"
-	"github.com/Triangleman7/Interns_Summer_2022/outputdata/docx"
-	"github.com/Triangleman7/Interns_Summer_2022/outputdata/html"
+	"github.com/Triangleman7/Interns_Summer_2022/resources/msword"
+	"github.com/Triangleman7/Interns_Summer_2022/server/docx"
+	"github.com/Triangleman7/Interns_Summer_2022/server/html"
 )
 
-type FormOutput struct {
-	TemplateDOCX string // Filename of template DOCX file
-	TemplateHTML string // Filename of template HTML file
+type FormOutput interface {
+	handle(http.ResponseWriter, *http.Request) error // Handles submissions to the form element
 
-	OutDOCX string // Filename of output DOCX file
-	OutHTML string // Filename of output HTML file
+	outputDOCX() error // Outputs to a Word Document (.docx)
+	outputHTML() error // Outputs to an HTML Document (.html)
+
+	copyCSS() error // Copies CSS stylesheet to output directory
+}
+
+type Form struct {
+	Name string // Field element 'name' attribute
+}
+
+// OutDir constructs the path (relative to the root directory) to the output directory for the form
+// f.
+func (f *Form) OutDir() (path string) {
+	return filepath.Join(OUTPUTDIRECTORY, f.Name)
+}
+
+// SetupOutput creates the output directory for the form f and all necessary subdirectories.
+func (f *Form) SetupOutput(name string) {
+	f.Name = name
+
+	DirectorySetup(f.OutDir(), FILEMODE)
+
+	var subdirs []string = []string{"images"}
+	for _, sd := range subdirs {
+		DirectorySetup(filepath.Join(f.OutDir(), sd), FILEMODE)
+	}
+}
+
+// GetTemplate returns the path to the template file under the name filename.
+func (f *Form) GetTemplate(filename string) (path string) {
+	return filepath.Join(TEMPLATEDIRECTORY, f.Name, filename)
+}
+
+// GetOut returns the path to the output file under the name filename.
+func (f *Form) GetOut(filename string) (path string) {
+	return filepath.Join(OUTPUTDIRECTORY, f.Name, filename)
+}
+
+// TemplateDOCX returns the path to the template Word Document (DOCX).
+func (f *Form) TemplateDOCX() (path string) {
+	return f.GetTemplate("index.docx")
+}
+
+// OutDOCX returns the path to the output Word Document (DOCX).
+func (f *Form) OutDOCX() (path string) {
+	return f.GetOut("index.docx")
+}
+
+// TemplateHTML returns the path to the template HTML Document.
+func (f *Form) TemplateHTML() (path string) {
+	return f.GetTemplate("index.html")
+}
+
+// OutHTML returns the path to the output HTML Document.
+func (f *Form) OutHTML() (path string) {
+	return f.GetOut("index.html")
+}
+
+// TemplateCSS returns the path to the template CSS stylesheet.
+func (f *Form) TemplateCSS() (path string) {
+	return f.GetTemplate("styles.css")
+}
+
+// OutCSS returns the path to the output CSS stylesheet.
+func (f *Form) OutCSS() (path string) {
+	return f.GetOut("styles.css")
+}
+
+// OutImages returns the path to the output images/ directory.
+func (f *Form) OutImages() (path string) {
+	return f.GetOut("images/")
 }
 
 type FormPrimary struct {
-	Output FormOutput // Output specifications
+	form Form
 
-	PrimaryImage string // {primary-image}
-	PrimaryText  string // {primary-text}
+	primaryImage string // {primary-image}
+	primaryText  string // {primary-text}
 }
 
-// HandleFormPrimary handles form submission to form#primary.
-//
-// Raises any errors encountered while handling the form or procesing form input.
-func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
-	var form FormPrimary
-	form.Output = FormOutput{"template.docx", "template.html", "form-primary.docx", "form-primary.html"}
+func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error) {
+	if f.form.Name == "" {
+		return fmt.Errorf("output directory for element 'form#primary' not set up")
+	}
 	log.Print("Handling form submission to form#primary")
 
 	// Parse form submission
@@ -42,34 +109,39 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	log.Print("Parsed form submission")
 
 	// Process element input[name="primary-text"]
-	var primaryText string = r.FormValue("primary-text")
-	var primaryTextOperation string = r.FormValue("primary-text-operation")
-	form.PrimaryText, err = FormatValue(primaryText, primaryTextOperation)
-	if err != nil {
-		return
-	}
-	log.Print("Processed <input name=\"primary-text\"> field")
+	var primaryText string = r.FormValue("caption-text")
+	var primaryTextCasing string = r.FormValue("caption-casing")
+	f.primaryText = FormatValue(primaryText, primaryTextCasing)
 
 	// Process element input[name="primary-image"]
 	var file multipart.File
 	var header *multipart.FileHeader
-	file, header, err = r.FormFile("primary-image")
+	file, header, err = r.FormFile("image-upload")
 	if err != nil {
 		return
 	}
 	defer file.Close()
-	form.PrimaryImage, err = UploadFile(file, header)
+	var uploadpath string
+	uploadpath, err = UploadFile(file, header)
 	if err != nil {
 		return
 	}
-	log.Print("Processed <input name=\"primary-image\"> field")
+	f.primaryImage = filepath.Join(f.form.OutImages(), header.Filename)
+	err = CopyFile(uploadpath, f.primaryImage)
+	if err != nil {
+		return
+	}
 
 	// Write output
-	err = FormPrimaryDOCX(form)
+	err = f.outputDOCX()
 	if err != nil {
 		return
 	}
-	err = FormPrimaryHTML(form)
+	err = f.outputHTML()
+	if err != nil {
+		return
+	}
+	err = f.copyCSS()
 	if err != nil {
 		return
 	}
@@ -78,21 +150,20 @@ func HandleFormPrimary(w http.ResponseWriter, r *http.Request) (err error) {
 	return
 }
 
-func FormPrimaryDOCX(form FormPrimary) (err error) {
-	var templatepath = filepath.Join(TEMPLATEDIRECTORY, form.Output.TemplateDOCX)
-	var outpath = filepath.Join(OUTPUTDIRECTORY, form.Output.OutDOCX)
+func (f *FormPrimary) outputDOCX() (err error) {
+	var templatepath string = f.form.TemplateDOCX()
+	var outpath string = f.form.OutDOCX()
 
 	var reader *msword.ReplaceDocx
-	reader, err = msword.ReadDocxFile(templatepath)
+	var outDOCX *msword.Docx
+	reader, outDOCX, err = docx.ReadTemplate(templatepath)
 	if err != nil {
 		return
 	}
 	defer reader.Close()
 
-	var outDOCX *msword.Docx = reader.Editable()
-
-	docx.Image(outDOCX, 1, form.PrimaryImage)
-	docx.Paragraph(outDOCX, "primary-text", form.PrimaryText)
+	docx.Image(outDOCX, 1, f.primaryImage)
+	docx.Paragraph(outDOCX, "caption-text", f.primaryText)
 
 	err = docx.WriteDOCX(outpath, outDOCX)
 	if err != nil {
@@ -104,9 +175,9 @@ func FormPrimaryDOCX(form FormPrimary) (err error) {
 	return
 }
 
-func FormPrimaryHTML(form FormPrimary) (err error) {
-	var outpath = filepath.Join(OUTPUTDIRECTORY, form.Output.OutHTML)
-	var templatepath = filepath.Join(TEMPLATEDIRECTORY, form.Output.TemplateHTML)
+func (f *FormPrimary) outputHTML() (err error) {
+	var templatepath string = f.form.TemplateHTML()
+	var outpath string = f.form.OutHTML()
 
 	var outHTML string
 	outHTML, err = html.ReadTemplate(templatepath)
@@ -114,8 +185,8 @@ func FormPrimaryHTML(form FormPrimary) (err error) {
 		return
 	}
 
-	html.Image(&outHTML, "primary-image", form.PrimaryImage)
-	html.Paragraph(&outHTML, "primary-text", form.PrimaryText)
+	html.Image(&outHTML, "image-upload", f.primaryImage)
+	html.Paragraph(&outHTML, "caption-text", f.primaryText)
 
 	err = html.WriteHTML(outpath, outHTML)
 	if err != nil {
@@ -125,4 +196,8 @@ func FormPrimaryHTML(form FormPrimary) (err error) {
 	log.Printf("HTML output written to %s", outpath)
 
 	return
+}
+
+func (f *FormPrimary) copyCSS() (err error) {
+	return CopyFile(f.form.TemplateCSS(), f.form.OutCSS())
 }
