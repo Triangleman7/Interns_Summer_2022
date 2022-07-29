@@ -163,4 +163,4 @@ See the [`pytest-html` Documentation](https://pytest-html.readthedocs.io/en/late
 The code in this repository is licensed under an MIT License.
 See [LICENSE](https://github.com/Triangleman7/Interns_Summer_2022/blob/main/LICENSE) for more information.
 
-Copyright (c) 2022 Jacob Lee, Anthony Battaglia
+Copyright (c) 2022 Jacob Lee, Anthony Battaglia, Caeden Kim
