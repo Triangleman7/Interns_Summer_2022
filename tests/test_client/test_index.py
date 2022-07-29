@@ -2,6 +2,7 @@
 Regression tests for **client/index.html**.
 """
 
+import string
 import subprocess
 
 from playwright.sync_api import sync_playwright
@@ -86,7 +87,17 @@ class TestIndex:
 
     @pytest.mark.parametrize(
         "query",
-        []
+        [
+            string.ascii_letters,
+            string.ascii_lowercase,
+            string.ascii_uppercase,
+            string.digits,
+            string.hexdigits,
+            string.octdigits,
+            string.punctuation,
+            string.printable,
+            string.whitespace,
+        ]
     )
     def test_form_search(self, page, query: str):
         """
