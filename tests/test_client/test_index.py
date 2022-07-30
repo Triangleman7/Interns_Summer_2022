@@ -12,7 +12,7 @@ import requests
 from .. import URL
 
 
-HEADLESS = True
+HEADLESS = False
 
 
 @pytest.fixture(scope="module")
@@ -23,7 +23,10 @@ def page(request):
 
     :rtype: playwright.sync_api._generated.Page
     """
-    process = subprocess.Popen(["make", "run"])
+    process = subprocess.run(["make", "build"])
+    assert process.returncode == 0
+
+    process = subprocess.Popen(["./main.out"])
 
     with sync_playwright() as play:
         if request.param == "chromium":
