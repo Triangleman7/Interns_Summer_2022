@@ -32,7 +32,7 @@ function handleFormPrimary(event: SubmitEvent) {
 }
 
 
-const formSearch: HTMLFormElement = document.forms[<any>"primary"];
+const formSearch: HTMLFormElement = document.forms[<any>"search"];
 formSearch.addEventListener("submit", handleFormSearch);
 
 /**
