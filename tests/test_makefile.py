@@ -17,11 +17,11 @@ class TestBuild:
     Regression tests for the `$ make build` command.
     """
     def setup(self):
-        process = subprocess.run(["make", "build"])
+        process = subprocess.run(["make", "build"], check=True)
         assert process.returncode == 0
 
     def teardown(self):
-        process = subprocess.run(["make", "clean"])
+        process = subprocess.run(["make", "clean"], check=True)
         assert process.returncode == 0
 
     def test_out(self):
@@ -43,7 +43,7 @@ class TestBuild:
         for root, _, files in os.walk(directory):
             for file in files:
                 path = pathlib.Path(root, file)
-                if path.suffix == ".sass" or path.suffix == ".scss":
+                if path.suffix in (".sass", ".scss"):
                     assert pathlib.Path(
                         root, f"{path.stem}.css"
                     ), f"No *.css file corresponding to {path}"
@@ -76,7 +76,7 @@ class TestRun:
     Regression tests for the `$ make run` command.
     """
     def setup(self):
-        process = subprocess.run(["make", "build"])
+        process = subprocess.run(["make", "build"], check=True)
         assert process.returncode == 0
 
         self.process = subprocess.Popen(["make", "run"])
@@ -85,7 +85,7 @@ class TestRun:
         self.process.terminate()
         self.process.wait()
 
-        process = subprocess.run(["make", "clean"])
+        process = subprocess.run(["make", "clean"], check=True)
         assert process.returncode == 0
 
     def test_out(self):
@@ -107,7 +107,7 @@ class TestRun:
         for root, _, files in os.walk(directory):
             for file in files:
                 path = pathlib.Path(root, file)
-                if path.suffix == ".sass" or path.suffix == ".scss":
+                if path.suffix in (".sass", ".scss"):
                     assert pathlib.Path(
                         root, f"{path.stem}.css"
                     ).exists(), f"No *.css file corresponding to {path}"
@@ -145,10 +145,10 @@ class TestClean:
     Regression tests for the `$ make clean` command.
     """
     def setup(self):
-        process = subprocess.run(["make", "build"])
+        process = subprocess.run(["make", "build"], check=True)
         assert process.returncode == 0
 
-        process = subprocess.run(["make", "clean"])
+        process = subprocess.run(["make", "clean"], check=True)
         assert process.returncode == 0
 
     def test_out(self):
