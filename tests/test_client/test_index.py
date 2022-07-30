@@ -247,3 +247,24 @@ class TestIndex:
 
         # Check <input> element properties
         assert element.get_attribute("type") == "submit"
+
+    def test_info_popups(self, page):
+        """
+        `div.popup`
+
+        :type page: playwright.sync_api._generated.Page
+        :param css: The CSS selector for the info popup element
+        """
+        css = "div.popup"
+        css_popup_text = "span.popuptext"
+
+        for idx, element in enumerate(page.query_selector_all(css)):
+            # Check uniqueness of `css_popup_text` within `element`
+            assert len(element.query_selector_all(css_popup_text)) == 1, idx
+            elem = element.query_selector(css_popup_text)
+
+            assert not elem.is_visible(), idx       # Popup text is not visible
+            element.hover()                         # Hover over `element` 
+            assert elem.is_visible(), idx           # Popup text is visible
+            page.hover("body")                      # Un-hover over `element`
+            assert not elem.is_visible(), idx       # Popup text is not visible
