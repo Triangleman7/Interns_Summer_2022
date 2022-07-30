@@ -23,6 +23,8 @@ def page(request):
 
     :rtype: playwright.sync_api._generated.Page
     """
+    process = subprocess.Popen(["make", "run"])
+
     with sync_playwright() as play:
         if request.param == "chromium":
             browser = play.chromium.launch(headless=HEADLESS)
@@ -40,6 +42,12 @@ def page(request):
         page.close()
         browser.close()
 
+    process.terminate()
+    process.wait()
+
+    process = subprocess.run(["make", "clean"])
+    assert process.returncode == 0
+
 
 @pytest.mark.parametrize(
     "page",
@@ -50,16 +58,6 @@ class TestIndex:
     """
     Automated browser testing for `/` (**client/index.html**)
     """
-    def setup(self):
-        self.process = subprocess.Popen(["make", "run"])
-
-    def teardown(self):
-        self.process.terminate()
-        self.process.wait()
-
-        process = subprocess.run(["make", "clean"])
-        assert process.returncode == 0
-
     def test_nav_top(self, page):
         """
         `header.main nav.top`
@@ -101,12 +99,12 @@ class TestIndex:
     )
     def test_form_search(self, page, query: str):
         """
-        `header.main form.search`
+        `header.main form#search`
 
         :type page: playwright.sync_api._generated.Page
         :param query: The search query to input into the search bar input form
         """
-        css = "header.main form.search"
+        css = "header.main form#search"
         css_search_input = "div.input-search > input.input-text"
 
         # Check uniqueness of `css`
@@ -114,14 +112,13 @@ class TestIndex:
         element = page.query_selector(css)
 
         # Check uniqueness of `css_search_input`
-        assert len(page.query_selector_all(css_search_input)) == 1
-        search_input = page.query_selector(css_search_input)
+        assert len(element.query_selector_all(css_search_input)) == 1
+        search_input = element.query_selector(css_search_input)
 
         # Submit `query` into search form
         before_url = page.url
         search_input.fill(query)
         search_input.press("Enter")
-        page.wait_for_event("submit")
         after_url = page.url
         assert before_url == after_url, query
 
@@ -149,3 +146,84 @@ class TestIndex:
             assert href is not None
             with requests.get(href) as response:
                 assert response.status_code == 200, href
+
+    def test_form_primary(self, page):
+        """
+        `form#primary`
+
+        :type page: playwright.sync_api._generated.Page
+        """
+        css = "form#primary"
+
+        input_fields = [
+            "image-upload",
+            "caption-text",
+            "caption-casing",
+            "form-submit"
+        ]
+
+        # Check uniqueness of `css`
+        assert len(page.query_selector_all(css)) == 1
+        element = page.query_selector(css)
+
+        # Check <input> descendant elements
+        input_elements = element.query_selector_all("input")
+        assert len(input_elements) == 4
+        for idx, elem in enumerate(input_elements):
+            name = elem.get_attribute("name")
+            assert name is not None, idx
+            assert name == input_fields[idx], idx
+
+    def test_image_upload(self, page):
+        """
+        `form#primary input[name='image-upload']
+
+        :type page: playwright.sync_api._generated.Page
+        """
+        css = "form#primary input[name='image-upload']"
+
+        # Check uniqueness of `css`
+        assert len(page.query_selector_all(css)) == 1
+        element = page.query_selector(css)
+
+        # Check <input> element properties
+        assert element.get_attribute("type") == "file"
+        assert element.get_attribute("accept") == "image/jpeg"
+
+    def test_image_caption(self, page):
+        """
+        `form#primary input[name='image-caption']
+
+        :type page: playwright.sync_api._generated.Page
+        """
+        css = "form#primary input[name='image-caption']"
+
+        # Check uniqueness of `css`
+        assert len(page.query_selector_all(css)) == 1
+        element = page.query_selector(css)
+
+        # Check <input> element properties
+        assert element.get_attribute("type") == "text"
+
+    def test_caption_casing(self, page):
+        """
+        `form#primary select[name='caption-casing']
+
+        :type page: playwright.sync_api._generated.Page
+        """
+        css = "form#primary select[name='caption-casing']"
+
+        # Check uniqueness of `css`
+        assert len(page.query_selector_all(css)) == 1
+        element = page.query_selector(css)
+
+        # Check <select> element <option> descendant elements
+        option_elements = element.query_selector_all("option")
+        assert len(option_elements) == 13
+        assert {
+            x.get_attribute("value") for x in option_elements
+        } == {
+            "", "lower", "upper", "alternating", "camel",
+            "dot", "kebab", "opposite", "pascal", "sarcastic",
+            "snake", "start", "train"
+        }
