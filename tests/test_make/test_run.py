@@ -9,8 +9,8 @@ import subprocess
 import pytest
 import requests
 
-from .. import URL
 from make import constants
+from .. import URL
 
 
 class TestRun:
@@ -18,9 +18,9 @@ class TestRun:
     Regression tests for the `$ python -m make run` command.
     """
     def setup(self):
-        process = subprocess.run(["python", "-m", "make", "build"])
+        process = subprocess.run(["python", "-m", "make", "build"], check=True)
         assert process.returncode == 0
-        
+
         self.process = subprocess.Popen(["python", "-m", "make", "run"])
 
     def teardown(self):
@@ -49,7 +49,7 @@ class TestRun:
         for root, _, files in os.walk(directory):
             for file in files:
                 path = pathlib.Path(root, file)
-                if path.suffix == ".sass" or path.suffix == ".scss":
+                if path.suffix in (".sass", ".scss"):
                     assert pathlib.Path(
                         root, f"{path.stem}.css"
                     ).exists(), f"No *.css file corresponding to {path}"

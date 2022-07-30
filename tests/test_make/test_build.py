@@ -16,12 +16,12 @@ class TestBuild:
     Regression tests for the `$ python -m make build` command.
     """
     def setup(self):
-        process = subprocess.run(["python", "-m", "make", "build"])
-        process.returncode == 0
+        process = subprocess.run(["python", "-m", "make", "build"], check=True)
+        assert process.returncode == 0
 
     def teardown(self):
-        process = subprocess.run(["python", "-m", "make", "clean"])
-        process.returncode == 0
+        process = subprocess.run(["python", "-m", "make", "clean"], check=True)
+        assert process.returncode == 0
 
     def test_out(self):
         """
@@ -42,7 +42,7 @@ class TestBuild:
         for root, _, files in os.walk(directory):
             for file in files:
                 path = pathlib.Path(root, file)
-                if path.suffix == ".sass" or path.suffix == ".scss":
+                if path.suffix in (".sass", ".scss"):
                     assert pathlib.Path(
                         root, f"{path.stem}.css"
                     ), f"No *.css file corresponding to {path}"

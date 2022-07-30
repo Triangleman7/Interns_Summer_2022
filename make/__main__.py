@@ -17,6 +17,6 @@ COMMANDS = {
 }
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     cmd = COMMANDS.get(sys.argv[1])
     cmd()

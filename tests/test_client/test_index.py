@@ -23,32 +23,35 @@ def page(request):
 
     :rtype: playwright.sync_api._generated.Page
     """
-    process = subprocess.run(["make", "build"])
+    process = subprocess.run(["make", "build"], check=True)
     assert process.returncode == 0
 
-    process = subprocess.Popen(["./main.out"])
+    with subprocess.Popen(["./main.out"]) as process:
+        # Initialize automated browser
+        with sync_playwright() as play:
+            # Get appropriate web browser type
+            if request.param == "chromium":
+                browser = play.chromium.launch(headless=HEADLESS)
+            elif request.param == "firefox":
+                browser = play.firefox.launch(headless=HEADLESS)
+            elif request.param == "webkit":
+                browser = play.webkit.launch(headless=HEADLESS)
+            else:
+                raise ValueError(f"Could not find matching browser for {request.param}")
 
-    with sync_playwright() as play:
-        if request.param == "chromium":
-            browser = play.chromium.launch(headless=HEADLESS)
-        elif request.param == "firefox":
-            browser = play.firefox.launch(headless=HEADLESS)
-        elif request.param == "webkit":
-            browser = play.webkit.launch(headless=HEADLESS)
-        else:
-            raise ValueError(f"Could not find matching browser for {request.param}")
+            # Initialize new page and navigate to localhost port
+            page = browser.new_page()
+            page.goto(URL)
+            yield page
 
-        page = browser.new_page()
-        page.goto(URL)
-        yield page
+            page.close()
+            browser.close()
 
-        page.close()
-        browser.close()
+        # Terminate server
+        process.terminate()
+        process.wait()
 
-    process.terminate()
-    process.wait()
-
-    process = subprocess.run(["make", "clean"])
+    process = subprocess.run(["make", "clean"], check=True)
     assert process.returncode == 0
 
 
@@ -84,7 +87,8 @@ class TestIndex:
             href = a.get_attribute("href")
             assert href is not None
             with requests.get(href) as response:
-                # assert response.status_code == 200, href      # TODO: Use once repository is public
+                # TODO: Use once repository is public
+                # assert response.status_code == 200, href
                 assert response.status_code == 404, href
 
     @pytest.mark.parametrize(
@@ -149,7 +153,8 @@ class TestIndex:
             href = a.get_attribute("href")
             assert href is not None
             with requests.get(href) as response:
-                # assert response.status_code == 200, href      # TODO: Use once repository is public
+                # TODO: Use once repository is public
+                # assert response.status_code == 200, href
                 assert response.status_code == 404, href
 
     def test_form_primary(self, page):
@@ -236,7 +241,7 @@ class TestIndex:
     def test_submit_form(self, page):
         """
         `form#primary input[name='submit-form']
-        
+
         :type page: playwright.sync_api._generated.Page
         """
         css = "form#primary input[name='submit-form']"
@@ -264,7 +269,7 @@ class TestIndex:
             elem = element.query_selector(css_popup_text)
 
             assert not elem.is_visible(), idx       # Popup text is not visible
-            element.hover()                         # Hover over `element` 
+            element.hover()                         # Hover over `element`
             assert elem.is_visible(), idx           # Popup text is visible
             page.hover("body")                      # Un-hover over `element`
             assert not elem.is_visible(), idx       # Popup text is not visible

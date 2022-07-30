@@ -16,10 +16,10 @@ class TestClean:
     Regression tests for the `$ make clean` command.
     """
     def setup(self):
-        process = subprocess.run(["python", "-m", "make", "build"])
+        process = subprocess.run(["python", "-m", "make", "build"], check=True)
         assert process.returncode == 0
 
-        process = subprocess.run(["python", "-m", "make", "clean"])
+        process = subprocess.run(["python", "-m", "make", "clean"], check=True)
         assert process.returncode == 0
 
     def test_out(self):
