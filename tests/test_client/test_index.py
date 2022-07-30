@@ -232,3 +232,18 @@ class TestIndex:
             "dot", "kebab", "opposite", "pascal", "sarcastic",
             "snake", "start", "train"
         }
+
+    def test_submit_form(self, page):
+        """
+        `form#primary input[name='submit-form']
+        
+        :type page: playwright.sync_api._generated.Page
+        """
+        css = "form#primary input[name='submit-form']"
+
+        # Check uniqueness of `css`
+        assert len(page.query_selector_all(css)) == 1
+        element = page.query_selector(css)
+
+        # Check <input> element properties
+        assert element.get_attribute("type") == "submit"
