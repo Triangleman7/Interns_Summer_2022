@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -96,17 +95,15 @@ type FormPrimary struct {
 }
 
 func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error) {
-	if f.form.Name == "" {
-		return fmt.Errorf("output directory for element 'form#primary' not set up")
-	}
-	log.Print("Handling form submission to form#primary")
+	f.form.Name = "form-primary"
+	log.Printf("%s - Handling form submission", f.form.Name)
 
 	// Parse form submission
 	err = r.ParseMultipartForm(0)
 	if err != nil {
 		return
 	}
-	log.Print("Parsed form submission")
+	log.Printf("%s - Parsed form submission", f.form.Name)
 
 	// Process form <input> fields
 	var captionText string = r.FormValue("caption-text")
@@ -115,11 +112,11 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	var imageUploadHeader *multipart.FileHeader
 	imageUploadFile, imageUploadHeader, err = r.FormFile("image-upload")
 	if err != nil {
-		var css string = "form#primary input[name='image-upload']"
-		log.Printf("Empty form <input> field: %s", css)
+		var css string = "input[name='image-upload']"
+		log.Printf("%s - Empty form <input> field: %s", f.form.Name, css)
 		return
 	}
-	log.Printf("Processed form <input> fields")
+	log.Printf("%s - Processed form <input> fields", f.form.Name)
 
 	// Process {primary-image} output field
 	defer imageUploadFile.Close()
@@ -150,7 +147,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	if err != nil {
 		return
 	}
-	log.Printf("Successfully wrote all output: %s", OUTPUTDIRECTORY)
+	log.Printf("%s - Successfully wrote all output: %s", f.form.Name, OUTPUTDIRECTORY)
 
 	return
 }
@@ -175,7 +172,7 @@ func (f *FormPrimary) outputDOCX() (err error) {
 		return
 	}
 
-	log.Printf("DOCX output written to %s", outpath)
+	log.Printf("%s - DOCX output written to %s", f.form.Name, outpath)
 
 	return
 }
@@ -198,7 +195,7 @@ func (f *FormPrimary) outputHTML() (err error) {
 		return
 	}
 
-	log.Printf("HTML output written to %s", outpath)
+	log.Printf("%s - HTML output written to %s", f.form.Name, outpath)
 
 	return
 }
