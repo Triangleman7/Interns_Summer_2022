@@ -2,6 +2,9 @@
 Regression tests for **client/index.html**.
 """
 
+import itertools
+import os
+import pathlib
 import string
 import subprocess
 
@@ -273,3 +276,52 @@ class TestIndex:
             assert elem.is_visible(), idx           # Popup text is visible
             page.hover("body")                      # Un-hover over `element`
             assert not elem.is_visible(), idx       # Popup text is not visible
+
+    @pytest.mark.parametrize(
+        "image_upload,caption_text,caption_casing",
+        itertools.product(
+            [
+                *list(pathlib.Path("client", "images").glob("*.jpg"))
+            ],
+            [
+                string.ascii_letters, string.ascii_lowercase, string.ascii_uppercase,
+                string.digits, string.hexdigits, string.octdigits,
+                string.punctuation, string.printable, string.whitespace,
+            ],
+            [
+                "", "lower", "upper", "alternating", "camel",
+                "dot", "kebab", "opposite", "pascal", "sarcastic",
+                "snake", "start", "train"
+            ]
+        )
+    )
+    def test_form_submission(self, page, image_upload: str, caption_text: str, caption_casing: str):
+        """
+        :type page: playwright.sync_api._generated.Page
+        :param image_upload: The value to fill the `input[name='image-upload']` field
+        :param caption_text: The value to fill the `input[name='caption-text']` field
+        :param caption_casing: The value to fill the `select[name='caption-casing']` field
+        """
+        path = pathlib.Path("out", "form-primary")
+        out_docx = path / "index.docx"
+        out_html = path / "index.html"
+
+        page.set_input_files(
+            "form#primary input[name='image-upload']", image_upload
+        )
+        page.fill(
+            "form#primary input[name='caption-text']", caption_text
+        )
+        page.select_option(
+            "form#primary select[name='caption-casing']", caption_casing
+        )
+        page.click(
+            "form#primary input[name='submit-form']"
+        )
+        page.wait_for_event("requestfinished")
+
+        assert path.exists()
+        assert out_docx.exists()
+        assert out_html.exists()
+        os.remove(out_docx)
+        os.remove(out_html)
