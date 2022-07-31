@@ -2,11 +2,11 @@
 Defines the constants defined in **makefile**.
 """
 
-from pathlib import Path
+import pathlib
 
 
-BINARY_NAME = Path("main.out")
+BINARY_NAME = pathlib.Path("main.out")
 
-SCRIPTS = Path("client/scripts")
-STYLES = Path("client/styles")
-TEMPLATES = Path("server/templates")
+SCRIPTS = pathlib.Path("client", "scripts")
+STYLES = pathlib.Path("client", "styles")
+TEMPLATES = pathlib.Path("server", "templates")
