@@ -9,6 +9,9 @@ from .constants import BINARY_NAME, SCRIPTS, STYLES, TEMPLATES
 
 
 def main():
+    """
+    Runs the commands defined in **makefile** for the `$ make run` command.
+    """
     # Compile/Transpile TypeScript source files
     for file in SCRIPTS.glob("*.ts"):
         os.system(f"tsc {file}")

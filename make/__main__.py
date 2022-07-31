@@ -1,8 +1,8 @@
 """
-Runs an imitation of the `$ make (build|run|clean)` command.
+Runs an imitation of the `$ make (build|clean|run)` command.
 
 Usage:
-- `$ python -m make (build|run|clean)`
+- `$ python -m make (build|clean|run)`
 """
 
 import sys
