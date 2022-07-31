@@ -1,5 +1,5 @@
 /**
- * Handles popup-style elements.
+ * Handles element animations.
  */
 
 /**
