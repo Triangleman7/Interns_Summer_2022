@@ -17,10 +17,16 @@ class TestBuild:
     Regression tests for the `$ make build` command.
     """
     def setup(self):
+        """
+        Run the `$ make build` command.
+        """
         process = subprocess.run(["make", "build"], check=True)
         assert process.returncode == 0
 
     def teardown(self):
+        """
+        Run the `$ make clean` command.
+        """
         process = subprocess.run(["make", "clean"], check=True)
         assert process.returncode == 0
 
@@ -76,12 +82,18 @@ class TestRun:
     Regression tests for the `$ make run` command.
     """
     def setup(self):
+        """
+        Run the `$ make build` and `$ make run` commands.
+        """
         process = subprocess.run(["make", "build"], check=True)
         assert process.returncode == 0
 
         self.process = subprocess.Popen(["make", "run"])
 
     def teardown(self):
+        """
+        Terminate the `$ make run` command and run the `$ make clean` command.
+        """
         self.process.terminate()
         self.process.wait()
 
@@ -145,6 +157,9 @@ class TestClean:
     Regression tests for the `$ make clean` command.
     """
     def setup(self):
+        """
+        Run the `$ make build` and `$ make clean` commands.
+        """
         process = subprocess.run(["make", "build"], check=True)
         assert process.returncode == 0
 

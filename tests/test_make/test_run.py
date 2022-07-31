@@ -18,12 +18,18 @@ class TestRun:
     Regression tests for the `$ python -m make run` command.
     """
     def setup(self):
+        """
+        Runs the `$ python -m make build` and `$ python -m make run` commands.
+        """
         process = subprocess.run(["python", "-m", "make", "build"], check=True)
         assert process.returncode == 0
 
         self.process = subprocess.Popen(["python", "-m", "make", "run"])
 
     def teardown(self):
+        """
+        Terminate the `$ python -m make run` command and run the `$ python -m make clean` command.
+        """
         self.process.terminate()
         self.process.wait()
 
@@ -77,6 +83,7 @@ class TestRun:
 
     def test_localhost(self):
         """
+        Tests for successful running of the server by making a GET request to the localhost port.
         """
         with requests.get(URL) as response:
             assert response.status_code == 200
