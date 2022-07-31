@@ -2,6 +2,7 @@
 Regression tests for **client/index.html**.
 """
 
+import datetime
 import itertools
 import os
 import pathlib
@@ -170,6 +171,7 @@ class TestIndex:
 
         input_fields = [
             "image-upload",
+            "image-timestamp",
             "caption-text",
             "caption-casing",
             "submit-form"
@@ -181,7 +183,7 @@ class TestIndex:
 
         # Check <input>/<select> descendant elements
         input_elements = element.query_selector_all("input, select")
-        assert len(input_elements) == 4
+        assert len(input_elements) == 5
         for idx, elem in enumerate(input_elements):
             name = elem.get_attribute("name")
             assert name is not None, idx
@@ -202,6 +204,21 @@ class TestIndex:
         # Check <input> element properties
         assert element.get_attribute("type") == "file"
         assert element.get_attribute("accept") == "image/jpeg"
+
+    def test_image_timestamp(self, page):
+        """
+        `form#primary input[name='image-timestamp']
+
+        :type page: playwright.sync_api._generated.Page
+        """
+        css = "form#primary input[name='image-timestamp']"
+
+        # Check uniqueness of `css`
+        assert len(page.query_selector_all(css)) == 1
+        element = page.query_selector(css)
+
+        # Check <input> element properties
+        assert element.get_attribute("type") == "datetime-local"
 
     def test_caption_text(self, page):
         """
@@ -278,10 +295,13 @@ class TestIndex:
             assert not elem.is_visible(), idx       # Popup text is not visible
 
     @pytest.mark.parametrize(
-        "image_upload,caption_text,caption_casing",
+        "image_upload,image_timestamp,caption_text,caption_casing",
         itertools.product(
             [
                 *list(pathlib.Path("client", "images").glob("*.jpg"))
+            ],
+            [
+                datetime.datetime.now()
             ],
             [
                 string.ascii_letters, string.ascii_lowercase, string.ascii_uppercase,
@@ -295,10 +315,15 @@ class TestIndex:
             ]
         )
     )
-    def test_form_submission(self, page, image_upload: str, caption_text: str, caption_casing: str):
+    def test_form_submission(
+        self, page,
+        image_upload: str, image_timestamp: datetime.datetime,
+        caption_text: str, caption_casing: str
+    ):
         """
         :type page: playwright.sync_api._generated.Page
         :param image_upload: The value to fill the `input[name='image-upload']` field
+        :param image_timestamp: The value to fill the `input[name='image-timestamp']` field
         :param caption_text: The value to fill the `input[name='caption-text']` field
         :param caption_casing: The value to fill the `select[name='caption-casing']` field
         """
@@ -306,18 +331,27 @@ class TestIndex:
         out_docx = path / "index.docx"
         out_html = path / "index.html"
 
-        page.set_input_files(
-            "form#primary input[name='image-upload']", image_upload
-        )
-        page.fill(
-            "form#primary input[name='caption-text']", caption_text
-        )
-        page.select_option(
-            "form#primary select[name='caption-casing']", caption_casing
-        )
-        page.click(
-            "form#primary input[name='submit-form']"
-        )
+        input_elements = {
+            "image-upload": page.query_selector("form#primary input[name='image-upload']"),
+            "image-timestamp": page.query_selector("form#primary input[name='image-timestamp']"),
+            "caption-text": page.query_selector("form#primary input[name='caption-text']"),
+            "caption-casing": page.query_selector("form#primary select[name='caption-casing']"),
+            "submit-form": page.query_selector("form#primary input[name='submit-form']")
+        }
+
+        input_elements["image-upload"].set_input_files(image_upload)
+
+        input_elements["image-timestamp"].click()
+        input_elements["image-timestamp"].type(image_timestamp.strftime("%m%d%Y"))
+        input_elements["image-timestamp"].press("Tab")
+        input_elements["image-timestamp"].type(image_timestamp.strftime("%I%M%p"))
+
+        input_elements["caption-text"].fill(caption_text)
+
+        input_elements["caption-casing"].select_option(caption_casing)
+
+        input_elements["submit-form"].click()
+
         page.wait_for_event("requestfinished")
 
         assert path.exists()
