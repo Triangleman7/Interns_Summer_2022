@@ -28,6 +28,7 @@ func main() {
 
 	// Register handler functions
 	http.HandleFunc("/", server.ProcessRootRequest)
+	http.HandleFunc("/forms/primary", server.ProcessFormPrimaryRequest)
 
 	// Serve necessary directories
 	var serveDirectories []string = []string{"client", "temp"}

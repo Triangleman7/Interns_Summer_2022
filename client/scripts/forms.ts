@@ -14,12 +14,14 @@ formPrimary.addEventListener("submit", handleFormPrimary);
  * @param {SubmitEvent} event   Internally passed event received on form submission invocation.
  */
 function handleFormPrimary(event: SubmitEvent) {
+    let path: string = "forms/primary";
+
     // Disable default action
     event.preventDefault();
 
     // Configure a POST request
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/");
+    xhr.open("POST", path);
 
     // Prepare form data
     let data = new FormData(formPrimary);
@@ -28,7 +30,7 @@ function handleFormPrimary(event: SubmitEvent) {
     xhr.send(data);
 
     // Listen for 'load' event
-    xhr.onload = () => { console.log(xhr.responseText); }
+    xhr.onload = () => { console.log(`${path}: ${xhr.status}`); }
 }
 
 
