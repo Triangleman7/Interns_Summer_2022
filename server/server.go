@@ -78,35 +78,56 @@ func SetupCloseHandler() {
 	}()
 }
 
-// ProcessRootRequest processes and responds to all requests made to the root url ("/"). Only GET
-// and POST requests are accepted and raises an error if other requests are received.
-//
-// Raises any errors encountered while handling POST requests.
-func ProcessRootRequest(w http.ResponseWriter, r *http.Request) {
-	var err error
-
-	// Assert URL path directs to the root address
-	if r.URL.Path != "/" {
+func requestCheck(w http.ResponseWriter, r *http.Request, path string) {
+	if r.URL.Path != path {
 		http.Error(w, "404 not found.", http.StatusNotFound)
 		return
 	}
 
-	log.Printf("Received request: %s", r.Method)
-	log.Printf("Request headers: %v", r.Header)
+	log.Printf("%s - Received request: %s", path, r.Method)
+	log.Printf("%s - Request headers: %v", path, r.Header)
+}
+
+// ProcessRootRequest processes and responds to all requests made to the root URL ("/"). Only GET
+// requests are supported; raises an error if other request types are received.
+func ProcessRootRequest(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var path string = "/"
+	requestCheck(w, r, path)
+
 	switch r.Method {
 
 	case "GET":
-		// Serve the root HTML document
 		http.ServeFile(w, r, "client/index.html")
 
+	default:
+		err = errors.New("only GET requests supported")
+	}
+
+	if err != nil {
+		log.Panic(err)
+	}
+}
+
+// ProcessFormPrimaryRequest processes and responds to all POST requests made to the form
+// `form#primary` ("/forms/primary"). Only POST requests are supported; raises an error if other
+// request types are received.
+//
+// Raises any errors encountered while handling POST requests.
+func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var path string = "/forms/primary"
+	requestCheck(w, r, path)
+
+	switch r.Method {
+
 	case "POST":
-		// Handle form submission to element form#primary
-		var form FormPrimary
-		form.form.SetupOutput("form-primary")
-		err = form.handle(w, r)
+		var formPrimary FormPrimary
+		formPrimary.form.SetupOutput("form-primary")
+		err = formPrimary.handle(w, r)
 
 	default:
-		err = errors.New("only GET and POST requests supported")
+		err = errors.New("only GEt requests supported")
 	}
 
 	if err != nil {

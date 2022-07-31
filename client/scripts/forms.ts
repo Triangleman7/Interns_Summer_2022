@@ -19,7 +19,7 @@ function handleFormPrimary(event: SubmitEvent) {
 
     // Configure a POST request
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/");
+    xhr.open("POST", "/forms/primary");
 
     // Prepare form data
     let data = new FormData(formPrimary);
@@ -28,7 +28,7 @@ function handleFormPrimary(event: SubmitEvent) {
     xhr.send(data);
 
     // Listen for 'load' event
-    xhr.onload = () => { console.log(xhr.responseText); }
+    xhr.onload = () => { console.log(xhr.status); }
 }
 
 
