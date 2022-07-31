@@ -5,7 +5,7 @@
         <link rel="icon" href="/client/images/favicon.ico"/>
         <title>Interns Summer 2022</title>
         <script type="text/javascript" src="/client/scripts/forms.js" defer></script>
-        <script type="text/javascript" src="/client/scripts/popups.js" defer></script>
+        <script type="text/javascript" src="/client/scripts/animations.js" defer></script>
         <link rel="stylesheet" type="text/css" href="/client/styles/styles.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
 
@@ -60,7 +60,7 @@
                         <hr class="section-divider">
                         <div class="form-group image-upload">
                             <label for="image-upload">Image Upload</label>
-                            <input class="form-control" type="file" name="image-upload" accept="image/jpeg">
+                            <input class="form-control" type="file" name="image-upload" accept="image/jpeg" required>
                             <div class="popup" onmouseover="popupImageUpload.show()" onmouseleave="popupImageUpload.hide()">
                                 <img class="info" src="/client/images/info-icon.png">
                                 <span id="primary-image-upload" class="popuptext">
@@ -80,6 +80,14 @@
                         </div>
                         <hr>
                         <h3>Image Transformations</h3>
+                        <div class="form-group image-timestamp">
+                            <label for="image-timestamp">Image Timestamp</label>
+                            <input class="form-control" type="datetime-local" name="image-timestamp">
+                            <div class="popup" onmouseover="popupImageTimestamp.show()" onmouseleave="popupImageTimestamp.hide()">
+                                <img class="info" src="/client/images/info-icon.png">
+                                <span id="primary-image-timestamp" class="popuptext">Defaults to the current datetime.</span>
+                            </div>
+                        </div>
                         <hr class="section-divider">
                         <div class="form-group caption-text">
                             <label for="caption-text">Image Caption</label>

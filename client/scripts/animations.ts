@@ -53,5 +53,6 @@ class Popup {
 }
 
 const popupImageUpload = new Popup("primary-image-upload");
+const popupImageTimestamp = new Popup("primary-image-timestamp");
 const popupCaptionCasing = new Popup("primary-caption-casing");
 const popupFormSubmit = new Popup("primary-form-submit");

@@ -374,7 +374,7 @@ img.info {
 }
   
 /* Toggle this class when clicking on the popup container (hide and show the popup) */
-.popup .show {
+.popup .popuptext.show {
     visibility: visible;
     -webkit-animation: popupFadeIn 1s;
     animation: popupFadeIn 1s

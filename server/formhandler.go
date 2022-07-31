@@ -5,6 +5,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/Triangleman7/Interns_Summer_2022/resources/msword"
 	"github.com/Triangleman7/Interns_Summer_2022/server/docx"
@@ -90,8 +91,9 @@ func (f *Form) OutImages() (path string) {
 type FormPrimary struct {
 	form Form
 
-	primaryImage string // {primary-image}
-	primaryText  string // {primary-text}
+	imageUpload    string // {primary-image}
+	imageTimestamp string // {primary-image-timestamp}
+	captionText    string // {primary-text}
 }
 
 func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error) {
@@ -116,6 +118,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 		log.Printf("%s - Empty form <input> field: %s", f.form.Name, css)
 		return
 	}
+	var imageTimestamp string = r.FormValue("image-timestamp")
 	log.Printf("%s - Processed form <input> fields", f.form.Name)
 
 	// Process {primary-image} output field
@@ -125,14 +128,23 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	if err != nil {
 		return
 	}
-	f.primaryImage = filepath.Join(f.form.OutImages(), imageUploadHeader.Filename)
-	err = CopyFile(uploadpath, f.primaryImage)
+	f.imageUpload = filepath.Join(f.form.OutImages(), imageUploadHeader.Filename)
+	err = CopyFile(uploadpath, f.imageUpload)
 	if err != nil {
 		return
 	}
 
+	// Process {primary-image-timestamp} output field
+	var timeFormat = "2006-01-02T03:04"
+	_, err = time.Parse(timeFormat, imageTimestamp)
+	if err != nil {
+		f.imageTimestamp = imageTimestamp
+	} else {
+		f.imageTimestamp = time.Now().Format(timeFormat)
+	}
+
 	// Process {primary-text} output field
-	f.primaryText = FormatValue(captionText, captionCasing)
+	f.captionText = FormatValue(captionText, captionCasing)
 
 	// Write output
 	err = f.outputDOCX()
@@ -164,8 +176,8 @@ func (f *FormPrimary) outputDOCX() (err error) {
 	}
 	defer reader.Close()
 
-	docx.Image(outDOCX, 1, f.primaryImage)
-	docx.Paragraph(outDOCX, "caption-text", f.primaryText)
+	docx.Image(outDOCX, 1, f.imageUpload)
+	docx.Paragraph(outDOCX, "caption-text", f.captionText)
 
 	err = docx.WriteDOCX(outpath, outDOCX)
 	if err != nil {
@@ -187,8 +199,9 @@ func (f *FormPrimary) outputHTML() (err error) {
 		return
 	}
 
-	html.Image(&outHTML, "image-upload", f.primaryImage)
-	html.Paragraph(&outHTML, "caption-text", f.primaryText)
+	html.Image(&outHTML, "image-upload", f.imageUpload)
+	html.Paragraph(&outHTML, "image-timestamp", f.imageTimestamp)
+	html.Paragraph(&outHTML, "caption-text", f.captionText)
 
 	err = html.WriteHTML(outpath, outHTML)
 	if err != nil {
