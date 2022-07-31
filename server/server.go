@@ -4,6 +4,7 @@ Package server provides support for hosting, running, and handling a local serve
 package server
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -119,6 +120,8 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 	var path string = "/forms/primary"
 	requestCheck(w, r, path)
 
+	payload := make(map[string]interface{})
+
 	switch r.Method {
 
 	case "POST":
@@ -131,6 +134,12 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
+		payload["success"] = 0
 		log.Panic(err)
+	} else {
+		payload["success"] = 1
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(payload)
 }
