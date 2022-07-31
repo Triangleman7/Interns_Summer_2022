@@ -27,7 +27,7 @@ func main() {
 	server.SetupCloseHandler()
 
 	// Register handler functions
-	http.HandleFunc("/", server.ProcessRootResponse)
+	http.HandleFunc("/", server.ProcessRootRequest)
 
 	// Serve necessary directories
 	var serveDirectories []string = []string{"client", "temp"}

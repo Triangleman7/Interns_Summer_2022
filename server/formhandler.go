@@ -108,29 +108,34 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	}
 	log.Print("Parsed form submission")
 
-	// Process element input[name="primary-text"]
-	var primaryText string = r.FormValue("caption-text")
-	var primaryTextCasing string = r.FormValue("caption-casing")
-	f.primaryText = FormatValue(primaryText, primaryTextCasing)
+	// Process form <input> fields
+	var captionText string = r.FormValue("caption-text")
+	var captionCasing string = r.FormValue("caption-casing")
+	var imageUploadFile multipart.File
+	var imageUploadHeader *multipart.FileHeader
+	imageUploadFile, imageUploadHeader, err = r.FormFile("image-upload")
+	if err != nil {
+		var css string = "form#primary input[name='image-upload']"
+		log.Printf("Empty form <input> field: %s", css)
+		return
+	}
+	log.Printf("Processed form <input> fields")
 
-	// Process element input[name="primary-image"]
-	var file multipart.File
-	var header *multipart.FileHeader
-	file, header, err = r.FormFile("image-upload")
-	if err != nil {
-		return
-	}
-	defer file.Close()
+	// Process {primary-image} output field
+	defer imageUploadFile.Close()
 	var uploadpath string
-	uploadpath, err = UploadFile(file, header)
+	uploadpath, err = UploadFile(imageUploadFile, imageUploadHeader)
 	if err != nil {
 		return
 	}
-	f.primaryImage = filepath.Join(f.form.OutImages(), header.Filename)
+	f.primaryImage = filepath.Join(f.form.OutImages(), imageUploadHeader.Filename)
 	err = CopyFile(uploadpath, f.primaryImage)
 	if err != nil {
 		return
 	}
+
+	// Process {primary-text} output field
+	f.primaryText = FormatValue(captionText, captionCasing)
 
 	// Write output
 	err = f.outputDOCX()

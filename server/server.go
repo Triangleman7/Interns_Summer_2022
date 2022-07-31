@@ -78,11 +78,11 @@ func SetupCloseHandler() {
 	}()
 }
 
-// ProcessRootResponse processes and responds to all requests made to the root url ("/"). Only GET
+// ProcessRootRequest processes and responds to all requests made to the root url ("/"). Only GET
 // and POST requests are accepted and raises an error if other requests are received.
 //
 // Raises any errors encountered while handling POST requests.
-func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
+func ProcessRootRequest(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	// Assert URL path directs to the root address
