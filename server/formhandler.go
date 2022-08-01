@@ -96,7 +96,9 @@ type FormPrimary struct {
 
 	imageUpload    string
 	imageTimestamp string
+	imageAlign     string
 	captionText    string
+	captionAlign   string
 	captionStyling map[string]bool
 }
 
@@ -149,6 +151,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 
 	// Process {primary-text} output field
 	f.captionText = FormatValue(captionText, captionCasing)
+	f.captionAlign = r.FormValue("caption-align")
 	f.captionStyling = make(map[string]bool)
 	for _, style := range []string{
 		"italics", "bold", "underline", "strikethrough",
@@ -248,9 +251,21 @@ func (f *FormPrimary) outputSCSS() (err error) {
 		return
 	}
 
-	scss.Rule(&outSCSS, "img.image-upload", map[string]string{"margin": "0 auto"})
-	scss.Rule(&outSCSS, "p.image-timestamp", map[string]string{"text-align": "center"})
-	scss.Rule(&outSCSS, "p.caption-text", map[string]string{"text-align": "center"})
+	scss.Rule(
+		&outSCSS,
+		"img.image-upload",
+		map[string]string{"margin": "0 auto"},
+	)
+	scss.Rule(
+		&outSCSS,
+		"p.image-timestamp",
+		map[string]string{"text-align": "center"},
+	)
+	scss.Rule(
+		&outSCSS,
+		"p.caption-text",
+		map[string]string{"text-align": f.captionAlign},
+	)
 
 	err = scss.WriteSCSS(outpath, outSCSS)
 	if err != nil {
