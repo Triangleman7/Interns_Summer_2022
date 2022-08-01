@@ -1,15 +1,18 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"mime/multipart"
 	"net/http"
+	"os/exec"
 	"path/filepath"
 	"time"
 
 	"github.com/Triangleman7/Interns_Summer_2022/resources/msword"
 	"github.com/Triangleman7/Interns_Summer_2022/server/docx"
 	"github.com/Triangleman7/Interns_Summer_2022/server/html"
+	"github.com/Triangleman7/Interns_Summer_2022/server/scss"
 )
 
 type FormOutput interface {
@@ -74,13 +77,13 @@ func (f *Form) OutHTML() (path string) {
 }
 
 // TemplateCSS returns the path to the template CSS stylesheet.
-func (f *Form) TemplateCSS() (path string) {
-	return f.GetTemplate("styles.css")
+func (f *Form) TemplateSCSS() (path string) {
+	return f.GetTemplate("styles.scss")
 }
 
 // OutCSS returns the path to the output CSS stylesheet.
-func (f *Form) OutCSS() (path string) {
-	return f.GetOut("styles.css")
+func (f *Form) OutSCSS() (path string) {
+	return f.GetOut("styles.scss")
 }
 
 // OutImages returns the path to the output images/ directory.
@@ -166,11 +169,21 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	if err != nil {
 		return
 	}
-	err = f.copyCSS()
+	err = f.outputSCSS()
 	if err != nil {
 		return
 	}
 	log.Printf("%s - Successfully wrote all output: %s", f.form.Name, OUTPUTDIRECTORY)
+
+	// Transpile output SCSS to CSS
+	var cmd *exec.Cmd = exec.Command(
+		"sass", fmt.Sprintf("%s:%s", f.form.OutDir(), f.form.OutDir()),
+	)
+	err = cmd.Run()
+	if err != nil {
+		return
+	}
+	log.Printf("%s - Successfully compiled SCSS to CSS: %s", f.form.Name, f.form.OutDir())
 
 	return
 }
@@ -225,6 +238,26 @@ func (f *FormPrimary) outputHTML() (err error) {
 	return
 }
 
-func (f *FormPrimary) copyCSS() (err error) {
-	return CopyFile(f.form.TemplateCSS(), f.form.OutCSS())
+func (f *FormPrimary) outputSCSS() (err error) {
+	var templatepath string = f.form.TemplateSCSS()
+	var outpath string = f.form.OutSCSS()
+
+	var outSCSS string
+	outSCSS, err = scss.ReadTemplate(templatepath)
+	if err != nil {
+		return
+	}
+
+	scss.Rule(&outSCSS, "img.image-upload", map[string]string{"margin": "0 auto"})
+	scss.Rule(&outSCSS, "p.image-timestamp", map[string]string{"text-align": "center"})
+	scss.Rule(&outSCSS, "p.caption-text", map[string]string{"text-align": "center"})
+
+	err = scss.WriteSCSS(outpath, outSCSS)
+	if err != nil {
+		return
+	}
+
+	log.Printf("%s - SCSS output written to %s", f.form.Name, outpath)
+
+	return
 }
