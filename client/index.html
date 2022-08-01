@@ -67,19 +67,12 @@
                                     Supported File Types
                                     <ul>
                                         <li>
-                                            <span class="key">JPEG</span>
-                                            (
-                                            <span class="value">*.jpeg</span>
-                                            ,
-                                            <span class="value">*.jpg</span>
-                                            )
+                                            <span class="key">JPEG</span>(<span class="value">*.jpeg</span>,<span class="value">*.jpg</span>)
                                         </li>
                                     </ul>
                                 </span>
                             </div>
                         </div>
-                        <hr>
-                        <h3>Image Transformations</h3>
                         <div class="form-group image-timestamp">
                             <label for="image-timestamp">Image Timestamp</label>
                             <input class="form-control" type="datetime-local" name="image-timestamp">
@@ -88,6 +81,17 @@
                                 <span id="primary-image-timestamp" class="popuptext">Defaults to the current datetime.</span>
                             </div>
                         </div>
+                        <hr>
+                        <h3>Image Transformations</h3>
+                        <div class="form-group image-align">
+                            <label for="image-align">Image Align</label>
+                            <select class="form-control" name="image-align">
+                                <option value="">Default</option>
+                                <option value="left">Left</option>
+                                <option value="center">Center</option>
+                                <option value="right">Right</option>
+                            </select>
+                        </div>
                         <hr class="section-divider">
                         <div class="form-group caption-text">
                             <label for="caption-text">Image Caption</label>
@@ -95,6 +99,15 @@
                         </div>
                         <hr>
                         <h3>Caption Transformations</h3>
+                        <div class="form-group caption-align">
+                            <label for="caption-align">Image Align</label>
+                            <select class="form-control" name="caption-align">
+                                <option value="">Default</option>
+                                <option value="left">Left</option>
+                                <option value="center">Center</option>
+                                <option value="right">Right</option>
+                            </select>
+                        </div>
                         <div class="form-group caption-operation">
                             <label for="caption-casing">Caption Casing</label>
                             <select class="form-control" name="caption-casing">
@@ -118,64 +131,40 @@
                                     Supported Cases
                                     <ul>
                                         <li>
-                                            <span class="key">Lowercase</span>
-                                            :
-                                            <span class="value">lowercase</span>
+                                            <span class="key">Lowercase</span>:<span class="value">lowercase</span>
                                         </li>
                                         <li>
-                                            <span class="key">Uppercase</span>
-                                            :
-                                            <span class="value">UPPERCASE</span>
+                                            <span class="key">Uppercase</span>:<span class="value">UPPERCASE</span>
                                         </li>
                                         <li>
-                                            <span class="key">Alternating Case</span>
-                                            :
-                                            <span class="value">AlTeRnAtInG CaSe</span>
+                                            <span class="key">Alternating Case</span>:<span class="value">AlTeRnAtInG CaSe</span>
                                         </li>
                                         <li>
-                                            <span class="key">Camel Case</span>
-                                            :
-                                            <span class="value">camelCase</span>
+                                            <span class="key">Camel Case</span>:<span class="value">camelCase</span>
                                         </li>
                                         <li>
-                                            <span class="key">Dot Case</span>
-                                            :
-                                            <span class="value">dot.case</span>
+                                            <span class="key">Dot Case</span>:<span class="value">dot.case</span>
                                         </li>
                                         <li>
-                                            <span class="key">Kebab Case</span>
-                                            :
-                                            <span class="value">kebab-case</span>
+                                            <span class="key">Kebab Case</span>:<span class="value">kebab-case</span>
                                         </li>
                                         <li>
-                                            <span class="key">Opposite Case</span>
-                                            :
-                                            <span class="value">oPPOSITE cASE</span>
+                                            <span class="key">Opposite Case</span>:<span class="value">oPPOSITE cASE</span>
                                         </li>
                                         <li>
-                                            <span class="key">Pascal Case</span>
-                                            :
-                                            <span class="value">PascalCase</span>
+                                            <span class="key">Pascal Case</span>:<span class="value">PascalCase</span>
                                         </li>
                                         <li>
-                                            <span class="key">Sarcastic Case</span>
-                                            :
-                                            <span class="value">sArCaStIc cAsE</span>
+                                            <span class="key">Sarcastic Case</span>:<span class="value">sArCaStIc cAsE</span>
                                         </li>
                                         <li>
-                                            <span class="key">Snake Case</span>
-                                            :
-                                            <span class="value">snake_case</span>
+                                            <span class="key">Snake Case</span>:<span class="value">snake_case</span>
                                         </li>
                                         <li>
-                                            <span class="key">Start Case</span>
-                                            :
-                                            <span class="value">Start Case</span>
+                                            <span class="key">Start Case</span>:<span class="value">Start Case</span>
                                         </li>
                                         <li>
-                                            <span class="key">Train Case</span>
-                                            :
-                                            <span class="value">Train-Case</span>
+                                            <span class="key">Train Case</span>:<span class="value">Train-Case</span>
                                         </li>
                                     </ul>
                                 </span>
