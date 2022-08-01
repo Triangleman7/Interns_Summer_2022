@@ -59,7 +59,7 @@ func PTextDecoration(strikethrough bool, underline bool) (textDecoration string)
 	} else if underline {
 		return "underline"
 	} else {
-		return ""
+		return "normal"
 	}
 }
 
