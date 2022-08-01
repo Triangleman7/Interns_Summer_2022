@@ -155,7 +155,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	f.captionAlign = r.FormValue("caption-align")
 	f.captionStyling = make(map[string]bool)
 	for _, style := range []string{
-		"italics", "bold", "underline", "strikethrough",
+		"italic", "bold", "underline", "strikethrough",
 	} {
 		if r.FormValue(style) == "on" {
 			f.captionStyling[style] = true
@@ -254,36 +254,33 @@ func (f *FormPrimary) outputSCSS() (err error) {
 		return
 	}
 
-	var imageUploadMargin string
-	switch f.imageAlign {
-	// Left alignment
-	case "left":
-		imageUploadMargin = "0 auto 0 0"
-	// Right alignment
-	case "right":
-		imageUploadMargin = "0 0 0 auto"
-	// Center alignment
-	case "center":
-		imageUploadMargin = "0 auto"
-	// Default alignment
-	default:
-		imageUploadMargin = "inherit"
-	}
-
 	scss.Rule(
 		&outSCSS,
 		"img.image-upload",
-		map[string]string{"display": "block", "margin": imageUploadMargin, "width": "50%"},
+		map[string]string{
+			"display": "block",
+			"width": "50%",
+			"margin": scss.ImgMargin(f.imageAlign),
+		},
 	)
 	scss.Rule(
 		&outSCSS,
 		"p.image-timestamp",
-		map[string]string{"text-align": "center"},
+		map[string]string{
+			"text-align": f.ImageAlign,
+		},
 	)
 	scss.Rule(
 		&outSCSS,
 		"p.caption-text",
-		map[string]string{"text-align": f.captionAlign},
+		map[string]string{
+			"text-align": f.captionAlign,
+			"font-style": scss.PFontStyle(f.captionStyling["italic"]),
+			"font-weight": scss.PFontWeight(f.captionStyling["bold"]),
+			"text-decoration": scss.PTextDecoration(
+				f.captionStyling["strikethrough"], f.captionStyling["underline"],
+			),
+		},
 	)
 
 	err = scss.WriteSCSS(outpath, outSCSS)
