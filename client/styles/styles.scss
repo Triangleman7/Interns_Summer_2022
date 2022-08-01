@@ -245,6 +245,8 @@ $form-ph-text-color: #ccc;
 $form-text-color: #495057;
 $form-bg-color: #fff;
 
+$form-label-padding: 0px 0px 0px 10px;
+
 #content .form-container {
     float: left;
     position: relative;
@@ -268,6 +270,12 @@ $form-bg-color: #fff;
     font-family: inherit;
 }
 
+.form-container .form-group fieldset {
+    border: 1px solid rgba(25, 25, 25, 0.32);
+    background-clip: padding-box;
+    color: $form-text-color;
+}
+
 .form-container .form-group fieldset label {
     font-family: inherit;
     font-size: 1em;
@@ -275,18 +283,27 @@ $form-bg-color: #fff;
     color: rgba(0, 0, 0, 0.87);
 }
 
-.form-container .form-group label {
+.form-container .form-group fieldset legend {
+    padding: $form-label-padding;
     font-family: inherit;
     font-size: 1em;
     font-weight: bolder;
     color: rgba(0, 0, 0, 0.87);
 }
 
-.form-container .form-group legend {
+.form-container .form-group label {
+    padding: $form-label-padding;
     font-family: inherit;
     font-size: 1em;
     font-weight: bolder;
     color: rgba(0, 0, 0, 0.87);
+}
+
+.form-container .form-group input {
+    border: 1px solid rgba(25, 25, 25, 0.32);
+    background-clip: padding-box;
+    color: $form-text-color;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .form-container .form-group input::placeholder {
@@ -311,6 +328,8 @@ $form-bg-color: #fff;
     margin: 0.4rem;
 }
 
+.form-container .form-group input[type='datetime-local'] {}
+
 .form-container .form-group input[type='file'] {
     line-height: auto;
 }
@@ -329,12 +348,7 @@ $form-bg-color: #fff;
     cursor: pointer;
 }
 
-.form-container .form-group input[type='text'] {
-    border: 1px solid rgba(25, 25, 25, 0.32);
-    background-clip: padding-box;
-    color: $form-text-color;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
+.form-container .form-group input[type='text'] {}
 
 .form-container .form-group select {
     border: 1px solid rgba(25, 25, 25, 0.32);
