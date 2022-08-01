@@ -188,6 +188,7 @@ func (f *FormPrimary) outputDOCX() (err error) {
 	defer reader.Close()
 
 	docx.Image(outDOCX, 1, f.imageUpload)
+	docx.Paragraph(outDOCX, "image-timestamp", f.imageTimestamp)
 	docx.Paragraph(outDOCX, "caption-text", f.captionText)
 
 	err = docx.WriteDOCX(outpath, outDOCX)
