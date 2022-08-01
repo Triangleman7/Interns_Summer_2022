@@ -174,6 +174,10 @@ class TestIndex:
             "image-timestamp",
             "caption-text",
             "caption-casing",
+            "italics",
+            "bold",
+            "underline",
+            "strikethrough"
             "submit-form"
         ]
 
@@ -183,7 +187,7 @@ class TestIndex:
 
         # Check <input>/<select> descendant elements
         input_elements = element.query_selector_all("input, select")
-        assert len(input_elements) == 5
+        assert len(input_elements) == len(input_fields)
         for idx, elem in enumerate(input_elements):
             name = elem.get_attribute("name")
             assert name is not None, idx
@@ -191,7 +195,7 @@ class TestIndex:
 
     def test_image_upload(self, page):
         """
-        `form#primary input[name='image-upload']
+        `form#primary input[name='image-upload']`
 
         :type page: playwright.sync_api._generated.Page
         """
@@ -207,7 +211,7 @@ class TestIndex:
 
     def test_image_timestamp(self, page):
         """
-        `form#primary input[name='image-timestamp']
+        `form#primary input[name='image-timestamp']`
 
         :type page: playwright.sync_api._generated.Page
         """
@@ -222,7 +226,7 @@ class TestIndex:
 
     def test_caption_text(self, page):
         """
-        `form#primary input[name='caption-text']
+        `form#primary input[name='caption-text']`
 
         :type page: playwright.sync_api._generated.Page
         """
@@ -237,7 +241,7 @@ class TestIndex:
 
     def test_caption_casing(self, page):
         """
-        `form#primary select[name='caption-casing']
+        `form#primary select[name='caption-casing']`
 
         :type page: playwright.sync_api._generated.Page
         """
@@ -258,9 +262,31 @@ class TestIndex:
             "snake", "start", "train"
         }
 
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "italics", "bold", "underline", "strikethrough"
+        ]
+    )
+    def test_caption_styling(self, page, name: str):
+        """
+        `form#primary input[name='(bold|italics|strikethrough|underline)']`
+
+        :type page: playwright.sync_api._generated.Page
+        :param name: The `name` attribute of the <input> element
+        """
+        css = f"form#primary input[name='{name}']"
+
+        # Check uniqueness of items in `css`
+        assert len(page.query_selector_all(css)) == 1
+        element = page.query_selector(css)
+
+        # Check <input> element properties
+        element.get_attribute("type") == "checkbox"
+
     def test_submit_form(self, page):
         """
-        `form#primary input[name='submit-form']
+        `form#primary input[name='submit-form']`
 
         :type page: playwright.sync_api._generated.Page
         """
@@ -295,7 +321,7 @@ class TestIndex:
             assert not elem.is_visible(), idx       # Popup text is not visible
 
     @pytest.mark.parametrize(
-        "image_upload,image_timestamp,caption_text,caption_casing",
+        "image_upload,image_timestamp,caption_text,caption_casing,caption_styling",
         itertools.product(
             [
                 *list(pathlib.Path("client", "images").glob("*.jpg"))
@@ -312,13 +338,16 @@ class TestIndex:
                 "", "lower", "upper", "alternating", "camel",
                 "dot", "kebab", "opposite", "pascal", "sarcastic",
                 "snake", "start", "train"
-            ]
+            ],
+            [
+                True, False
+            ],
         )
     )
     def test_form_submission(
         self, page,
         image_upload: str, image_timestamp: datetime.datetime,
-        caption_text: str, caption_casing: str
+        caption_text: str, caption_casing: str, caption_styling: bool
     ):
         """
         :type page: playwright.sync_api._generated.Page
@@ -326,6 +355,7 @@ class TestIndex:
         :param image_timestamp: The value to fill the `input[name='image-timestamp']` field
         :param caption_text: The value to fill the `input[name='caption-text']` field
         :param caption_casing: The value to fill the `select[name='caption-casing']` field
+        :param caption_styling: The values to fill the `input[name='(bold|italics|strikethrough|underline)']` fields
         """
         path = pathlib.Path("out", "form-primary")
         out_docx = path / "index.docx"
@@ -336,6 +366,10 @@ class TestIndex:
             "image-timestamp": page.query_selector("form#primary input[name='image-timestamp']"),
             "caption-text": page.query_selector("form#primary input[name='caption-text']"),
             "caption-casing": page.query_selector("form#primary select[name='caption-casing']"),
+            "italics": page.query_selector("form#primary input[name='italics']"),
+            "bold": page.query_selector("form#primary input[name='bold']"),
+            "underline": page.query_selector("form#primary input[name='underline']"),
+            "strikethrough": page.query_selector("form#primary input[name='strikethrough']"),
             "submit-form": page.query_selector("form#primary input[name='submit-form']")
         }
 
@@ -349,6 +383,12 @@ class TestIndex:
         input_elements["caption-text"].fill(caption_text)
 
         input_elements["caption-casing"].select_option(caption_casing)
+
+        for name in ("italics", "bold", "underline", "strikethrough"):
+            if caption_styling:
+                input_elements[name].check()
+            else:
+                input_elements[name].uncheck()
 
         input_elements["submit-form"].click()
 
