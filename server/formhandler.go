@@ -125,7 +125,6 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 		log.Printf("%s - Empty form <input> field: %s", f.form.Name, css)
 		return
 	}
-	var imageTimestamp string = r.FormValue("image-timestamp")
 	log.Printf("%s - Processed form <input> fields", f.form.Name)
 
 	// Process {primary-image} output field
@@ -145,13 +144,16 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 
 	// Process {primary-image-timestamp} output field
 	var timeFormat = "2006-01-02T03:04"
-	_, err = time.Parse(timeFormat, imageTimestamp)
-	if imageTimestamp == "" {
+	var timestamp string = r.FormValue("image-timestamp")
+	var datetime time.Time
+	datetime, err = time.Parse(timeFormat, r.FormValue("image-timestamp"))
+	log.Print(timestamp)
+	if r.FormValue("image-timestamp") == "" {
 		f.imageTimestamp = time.Now().Format(timeFormat)
 	} else if err != nil {
-		f.imageTimestamp = imageTimestamp
-	} else {
 		f.imageTimestamp = time.Now().Format(timeFormat)
+	} else {
+		f.imageTimestamp = datetime.Format(timeFormat)
 	}
 
 	// Process {primary-text} output field
