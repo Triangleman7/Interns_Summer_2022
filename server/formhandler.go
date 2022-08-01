@@ -295,6 +295,7 @@ func (f *FormPrimary) outputSCSS() (err error) {
 			"text-decoration": scss.PTextDecoration(
 				f.captionStyling["strikethrough"], f.captionStyling["underline"],
 			),
+			"overflow-wrap": "break-word",
 		},
 	)
 
