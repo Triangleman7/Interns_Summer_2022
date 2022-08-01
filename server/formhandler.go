@@ -95,6 +95,7 @@ type FormPrimary struct {
 	form Form
 
 	imageUpload    string
+	imageScale     string
 	imageTimestamp string
 	imageAlign     string
 	captionText    string
@@ -139,6 +140,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	if err != nil {
 		return
 	}
+	f.imageScale = r.FormValue("image-scale")
 	f.imageAlign = r.FormValue("image-align")
 
 	// Process {primary-image-timestamp} output field
@@ -261,7 +263,7 @@ func (f *FormPrimary) outputSCSS() (err error) {
 		"div.container",
 		map[string]string{
 			"display": "block",
-			"width": "50%",
+			"width": fmt.Sprintf("%s%%", f.imageScale),
 			"margin": scss.ImgMargin(f.imageAlign),
 		},
 	)
