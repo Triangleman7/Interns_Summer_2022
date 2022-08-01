@@ -258,7 +258,7 @@ func (f *FormPrimary) outputSCSS() (err error) {
 
 	scss.Rule(
 		&outSCSS,
-		"img.image-upload",
+		"div.container",
 		map[string]string{
 			"display": "block",
 			"width": "50%",
@@ -267,9 +267,17 @@ func (f *FormPrimary) outputSCSS() (err error) {
 	)
 	scss.Rule(
 		&outSCSS,
+		"img.image-upload",
+		map[string]string{
+			"height": "100%",
+			"width": "100%",
+		},
+	)
+	scss.Rule(
+		&outSCSS,
 		"p.image-timestamp",
 		map[string]string{
-			"text-align": f.imageAlign,
+			"text-align": "center",
 			"font-family": "monospace",
 		},
 	)
