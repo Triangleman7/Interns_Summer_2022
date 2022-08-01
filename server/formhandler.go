@@ -91,9 +91,10 @@ func (f *Form) OutImages() (path string) {
 type FormPrimary struct {
 	form Form
 
-	imageUpload    string // {primary-image}
-	imageTimestamp string // {primary-image-timestamp}
-	captionText    string // {primary-text}
+	imageUpload    string
+	imageTimestamp string
+	captionText    string
+	captionStyling map[string]bool
 }
 
 func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error) {
@@ -145,6 +146,16 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 
 	// Process {primary-text} output field
 	f.captionText = FormatValue(captionText, captionCasing)
+	f.captionStyling = make(map[string]bool)
+	for _, style := range []string{
+		"italics", "bold", "underline", "strikethrough",
+	} {
+		if r.FormValue(style) == "on" {
+			f.captionStyling[style] = true
+		} else {
+			f.captionStyling[style] = false
+		}
+	}
 
 	// Write output
 	err = f.outputDOCX()

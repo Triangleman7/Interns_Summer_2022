@@ -268,7 +268,21 @@ $form-bg-color: #fff;
     font-family: inherit;
 }
 
+.form-container .form-group fieldset label {
+    font-family: inherit;
+    font-size: 1em;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.87);
+}
+
 .form-container .form-group label {
+    font-family: inherit;
+    font-size: 1em;
+    font-weight: bolder;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.form-container .form-group legend {
     font-family: inherit;
     font-size: 1em;
     font-weight: bolder;
@@ -290,6 +304,11 @@ $form-bg-color: #fff;
     font-size: 1rem;
     line-height: 1.5rem;
     color: $form-text-color;
+}
+
+.form-container .form-group input[type='checkbox'] {
+    padding: 1rem;
+    margin: 0.4rem;
 }
 
 .form-container .form-group input[type='file'] {
