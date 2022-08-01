@@ -144,7 +144,9 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	// Process {primary-image-timestamp} output field
 	var timeFormat = "2006-01-02T03:04"
 	_, err = time.Parse(timeFormat, imageTimestamp)
-	if err != nil {
+	if imageTimestamp == "" {
+		f.imageTimestamp = time.Now().Format(timeFormat)
+	} else if err != nil {
 		f.imageTimestamp = imageTimestamp
 	} else {
 		f.imageTimestamp = time.Now().Format(timeFormat)
@@ -267,7 +269,8 @@ func (f *FormPrimary) outputSCSS() (err error) {
 		&outSCSS,
 		"p.image-timestamp",
 		map[string]string{
-			"text-align": f.ImageAlign,
+			"text-align": f.imageAlign,
+			"font-family": "monospace",
 		},
 	)
 	scss.Rule(
