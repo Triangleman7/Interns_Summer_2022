@@ -139,6 +139,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	if err != nil {
 		return
 	}
+	f.imageAlign = r.FormValue("image-align")
 
 	// Process {primary-image-timestamp} output field
 	var timeFormat = "2006-01-02T03:04"
@@ -162,6 +163,8 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 			f.captionStyling[style] = false
 		}
 	}
+
+	log.Printf("%s - Processed all form input: %v", f.form.Name, f)
 
 	// Write output
 	err = f.outputDOCX()
@@ -251,10 +254,26 @@ func (f *FormPrimary) outputSCSS() (err error) {
 		return
 	}
 
+	var imageUploadMargin string
+	switch f.imageAlign {
+	// Left alignment
+	case "left":
+		imageUploadMargin = "0 auto 0 0"
+	// Right alignment
+	case "right":
+		imageUploadMargin = "0 0 0 auto"
+	// Center alignment
+	case "center":
+		imageUploadMargin = "0 auto"
+	// Default alignment
+	default:
+		imageUploadMargin = "inherit"
+	}
+
 	scss.Rule(
 		&outSCSS,
 		"img.image-upload",
-		map[string]string{"margin": "0 auto"},
+		map[string]string{"display": "block", "margin": imageUploadMargin, "width": "50%"},
 	)
 	scss.Rule(
 		&outSCSS,
