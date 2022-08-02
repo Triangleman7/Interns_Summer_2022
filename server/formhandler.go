@@ -136,7 +136,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	for _, style := range []string{
 		"italic", "bold", "underline", "strikethrough",
 	} {
-		if r.FormValue(style) == "on" {
+		if r.FormValue(fmt.Sprintf("caption-styling-%s", style)) == "on" {
 			f.captionStyling[style] = true
 		} else {
 			f.captionStyling[style] = false
