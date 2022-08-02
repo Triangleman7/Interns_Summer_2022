@@ -1,13 +1,13 @@
 /*
-Package outputdata/docx handles writing Word Document (.DOCX) output.
+Package docx handles writing Word Document (.DOCX) output.
 */
 package docx
 
 import (
-	"github.com/Triangleman7/Interns_Summer_2022/resources/msword"
+	"../../resources/msword"
 )
 
-// ReadTemplate reads the template Word Document located at path and returns the a Word Document
+// ReadTemplate reads the template Word Document located at path and returns a Word Document
 // object (document).
 //
 // Raises any errors encountered while reading the Word Document.

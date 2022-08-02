@@ -10,9 +10,9 @@ import (
 // element that is sourced at src. Since output is a pointer, the replacement is performed
 // in-place.
 func Image(output *string, key string, src string) {
-	var field string = fmt.Sprintf("{%s}", key)
+	var field = fmt.Sprintf("{%s}", key)
 
-	var tag string = fmt.Sprintf(
+	var tag = fmt.Sprintf(
 		"<img class=\"%s\" src=\"%s\">",
 		key,
 		filepath.Join(RELROOT, src),
@@ -25,9 +25,9 @@ func Image(output *string, key string, src string) {
 // element that has content as the innter text. Since output is a pointer, the replacement is
 // performed in-place.
 func Paragraph(output *string, key string, content string) {
-	var field string = fmt.Sprintf("{%s}", key)
+	var field = fmt.Sprintf("{%s}", key)
 
-	var tag string = fmt.Sprintf(
+	var tag = fmt.Sprintf(
 		"<p class=\"%s\">%s</p>",
 		key,
 		content,

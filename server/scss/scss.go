@@ -1,5 +1,5 @@
 /*
-Package server/scss handles writing SCSS Document (.SCSS) output.
+Package scss handles writing SCSS Document (.SCSS) output.
 */
 package scss
 
@@ -35,7 +35,12 @@ func WriteSCSS(path string, content string) (err error) {
 	if err != nil {
 		return
 	}
-	defer file.Close()
+	defer func() {
+		var e = file.Close()
+		if e != nil {
+			panic(e)
+		}
+	}()
 
 	_, err = file.Write([]byte(content))
 	if err != nil {

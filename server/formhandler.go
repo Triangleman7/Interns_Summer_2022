@@ -7,12 +7,13 @@ import (
 	"net/http"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"time"
 
-	"github.com/Triangleman7/Interns_Summer_2022/resources/msword"
-	"github.com/Triangleman7/Interns_Summer_2022/server/docx"
-	"github.com/Triangleman7/Interns_Summer_2022/server/html"
-	"github.com/Triangleman7/Interns_Summer_2022/server/scss"
+	"../resources/msword"
+	"../server/docx"
+	"../server/html"
+	"../server/scss"
 )
 
 type FormOutput interface {
@@ -40,7 +41,7 @@ func (f *Form) SetupOutput(name string) {
 
 	DirectorySetup(f.OutDir(), FILEMODE)
 
-	var subdirs []string = []string{"images"}
+	var subdirs = []string{"images"}
 	for _, sd := range subdirs {
 		DirectorySetup(filepath.Join(f.OutDir(), sd), FILEMODE)
 	}
@@ -76,12 +77,12 @@ func (f *Form) OutHTML() (path string) {
 	return f.GetOut("index.html")
 }
 
-// TemplateCSS returns the path to the template CSS stylesheet.
+// TemplateSCSS returns the path to the template CSS stylesheet.
 func (f *Form) TemplateSCSS() (path string) {
 	return f.GetTemplate("styles.scss")
 }
 
-// OutCSS returns the path to the output CSS stylesheet.
+// OutSCSS returns the path to the output CSS stylesheet.
 func (f *Form) OutSCSS() (path string) {
 	return f.GetOut("styles.scss")
 }
@@ -94,13 +95,16 @@ func (f *Form) OutImages() (path string) {
 type FormPrimary struct {
 	form Form
 
-	imageUpload    string
-	imageScale     string
-	imageTimestamp string
-	imageAlign     string
-	captionText    string
-	captionAlign   string
-	captionStyling map[string]bool
+	fileUpload       string
+	fileUploadFile   multipart.File
+	fileUploadHeader *multipart.FileHeader
+	uploadTimestamp  string
+	imageScale       int
+	imageAlign       string
+	captionText      string
+	captionAlign     string
+	captionCasing    string
+	captionStyling   map[string]bool
 }
 
 func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error) {
@@ -115,51 +119,19 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	log.Printf("%s - Parsed form submission", f.form.Name)
 
 	// Process form <input> fields
-	var captionText string = r.FormValue("caption-text")
-	var captionCasing string = r.FormValue("caption-casing")
-	var imageUploadFile multipart.File
-	var imageUploadHeader *multipart.FileHeader
-	imageUploadFile, imageUploadHeader, err = r.FormFile("image-upload")
-	if err != nil {
-		var css string = "input[name='image-upload']"
-		log.Printf("%s - Empty form <input> field: %s", f.form.Name, css)
-		return
-	}
-	log.Printf("%s - Processed form <input> fields", f.form.Name)
-
-	// Process {primary-image} output field
-	defer imageUploadFile.Close()
-	var uploadpath string
-	uploadpath, err = UploadFile(imageUploadFile, imageUploadHeader)
+	f.fileUploadFile, f.fileUploadHeader, err = r.FormFile("file-upload")
 	if err != nil {
 		return
 	}
-	f.imageUpload = filepath.Join(f.form.OutImages(), imageUploadHeader.Filename)
-	err = CopyFile(uploadpath, f.imageUpload)
+	f.uploadTimestamp = r.FormValue("upload-timestamp")
+	f.imageScale, err = strconv.Atoi(r.FormValue("image-scale"))
 	if err != nil {
 		return
 	}
-	f.imageScale = r.FormValue("image-scale")
 	f.imageAlign = r.FormValue("image-align")
-
-	// Process {primary-image-timestamp} output field
-	var timeFormat = "2006-01-02T03:04"
-	var timestamp string = r.FormValue("image-timestamp")
-	var datetime time.Time
-	datetime, err = time.Parse(timeFormat, r.FormValue("image-timestamp"))
-	log.Print(timestamp)
-	if r.FormValue("image-timestamp") == "" {
-		f.imageTimestamp = time.Now().Format(timeFormat)
-	} else if err != nil {
-		f.imageTimestamp = time.Now().Format(timeFormat)
-	} else {
-		f.imageTimestamp = datetime.Format(timeFormat)
-	}
-
-	// Process {primary-text} output field
-	f.captionText = FormatValue(captionText, captionCasing)
+	f.captionText = r.FormValue("caption-text")
 	f.captionAlign = r.FormValue("caption-align")
-	f.captionStyling = make(map[string]bool)
+	f.captionCasing = r.FormValue("caption-casing")
 	for _, style := range []string{
 		"italic", "bold", "underline", "strikethrough",
 	} {
@@ -169,8 +141,43 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 			f.captionStyling[style] = false
 		}
 	}
+	log.Printf("%s - Processed form <input> fields: %v", f.form.Name, f.form)
 
-	log.Printf("%s - Processed all form input: %v", f.form.Name, f)
+	// Process {primary-image} output field
+	defer func() {
+		var e = f.fileUploadFile.Close()
+		if e != nil {
+			panic(e)
+		}
+	}()
+	var uploadpath string
+	uploadpath, err = UploadFile(f.fileUploadFile, f.fileUploadHeader)
+	if err != nil {
+		return
+	}
+	f.fileUpload = filepath.Join(f.form.OutImages(), f.fileUploadHeader.Filename)
+	err = CopyFile(uploadpath, f.fileUpload)
+	if err != nil {
+		return
+	}
+	log.Printf("%s - Processed output for field {primary-image}", f.form.Name)
+
+	// Process {primary-image-timestamp} output field
+	var timeFormat = "2006-01-02T03:04"
+	var datetime time.Time
+	datetime, err = time.Parse(timeFormat, f.uploadTimestamp)
+	if r.FormValue("image-timestamp") == "" {
+		f.uploadTimestamp = time.Now().Format(timeFormat)
+	} else if err != nil {
+		f.uploadTimestamp = time.Now().Format(timeFormat)
+	} else {
+		f.uploadTimestamp = datetime.Format(timeFormat)
+	}
+	log.Printf("%s - Processed output for field {primary-images-timestamp}", f.form.Name)
+
+	// Process {primary-text} output field
+	f.captionText = FormatValue(f.captionText, f.captionCasing)
+	log.Printf("%s - Processed output for field {primary-text}", f.form.Name)
 
 	// Write output
 	err = f.outputDOCX()
@@ -188,7 +195,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	log.Printf("%s - Successfully wrote all output: %s", f.form.Name, OUTPUTDIRECTORY)
 
 	// Transpile output SCSS to CSS
-	var cmd *exec.Cmd = exec.Command(
+	var cmd = exec.Command(
 		"sass", fmt.Sprintf("%s:%s", f.form.OutDir(), f.form.OutDir()),
 	)
 	err = cmd.Run()
@@ -201,8 +208,8 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 }
 
 func (f *FormPrimary) outputDOCX() (err error) {
-	var templatepath string = f.form.TemplateDOCX()
-	var outpath string = f.form.OutDOCX()
+	var templatepath = f.form.TemplateDOCX()
+	var outpath = f.form.OutDOCX()
 
 	var reader *msword.ReplaceDocx
 	var outDOCX *msword.Docx
@@ -210,10 +217,15 @@ func (f *FormPrimary) outputDOCX() (err error) {
 	if err != nil {
 		return
 	}
-	defer reader.Close()
+	defer func() {
+		var e = reader.Close()
+		if e != nil {
+			panic(e)
+		}
+	}()
 
-	docx.Image(outDOCX, 1, f.imageUpload)
-	docx.Paragraph(outDOCX, "image-timestamp", f.imageTimestamp)
+	docx.Image(outDOCX, 1, f.fileUpload)
+	docx.Paragraph(outDOCX, "image-timestamp", f.uploadTimestamp)
 	docx.Paragraph(outDOCX, "caption-text", f.captionText)
 
 	err = docx.WriteDOCX(outpath, outDOCX)
@@ -227,8 +239,8 @@ func (f *FormPrimary) outputDOCX() (err error) {
 }
 
 func (f *FormPrimary) outputHTML() (err error) {
-	var templatepath string = f.form.TemplateHTML()
-	var outpath string = f.form.OutHTML()
+	var templatepath = f.form.TemplateHTML()
+	var outpath = f.form.OutHTML()
 
 	var outHTML string
 	outHTML, err = html.ReadTemplate(templatepath)
@@ -236,8 +248,8 @@ func (f *FormPrimary) outputHTML() (err error) {
 		return
 	}
 
-	html.Image(&outHTML, "image-upload", f.imageUpload)
-	html.Paragraph(&outHTML, "image-timestamp", f.imageTimestamp)
+	html.Image(&outHTML, "image-upload", f.fileUpload)
+	html.Paragraph(&outHTML, "image-timestamp", f.uploadTimestamp)
 	html.Paragraph(&outHTML, "caption-text", f.captionText)
 
 	err = html.WriteHTML(outpath, outHTML)
@@ -251,8 +263,8 @@ func (f *FormPrimary) outputHTML() (err error) {
 }
 
 func (f *FormPrimary) outputSCSS() (err error) {
-	var templatepath string = f.form.TemplateSCSS()
-	var outpath string = f.form.OutSCSS()
+	var templatepath = f.form.TemplateSCSS()
+	var outpath = f.form.OutSCSS()
 
 	var outSCSS string
 	outSCSS, err = scss.ReadTemplate(templatepath)
@@ -265,8 +277,8 @@ func (f *FormPrimary) outputSCSS() (err error) {
 		"div.container",
 		map[string]string{
 			"display": "block",
-			"width": fmt.Sprintf("%s%%", f.imageScale),
-			"margin": scss.ImgMargin(f.imageAlign),
+			"width":   fmt.Sprintf("%d%%", f.imageScale),
+			"margin":  scss.ImgMargin(f.imageAlign),
 		},
 	)
 	scss.Rule(
@@ -274,14 +286,14 @@ func (f *FormPrimary) outputSCSS() (err error) {
 		"img.image-upload",
 		map[string]string{
 			"height": "100%",
-			"width": "100%",
+			"width":  "100%",
 		},
 	)
 	scss.Rule(
 		&outSCSS,
 		"p.image-timestamp",
 		map[string]string{
-			"text-align": "center",
+			"text-align":  "center",
 			"font-family": "monospace",
 		},
 	)
@@ -289,8 +301,8 @@ func (f *FormPrimary) outputSCSS() (err error) {
 		&outSCSS,
 		"p.caption-text",
 		map[string]string{
-			"text-align": f.captionAlign,
-			"font-style": scss.PFontStyle(f.captionStyling["italic"]),
+			"text-align":  f.captionAlign,
+			"font-style":  scss.PFontStyle(f.captionStyling["italic"]),
 			"font-weight": scss.PFontWeight(f.captionStyling["bold"]),
 			"text-decoration": scss.PTextDecoration(
 				f.captionStyling["strikethrough"], f.captionStyling["underline"],

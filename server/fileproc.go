@@ -22,7 +22,12 @@ func UploadFile(file multipart.File, header *multipart.FileHeader) (path string,
 	if err != nil {
 		return
 	}
-	defer destination.Close()
+	defer func() {
+		var e = destination.Close()
+		if e != nil {
+			panic(e)
+		}
+	}()
 	log.Printf("Destination file created: %s", path)
 
 	// Copy contents of received file to destination file
@@ -48,7 +53,12 @@ func CopyFile(source string, destination string) (err error) {
 	if err != nil {
 		return
 	}
-	defer fSource.Close()
+	defer func() {
+		var e = fSource.Close()
+		if e != nil {
+			panic(e)
+		}
+	}()
 	log.Printf("Opened source file: %s", source)
 
 	// Create destination file
@@ -56,7 +66,12 @@ func CopyFile(source string, destination string) (err error) {
 	if err != nil {
 		return
 	}
-	defer fDestination.Close()
+	defer func() {
+		var e = fDestination.Close()
+		if e != nil {
+			panic(e)
+		}
+	}()
 	log.Printf("Created destination file: %s", destination)
 
 	// Copy source file contents to destination file
