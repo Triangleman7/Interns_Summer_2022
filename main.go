@@ -9,7 +9,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Triangleman7/Interns_Summer_2022/server"
+	"./server"
 )
 
 func main() {

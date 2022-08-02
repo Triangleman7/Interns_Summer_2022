@@ -3,7 +3,7 @@ package docx
 import (
 	"fmt"
 
-	"github.com/Triangleman7/Interns_Summer_2022/resources/msword"
+	"../../resources/msword"
 )
 
 // Image replaces the image in document partially identified by key with the image at path src in

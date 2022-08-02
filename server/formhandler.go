@@ -10,10 +10,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Triangleman7/Interns_Summer_2022/resources/msword"
-	"github.com/Triangleman7/Interns_Summer_2022/server/docx"
-	"github.com/Triangleman7/Interns_Summer_2022/server/html"
-	"github.com/Triangleman7/Interns_Summer_2022/server/scss"
+	"../resources/msword"
+	"../server/docx"
+	"../server/html"
+	"../server/scss"
 )
 
 type FormOutput interface {
