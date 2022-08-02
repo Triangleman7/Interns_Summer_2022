@@ -59,7 +59,11 @@
                         <hr class="section-divider">
                         <h3>Image</h3>
                         <div class="form-group image-upload">
-                            <label for="file-upload">File Upload</label>
+                            <label for="file-upload">
+                                File Upload
+                                <span class="req-asterisk">*</span>
+                                <span class="required">(Required)</span>
+                            </label>
                             <input id="file-upload" name="file-upload" class="form-control" type="file" accept="image/jpeg" required>
                             <div class="popup" onmouseover="popupFileUpload.show()" onmouseleave="popupFileUpload.hide()">
                                 <img class="info" src="/client/images/info-icon.png" alt="Infobox Popup">
@@ -74,7 +78,10 @@
                             </div>
                         </div>
                         <div class="form-group upload-timestamp">
-                            <label for="upload-timestamp">Upload Timestamp</label>
+                            <label for="upload-timestamp">
+                                Upload Timestamp
+                                <span class="optional">(Optional)</span>
+                            </label>
                             <input id="upload-timestamp" name="upload-timestamp" class="form-control" type="datetime-local">
                             <div class="popup" onmouseover="popupUploadTimestamp.show()" onmouseleave="popupUploadTimestamp.hide()">
                                 <img class="info" src="/client/images/info-icon.png" alt="Infobox Popup">
@@ -84,11 +91,17 @@
                         <hr>
                         <h3>Image Transformations</h3>
                         <div class="form-group image-scale">
-                            <label for="image-scale">Image Scale (%)</label>
+                            <label for="image-scale">
+                                Image Scale (%)
+                                <span class="optional">(Optional)</span>
+                            </label>
                             <input id="image-scale" name="image-scale" class="form-control" type="number" min="1" max="100" value="50" required>
                         </div>
                         <div class="form-group image-align">
-                            <label for="image-align">Image Align</label>
+                            <label for="image-align">
+                                Image Align
+                                <span class="optional">(Optional)</span>
+                            </label>
                             <select id="image-align" name="image-align" class="form-control">
                                 <option value="match-parent">Default</option>
                                 <option value="left">Left</option>
@@ -99,13 +112,20 @@
                         <hr class="section-divider">
                         <h3>Image Caption</h3>
                         <div class="form-group caption-text">
-                            <label for="caption-text">Caption Text</label>
+                            <label for="caption-text">
+                                Caption Text
+                                <span class="req-asterisk">*</span>
+                                <span class="required">(Required)</span>
+                            </label>
                             <input id="caption-text" name="caption-text" class="form-control" type="text" placeholder="Enter Image Caption" required>
                         </div>
                         <hr>
                         <h3>Caption Transformations</h3>
                         <div class="form-group caption-align">
-                            <label for="caption-align">Caption Align</label>
+                            <label for="caption-align">
+                                Caption Align
+                                <span class="optional">(Optional)</span>
+                            </label>
                             <select id="caption-align" name="caption-align" class="form-control">
                                 <option value="match-parent">Default</option>
                                 <option value="start">Start</option>
@@ -118,7 +138,10 @@
                             </select>
                         </div>
                         <div class="form-group caption-operation">
-                            <label for="caption-casing">Caption Casing</label>
+                            <label for="caption-casing">
+                                Caption Casing
+                                <span class="optional">(Optional)</span>
+                            </label>
                             <select id="caption-casing" name="caption-casing" class="form-control">
                                 <option value="">No Operation</option>
                                 <option value="lower">Lowercase</option>
@@ -181,7 +204,10 @@
                         </div>
                         <div class="form-group caption-styling">
                             <fieldset>
-                                <legend>Caption Styling</legend>
+                                <legend>
+                                    Caption Styling
+                                    <span class="optional">(Optional)</span>
+                                </legend>
                                 <div>
                                     <input id="caption-styling-italic" name="caption-styling-italic" type="checkbox">
                                     <label for="caption-styling-italic">Italic</label>

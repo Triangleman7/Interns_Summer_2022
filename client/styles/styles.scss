@@ -39,6 +39,25 @@ ol, ul {
     list-style: none;
 }
 
+span.optional, span.required {
+    color: #9B9B9B;
+    font-size: 0.875rem;
+}
+
+span.optional {
+    font-style: italic;
+}
+
+span.required {
+    font-style: italic;
+    font-weight: bold;
+}
+
+span.req-asterisk {
+    color: #ff0000;
+    font-weight: bold;
+}
+
 #site {
     max-width: 1500px;
     height: 100%;
