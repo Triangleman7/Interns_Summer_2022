@@ -8,7 +8,6 @@ $background-color: #eaeaea;
     border: 0;
     margin: 0;
     vertical-align: baseline;
-    font-size: 100%;
     font: inherit;
 }
 
@@ -324,7 +323,7 @@ $form-label-padding: 0px 0px 0px 10px;
 // .form-container .form-group input[type='datetime-local'] {}
 
 .form-container .form-group input[type='file'] {
-    line-height: auto;
+    line-height: inherit;
 }
 
 // .form-container .form-group input[type='number'] {}

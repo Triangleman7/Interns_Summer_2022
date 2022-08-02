@@ -33,7 +33,7 @@
                     <form id="search">
                         <div class="input-search input-wrap">
                             <span class="icon magnify"></span>
-                            <input class="input-text" type="text" placeholder="Search">
+                            <input id="search-form" class="input-text" type="text" placeholder="Search">
                         </div>
                     </form>
                     <h1 id="logo">
@@ -50,45 +50,46 @@
                 </div>
             </header>
             <div id="full-logo">
-                <img src="/client/images/full-logo.jpg">
+                <img src="/client/images/full-logo.jpg" alt="Application Logo">
             </div>
             <div id="content">
                 <div class="form-container" style="width: 66.666667%; margin-left: 16.6666667%">
                     <h2>Image Captioning Engine (ICE)</h2>
                     <form id="primary" method="POST" enctype="multipart/form-data" action="/forms/primary">
                         <hr class="section-divider">
+                        <h3>Image</h3>
                         <div class="form-group image-upload">
-                            <label for="image-upload">Image Upload</label>
-                            <input class="form-control" type="file" name="image-upload" accept="image/jpeg" required>
-                            <div class="popup" onmouseover="popupImageUpload.show()" onmouseleave="popupImageUpload.hide()">
-                                <img class="info" src="/client/images/info-icon.png">
-                                <span id="primary-image-upload" class="popuptext">
+                            <label for="file-upload">File Upload</label>
+                            <input id="file-upload" name="file-upload" class="form-control" type="file" accept="image/jpeg" required>
+                            <div class="popup" onmouseover="popupFileUpload.show()" onmouseleave="popupFileUpload.hide()">
+                                <img class="info" src="/client/images/info-icon.png" alt="Infobox Popup">
+                                <div id="file-upload-popup" class="popuptext">
                                     Supported File Types
                                     <ul>
                                         <li>
                                             <span class="key">JPEG</span> (<span class="value">*.jpeg</span>,<span class="value">*.jpg</span>)
                                         </li>
                                     </ul>
-                                </span>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group image-timestamp">
-                            <label for="image-timestamp">Image Timestamp</label>
-                            <input class="form-control" type="datetime-local" name="image-timestamp">
-                            <div class="popup" onmouseover="popupImageTimestamp.show()" onmouseleave="popupImageTimestamp.hide()">
-                                <img class="info" src="/client/images/info-icon.png">
-                                <span id="primary-image-timestamp" class="popuptext">Defaults to the current datetime.</span>
+                        <div class="form-group upload-timestamp">
+                            <label for="upload-timestamp">Upload Timestamp</label>
+                            <input id="upload-timestamp" name="upload-timestamp" class="form-control" type="datetime-local">
+                            <div class="popup" onmouseover="popupUploadTimestamp.show()" onmouseleave="popupUploadTimestamp.hide()">
+                                <img class="info" src="/client/images/info-icon.png" alt="Infobox Popup">
+                                <span id="upload-timestamp-popup" class="popuptext">Defaults to the current datetime.</span>
                             </div>
                         </div>
                         <hr>
                         <h3>Image Transformations</h3>
                         <div class="form-group image-scale">
                             <label for="image-scale">Image Scale (%)</label>
-                            <input class="form-control" type="number" name="image-scale" min="1" max="100" value="50" required>
+                            <input id="image-scale" name="image-scale" class="form-control" type="number" min="1" max="100" value="50" required>
                         </div>
                         <div class="form-group image-align">
                             <label for="image-align">Image Align</label>
-                            <select class="form-control" name="image-align">
+                            <select id="image-align" name="image-align" class="form-control">
                                 <option value="match-parent">Default</option>
                                 <option value="left">Left</option>
                                 <option value="right">Right</option>
@@ -96,15 +97,16 @@
                             </select>
                         </div>
                         <hr class="section-divider">
+                        <h3>Image Caption</h3>
                         <div class="form-group caption-text">
-                            <label for="caption-text">Image Caption</label>
-                            <input class="form-control" type="text" name="caption-text" placeholder="Enter Image Caption" required>
+                            <label for="caption-text">Caption Text</label>
+                            <input id="caption-text" name="caption-text" class="form-control" type="text" placeholder="Enter Image Caption" required>
                         </div>
                         <hr>
                         <h3>Caption Transformations</h3>
                         <div class="form-group caption-align">
                             <label for="caption-align">Caption Align</label>
-                            <select class="form-control" name="caption-align">
+                            <select id="caption-align" name="caption-align" class="form-control">
                                 <option value="match-parent">Default</option>
                                 <option value="start">Start</option>
                                 <option value="end">End</option>
@@ -117,7 +119,7 @@
                         </div>
                         <div class="form-group caption-operation">
                             <label for="caption-casing">Caption Casing</label>
-                            <select class="form-control" name="caption-casing">
+                            <select id="caption-casing" name="caption-casing" class="form-control">
                                 <option value="">No Operation</option>
                                 <option value="lower">Lowercase</option>
                                 <option value="upper">Uppercase</option>
@@ -133,10 +135,10 @@
                                 <option value="train">Train Case</option>
                             </select>
                             <div class="popup" onmouseover="popupCaptionCasing.show()" onmouseleave="popupCaptionCasing.hide()">
-                                <img class="info" src="/client/images/info-icon.png">
-                                <span id="primary-caption-casing" class="popuptext">
+                                <img class="info" src="/client/images/info-icon.png" alt="Infobox Popup">
+                                <div id="caption-casing-popup" class="popuptext">
                                     Supported Cases
-                                    <ul>
+                                    <ol>
                                         <li>
                                             <span class="key">Lowercase</span> : <span class="value">lowercase</span>
                                         </li>
@@ -173,62 +175,66 @@
                                         <li>
                                             <span class="key">Train Case</span> : <span class="value">Train-Case</span>
                                         </li>
-                                    </ul>
-                                </span>
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group caption-styling">
                             <fieldset>
                                 <legend>Caption Styling</legend>
                                 <div>
-                                    <input type="checkbox" name="italic">
-                                    <label for="italic">Italic</label>
+                                    <input id="caption-style-italic" name="caption-style-italic" type="checkbox">
+                                    <label for="caption-style-italic">Italic</label>
                                 </div>
                                 <div>
-                                    <input type="checkbox" name="bold">
-                                    <label for="bold">Bold</label>
+                                    <input id="caption-style-bold" name="caption-style-bold" type="checkbox">
+                                    <label for="caption-style-bold">Bold</label>
                                 </div>
                                 <div>
-                                    <input type="checkbox" name="underline">
-                                    <label for="underline">Underline</label>
+                                    <input id="caption-style-underline" name="caption-style-underline" type="checkbox">
+                                    <label for="caption-style-underline">Underline</label>
                                 </div>
                                 <div>
-                                    <input type="checkbox" name="strikethrough">
-                                    <label for="strikethrough">Strikethrough</label>
+                                    <input id="caption-style-strikethrough" name="caption-style-strikethrough" type="checkbox">
+                                    <label for="caption-style-strikethrough">Strikethrough</label>
                                 </div>
                             </fieldset>
                             <div class="popup" onmouseover="popupCaptionStyling.show()" onmouseleave="popupCaptionStyling.hide()">
-                                <img class="info" src="/client/images/info-icon.png">
-                                <span id="primary-caption-styling" class="popuptext">
-                                    <ul>
-                                        <em style="font-style: italic;">Italics</em>
-                                    </ul>
-                                    <ul>
-                                        <strong style="font-weight: bold;">Bold</strong>
-                                    </ul>
-                                    <ul>
-                                        <u>Underline</u>
-                                    </ul>
-                                    <ul>
-                                        <s>Strikethrough</s>
-                                    </ul>
-                                </span>
+                                <img class="info" src="/client/images/info-icon.png" alt="Infobox Popup">
+                                <div id="caption-styling-popup" class="popuptext">
+                                    <ol>
+                                        <li>
+                                            <span style="font-style: italic;">Italic</span>
+                                        </li>
+                                        <li>
+                                            <span style="font-weight: bold;">Bold</span>
+                                        </li>
+                                        <li>
+                                            <span style="text-decoration: underline;">Underline</span>
+                                        </li>
+                                        <li>
+                                            <span style="text-decoration: line-through;">Strikethrough</span>
+                                        </li>
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                         <hr class="section-divider">
                         <div class="form-group form-submit">
-                            <input class="material-bubble" type="submit" name="submit-form" value="Process">
+                            <input id="form-submit" name="form-submit" class="material-bubble" type="submit" value="Process">
                             <div class="popup" onmouseover="popupFormSubmit.show()" onmouseleave="popupFormSubmit.hide()">
-                                <img class="info" src="/client/images/info-icon.png">
-                                <span id="primary-form-submit" class="popuptext">
+                                <img class="info" src="/client/images/info-icon.png" alt="Infobox Popup">
+                                <div id="form-submit-popup" class="popuptext">
                                     Output Documents
-                                    <ul>
-                                        <span class="key">DOCX</span> : <span class="value">out/form-primary/index.docx</span>
-                                    </ul>
-                                    <ul>
-                                        <span class="key">HTML</span> : <span class="value">out/form-primary/index.html</span>
-                                    </ul>
-                                </span>
+                                    <ol>
+                                        <li>
+                                            <span class="key">DOCX</span> : <span class="value">out/form-primary/index.docx</span>
+                                        </li>
+                                        <li>
+                                            <span class="key">HTML</span> : <span class="value">out/form-primary/index.html</span>
+                                        </li>
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                     </form>

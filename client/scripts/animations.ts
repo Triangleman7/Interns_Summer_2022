@@ -52,8 +52,8 @@ class Popup {
     }
 }
 
-const popupImageUpload = new Popup("primary-image-upload");
-const popupImageTimestamp = new Popup("primary-image-timestamp");
-const popupCaptionCasing = new Popup("primary-caption-casing");
-const popupCaptionStyling = new Popup("primary-caption-styling");
-const popupFormSubmit = new Popup("primary-form-submit");
+const popupFileUpload = new Popup("file-upload-popup");
+const popupUploadTimestamp = new Popup("upload-timestamp-popup");
+const popupCaptionCasing = new Popup("caption-casing-popup");
+const popupCaptionStyling = new Popup("caption-styling-popup");
+const popupFormSubmit = new Popup("form-submit-popup");

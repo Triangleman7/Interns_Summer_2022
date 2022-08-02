@@ -132,6 +132,7 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	f.captionText = r.FormValue("caption-text")
 	f.captionAlign = r.FormValue("caption-align")
 	f.captionCasing = r.FormValue("caption-casing")
+	f.captionStyling = make(map[string]bool)
 	for _, style := range []string{
 		"italic", "bold", "underline", "strikethrough",
 	} {

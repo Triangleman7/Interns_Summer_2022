@@ -25,6 +25,8 @@
  
      // Prepare form data
      let data = new FormData(formPrimary);
+
+     console.log(data);
  
      // Send request
      xhr.send(data);
