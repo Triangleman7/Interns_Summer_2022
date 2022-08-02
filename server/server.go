@@ -35,7 +35,7 @@ func DirectorySetup(dirpath string, mode os.FileMode) {
 	DirectoryTeardown(dirpath)
 
 	// Create an empty output directory
-	var err error = os.Mkdir(dirpath, mode)
+	var err = os.Mkdir(dirpath, mode)
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +49,7 @@ func DirectorySetup(dirpath string, mode os.FileMode) {
 func DirectoryTeardown(dirpath string) {
 	log.Printf("Tearing down directory at %s", dirpath)
 
-	var err error = os.RemoveAll(dirpath)
+	var err = os.RemoveAll(dirpath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -93,7 +93,7 @@ func requestCheck(w http.ResponseWriter, r *http.Request, path string) {
 // requests are supported; raises an error if other request types are received.
 func ProcessRootRequest(w http.ResponseWriter, r *http.Request) {
 	var err error
-	var path string = "/"
+	var path = "/"
 	requestCheck(w, r, path)
 
 	switch r.Method {
@@ -117,7 +117,7 @@ func ProcessRootRequest(w http.ResponseWriter, r *http.Request) {
 // Raises any errors encountered while handling POST requests.
 func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 	var err error
-	var path string = "/forms/primary"
+	var path = "/forms/primary"
 	requestCheck(w, r, path)
 
 	payload := make(map[string]interface{})
@@ -141,5 +141,8 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(payload)
+	err = json.NewEncoder(w).Encode(payload)
+	if err != nil {
+		log.Panic(err)
+	}
 }

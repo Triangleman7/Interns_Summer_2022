@@ -10,33 +10,34 @@ import (
 // the local file system.
 //
 // Raises any errors encountered while replacing the old image in the document with the new image.
-func Image(document *msword.Docx, key int, src string) (err error) {
+func Image(document *msword.Docx, key int, src string) {
+	var err error
 	var field string
 
 	// Using .jpg file extension
 	field = fmt.Sprintf("word/media/image%d.jpg", key)
 	err = document.ReplaceImage(field, src)
-	if err == nil {
-		return
+	if err != nil {
+		panic(err)
 	}
 
 	// Using .jpeg file extension
 	field = fmt.Sprintf("word/media/image%d.jpeg", key)
 	err = document.ReplaceImage(field, src)
-	if err == nil {
-		return
+	if err != nil {
+		panic(err)
 	}
-
-	return
 }
 
 // Paragraph replaces all instances of key found in the body text of document with content.
 //
 // Raises any errors encountered while replacing the body text in the document.
-func Paragraph(document *msword.Docx, key string, content string) (err error) {
-	var field string = fmt.Sprintf("{%v}", key)
+func Paragraph(document *msword.Docx, key string, content string) {
+	var err error
+	var field = fmt.Sprintf("{%v}", key)
 
 	err = document.Replace(field, content, -1)
-
-	return
+	if err != nil {
+		panic(err)
+	}
 }
