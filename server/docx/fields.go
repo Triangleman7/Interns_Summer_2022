@@ -14,18 +14,18 @@ func Image(document *msword.Docx, key int, src string) {
 	var err error
 	var field string
 
-	// Using .jpg file extension
-	field = fmt.Sprintf("word/media/image%d.jpg", key)
-	err = document.ReplaceImage(field, src)
-	if err != nil {
-		panic(err)
-	}
-
-	// Using .jpeg file extension
-	field = fmt.Sprintf("word/media/image%d.jpeg", key)
-	err = document.ReplaceImage(field, src)
-	if err != nil {
-		panic(err)
+	// Search for matching JPEG file
+	for _, ext := range []string{".jpeg", ".jpg"} {
+		field = fmt.Sprintf("word/media/image%d%s", key, ext)
+		for fname := range document.Images {
+			if field == fname {
+				err = document.ReplaceImage(field, src)
+				if err != nil {
+					panic(err)
+				}
+				return
+			}
+		}
 	}
 }
 
