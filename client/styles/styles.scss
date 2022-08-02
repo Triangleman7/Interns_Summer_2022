@@ -372,6 +372,14 @@ $form-label-padding: 0px 0px 0px 10px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+.form-container #success {
+    color: #00ff00;
+}
+
+.form-container #failure {
+    color: #ff0000;
+}
+
 /* || Info popup */
 
 $img-width: 15px;
