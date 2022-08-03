@@ -1,10 +1,13 @@
 package server
 
 import (
+	"archive/zip"
 	"fmt"
+	"io"
 	"log"
 	"mime/multipart"
 	"net/http"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
@@ -33,6 +36,10 @@ type Form struct {
 // f.
 func (f *Form) OutDir() (path string) {
 	return filepath.Join(OUTPUTDIRECTORY, f.Name)
+}
+
+func (f *Form) OutZIP() (path string) {
+	return filepath.Join(OUTPUTDIRECTORY, fmt.Sprintf("%s.zip", f.Name))
 }
 
 // SetupOutput creates the output directory for the form f and all necessary subdirectories.
@@ -107,7 +114,7 @@ type FormPrimary struct {
 	captionStyling   map[string]bool
 }
 
-func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error) {
+func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (zippath string, err error) {
 	f.form.Name = "form-primary"
 	log.Printf("%s - Handling form submission", f.form.Name)
 
@@ -205,7 +212,90 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	}
 	log.Printf("%s - Successfully compiled SCSS to CSS: %s", f.form.Name, f.form.OutDir())
 
-	return
+	err = f.outputZIP()
+	if err != nil {
+		panic(err)
+		return
+	}
+	log.Printf("%s - Successfully compressed output into ZIP archive: %s", f.form.Name, f.form.OutZIP())
+
+	return f.form.OutZIP(), nil
+}
+
+func (f *FormPrimary) outputZIP() (err error) {
+	var outpath = f.form.OutZIP()
+
+	var file *os.File
+	file, err = os.Create(outpath)
+	if err != nil {
+		return
+	}
+	defer func() {
+		var e = file.Close()
+		if e != nil {
+			panic(err)
+		}
+	}()
+	log.Printf("%s - Destination file created: %s", f.form.Name, outpath)
+
+	var writer = zip.NewWriter(file)
+	defer func() {
+		var e = writer.Close()
+		if e != nil {
+			panic(err)
+		}
+	}()
+	log.Printf("%s - Created ZIP archive writer: %s", f.form.Name, outpath)
+
+	walker := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		
+		var source *os.File
+		source, err = os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer func() {
+			var e = source.Close()
+			if e != nil {
+				panic(e)
+			}
+		}()
+		log.Printf("%s - Opened origin file: %s", f.form.Name, source.Name())
+	
+		var destination io.Writer
+		var relpath string
+		relpath, err = filepath.Rel(f.form.OutDir(), path)
+		if err != nil {
+			return err
+		}
+		destination, err = writer.Create(relpath)
+		if err != nil {
+			return err
+		}
+		log.Printf("%s - Destination file created in ZIP archive: %s", f.form.Name, source.Name())
+
+		_, err = io.Copy(destination, source)
+		if err != nil {
+			return err
+		}
+		log.Printf("%s - File contents copied to ZIP archive: %s", f.form.Name, source.Name())
+
+		return nil
+	}
+
+	err = filepath.Walk(f.form.OutDir(), walker)
+	if err != nil {
+		panic(err)
+	}
+	log.Printf("%s - Walked directory: %s", f.form.Name, f.form.OutDir())
+
+	return nil
 }
 
 func (f *FormPrimary) outputDOCX() (err error) {

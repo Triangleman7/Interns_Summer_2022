@@ -121,13 +121,15 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 	requestCheck(w, r, path)
 
 	payload := make(map[string]interface{})
+	var zippath string
 
 	switch r.Method {
 
 	case "POST":
 		var formPrimary FormPrimary
 		formPrimary.form.SetupOutput("form-primary")
-		err = formPrimary.handle(w, r)
+
+		zippath, err = formPrimary.handle(w, r)
 
 	default:
 		err = errors.New("only POST requests supported")
@@ -135,9 +137,10 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		payload["success"] = false
-		log.Panic(err)
+		payload["zip-path"] = ""
 	} else {
 		payload["success"] = true
+		payload["zip-path"] = zippath
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -145,4 +148,5 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Panic(err)
 	}
+	log.Printf("Responding to request: %v", payload)
 }
