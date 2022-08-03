@@ -12,7 +12,7 @@ function elementJSONDownload(filename: string, content: string): HTMLElement {
     );
     a.setAttribute("download", filename);
 
-    let textnode: Text = document.createTextNode("Download form input (JSON)");
+    let textnode: Text = document.createTextNode("Download");
     a.appendChild(textnode);
 
     let div: HTMLElement = document.createElement("div");
@@ -59,11 +59,7 @@ function handleFormPrimary(event: SubmitEvent) {
         var formJSON = JSON.stringify(formObject);
 
         //
-        let log: HTMLElement = document.createElement("div");
-        log.classList.add("log");
-        log.appendChild(
-            elementJSONDownload(`form-primary_${Date.now()}.json`, formJSON)
-        );
+        let JSONDownload = elementJSONDownload(`form-primary_${Date.now()}.json`, formJSON);
 
         // Clear form
         if (data["success"]) {
@@ -80,20 +76,30 @@ function handleFormPrimary(event: SubmitEvent) {
         );
 
         //
-        let tr: HTMLElement;
+        let tr: HTMLElement = document.createElement("tr");
 
         //
-        tr = document.createElement("tr");
-        tr.innerHTML = `<td class="col-timestamp">${datetime.toString()}</td>
-        <td class="col-result-status">${data["success"] ? "Success" : "Failure"}</td>`;
+        let tdTimestamp: HTMLElement = document.createElement("td");
+        tdTimestamp.classList.add("col-timestamp");
+        tdTimestamp.innerText = datetime.toString();
+        tr.appendChild(tdTimestamp);
+
+        //
+        let tdResultStatus: HTMLElement = document.createElement("td");
+        tdResultStatus.classList.add("col-result-status");
+        tdResultStatus.innerText = (data["success"] ? "Success" : "Failure");
+        tr.appendChild(tdResultStatus);
+
+        //
+        let tdFormInput: HTMLElement = document.createElement("td");
+        tdFormInput.classList.add("col-form-input");
+        tdFormInput.appendChild(JSONDownload);
+        tr.appendChild(tdFormInput);
+
+        //
         tbody.appendChild(tr);
 
         //
-        tr = document.createElement("tr");
-        tr.classList.add("collapsed");
-        tr.innerHTML = `<td colspan="2"><div class="log">${log.outerHTML}</div></td>`;
-        tbody.appendChild(tr);
-
         let tbodyFirst = <HTMLElement>document.querySelector("#results-table tbody:nth-of-type(1)")
         table.insertBefore(tbody, tbodyFirst);
     }
