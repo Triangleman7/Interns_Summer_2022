@@ -24,18 +24,23 @@ function handleFormPrimary(event: SubmitEvent) {
     xhr.open("POST", path);
  
     // Prepare form data
-    let data = new FormData(formPrimary);
+    let formData = new FormData(formPrimary);
  
     // Send request
-    xhr.send(data);
+    xhr.send(formData);
 
     // Listen for 'load' event
     xhr.onload = () => {
         let data = JSON.parse(xhr.response);
         let datetime = new Date(Date.now());
 
+        // JSON-seralize form input
+        let formObject: any = {};
+        formData.forEach((value, key) => formObject[key] = value);
+        var formJSON = JSON.stringify(formObject);
+
         //
-        let log: string = "";
+        let log: string = formJSON;
 
         // Clear form
         if (data["success"]) {
