@@ -372,14 +372,6 @@ $form-label-padding: 0px 0px 0px 10px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.form-container #form-success {
-    color: #00ff00;
-}
-
-.form-container #form-failure {
-    color: #ff0000;
-}
-
 /* || Results Table */
 
 $table-border-color: #e6e6e6;
@@ -387,6 +379,14 @@ $table-text-color: #999;
 
 table {
     border-collapse: collapse;
+}
+
+tbody.failure td.col-result-status {
+    color: red;
+}
+
+tbody.success td.col-result-status {
+    color: green;
 }
 
 thead th:nth-child(1), tbody td:nth-child(1) {
@@ -404,10 +404,29 @@ thead th:nth-child(2), tbody td:nth-child(2) {
     width: 100%;
 }
 
-#results-table th {
+#results-table th, #results-table td {
     padding: 5px;
     border: 1px solid $table-border-color;
     text-align: left;
+}
+
+tr.collapsed {
+    display: none;
+}
+
+.log:only-child {
+    height: inherit;
+}
+
+.log {
+    display: block;
+    padding: 5px;
+    overflow-y: scroll;
+    background-color: $table-border-color;
+    border: 1px solid $table-border-color;
+    font-family: 'Courier New', Courier, monospace;
+    color: black;
+    white-space: pre-wrap;
 }
 
 /* || Info popup */
