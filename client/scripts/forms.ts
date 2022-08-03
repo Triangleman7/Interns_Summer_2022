@@ -33,22 +33,31 @@ function handleFormPrimary(event: SubmitEvent) {
     xhr.onload = () => {
         let data = JSON.parse(xhr.response);
 
-        const node = document.createElement("span");
-        const datetime = new Date(Date.now());
+        // Clear form
         if (data["success"]) {
-            node.appendChild(document.createTextNode(`${datetime.toString()}: Success.`));
-            node.id = "success";
-        } else {
-            node.appendChild(document.createTextNode(`${datetime.toString()}: Failure.`));
-            node.id = "failure";
-        }
-
-        let success = document.getElementById("success");
-        if (success) {
-            formPrimary.removeChild(success);
             formPrimary.reset();
         }
-        let failure = document.getElementById("failure");
+
+        // Create new node to contain form submission status message
+        const node = document.createElement("div");
+        node.id = (data["success"] ? "form-success" : "form-failure");
+        
+        // Format form submission status message
+        let status: string = (data["success"] ? "Success" : "Failure");
+        let datetime = new Date(Date.now());
+        let text: string = `${datetime.toString()}: ${status}`;
+        let textnode: Text = document.createTextNode(text);
+        
+        node.appendChild(textnode)
+
+        // Remove existing #form-success element, if possible
+        let success = document.getElementById("form-success");
+        if (success) {
+            formPrimary.removeChild(success);
+        }
+
+        // Remove existing #form-failure element, if possible
+        let failure = document.getElementById("form-failure");
         if (failure) {
             formPrimary.removeChild(failure);
         }
