@@ -380,6 +380,36 @@ $form-label-padding: 0px 0px 0px 10px;
     color: #ff0000;
 }
 
+/* || Results Table */
+
+$table-border-color: #e6e6e6;
+$table-text-color: #999;
+
+table {
+    border-collapse: collapse;
+}
+
+thead th:nth-child(1), tbody td:nth-child(1) {
+    width: 80%;
+}
+
+thead th:nth-child(2), tbody td:nth-child(2) {
+    width: 20%;
+}
+
+#results-table {
+    border: 1px solid $table-border-color;
+    color: $table-text-color;
+    font-size: 12px;
+    width: 100%;
+}
+
+#results-table th {
+    padding: 5px;
+    border: 1px solid $table-border-color;
+    text-align: left;
+}
+
 /* || Info popup */
 
 $img-width: 15px;
