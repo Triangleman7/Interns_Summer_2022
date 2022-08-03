@@ -2,6 +2,25 @@
  * Handles events that are triggered when the submit action of a form is invoked.
  */
 
+
+function elementJSONDownload(filename: string, content: string): HTMLElement {
+    let a: HTMLElement = document.createElement("a");
+    a.classList.add("download-results");
+    a.setAttribute(
+        "href",
+        `data:application/json;charset=utf-8,${encodeURIComponent(content)}`
+    );
+    a.setAttribute("download", filename);
+
+    let textnode: Text = document.createTextNode("Download form input (JSON)");
+    a.appendChild(textnode);
+
+    let div: HTMLElement = document.createElement("div");
+    div.appendChild(a);
+
+    return div;
+}
+
 const formPrimary: HTMLFormElement = document.forms[<any>"primary"];
 formPrimary.addEventListener("submit", handleFormPrimary);
 
@@ -40,7 +59,11 @@ function handleFormPrimary(event: SubmitEvent) {
         var formJSON = JSON.stringify(formObject);
 
         //
-        let log: string = formJSON;
+        let log: HTMLElement = document.createElement("div");
+        log.classList.add("log");
+        log.appendChild(
+            elementJSONDownload(`form-primary_${Date.now()}.json`, formJSON)
+        );
 
         // Clear form
         if (data["success"]) {
@@ -68,7 +91,7 @@ function handleFormPrimary(event: SubmitEvent) {
         //
         tr = document.createElement("tr");
         tr.classList.add("collapsed");
-        tr.innerHTML = `<td colspan="2"><div class="log">${log}</div></td>`;
+        tr.innerHTML = `<td colspan="2"><div class="log">${log.outerHTML}</div></td>`;
         tbody.appendChild(tr);
 
         let tbodyFirst = <HTMLElement>document.querySelector("#results-table tbody:nth-of-type(1)")
@@ -91,4 +114,3 @@ function handleFormSearch(event: SubmitEvent) {
     // Disable default action
     event.preventDefault();
 }
- 
