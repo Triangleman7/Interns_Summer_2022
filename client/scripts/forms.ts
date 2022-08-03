@@ -18,7 +18,7 @@ function elementJSONDownload(filename: string, content: string): HTMLElement {
     let div: HTMLElement = document.createElement("div");
     div.appendChild(a);
 
-    return div;
+    return a;
 }
 
 const formPrimary: HTMLFormElement = document.forms[<any>"primary"];
