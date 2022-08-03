@@ -84,7 +84,7 @@ function handleFormPrimary(event: SubmitEvent) {
 
         //
         tr = document.createElement("tr");
-        tr.innerHTML = `<td class="col-timestamp">${datetime.toString()}<span class="expander"></span></td>
+        tr.innerHTML = `<td class="col-timestamp">${datetime.toString()}</td>
         <td class="col-result-status">${data["success"] ? "Success" : "Failure"}</td>`;
         tbody.appendChild(tr);
 
