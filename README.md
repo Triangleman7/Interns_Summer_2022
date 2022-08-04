@@ -49,11 +49,28 @@ $ python -m pip install -r requirements.txt
 
 ## Usage
 
-Once the server is running, the webpage can be viewed in the browser by opening the following URL:
+Once the server is running (See Below), the webpage can be viewed in the browser by opening the following URL:
 
 ```
 http://localhost:8080
 ```
+
+### Web Application
+
+The web application is a locally hosted, single-page website; the webpage supports the following forms:
+
+- **Form Name**
+- **CSS Selector**: A unique CSS selector for the form
+- **Output Directory**: The unique path to the directory containing the output of the submitted form data
+- **Output ZIP Archive**: The unique path to the ZIP archive of **Output Directory**
+
+| Form Name | CSS Selector | Output Directory | Output ZIP Archive |
+| --- | --- | --- | --- |
+| **primary** | `form#primary` | _./out/form-primary_ | _.out/form-primary.zip_ |
+
+_Note: Each submission to a form removes all its corresponding output directory along with all of the directory contents._
+
+## Commands
 
 ### Build
 
@@ -78,6 +95,12 @@ $ tsc client/scripts/*.ts                   # Transpile TypeScript source files 
 $ sass client/styles:client/styles          # Transpile SASS/SCSS style sheets into CSS style sheets
 $ sass server/templates:server/templates    # Transpile SASS/SCSS style sheets into CSS style sheets
 $ go build -o main.out main.go              # Compile Go package into a binary file
+```
+
+Afterwards, the Go package can be run by executing the compiled binary file, using the command:
+
+```bash
+$ ./main.out
 ```
 
 ### Clean
