@@ -99,7 +99,7 @@ func (f *Form) OutImages() (path string) {
 	return f.GetOut("images/")
 }
 
-func (f *Form) ZIPOutputDirectory() (err error) {
+func (f *Form) ZIPOutputDirectory() (zippath string, err error) {
 	var outpath = f.OutZIP()
 
 	var file *os.File
@@ -168,11 +168,11 @@ func (f *Form) ZIPOutputDirectory() (err error) {
 
 	err = filepath.Walk(f.OutDir(), walker)
 	if err != nil {
-		panic(err)
+		return
 	}
 	log.Printf("%s - Walked directory: %s", f.Name, f.OutDir())
 
-	return nil
+	return outpath, nil
 }
 
 type FormPrimary struct {

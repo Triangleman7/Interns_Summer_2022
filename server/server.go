@@ -6,10 +6,12 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 )
 
@@ -120,28 +122,18 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 	var path = "/forms/primary"
 	requestCheck(w, r, path)
 
-	payload := make(map[string]interface{})
-	var zippath string
-
 	switch r.Method {
 
 	case "POST":
 		var formPrimary FormPrimary
-		formPrimary.form.SetupOutput("form-primary")
-
-		zippath, err = formPrimary.handle(w, r)
+		err = formPrimary.handle(w, r)
 
 	default:
 		err = errors.New("only POST requests supported")
 	}
 
-	if err != nil {
-		payload["success"] = false
-		payload["zip-path"] = ""
-	} else {
-		payload["success"] = true
-		payload["zip-path"] = zippath
-	}
+	payload := make(map[string]interface{})
+	payload["success"] = (err != nil)
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(payload)
@@ -149,4 +141,34 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 		log.Panic(err)
 	}
 	log.Printf("Responding to request: %v", payload)
+}
+
+func ProcessFormPrimaryZIPRequest(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var path = "/forms/primary/zip"
+	requestCheck(w, r, path)
+
+	var zippath string
+	var filename string
+
+	switch r.Method {
+
+	case "POST":
+		var form = Form{"form-primary"}
+		zippath, err = form.ZIPOutputDirectory()
+
+		_, filename = filepath.Split(zippath)
+
+	default:
+		err = errors.New("only POST requests supported")
+	}
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	w.Header().Set("Content-Type", "application/zip")
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename='%s'", filename))
+
+	http.ServeFile(w, r, zippath)
 }
