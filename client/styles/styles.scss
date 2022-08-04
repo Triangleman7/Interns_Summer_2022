@@ -74,8 +74,8 @@ span.req-asterisk {
 
 /* || Header */
 
-$header-logo-width: 154px;
-$header-logo-height: 37px;
+$header-logo-width: 200px;
+$header-logo-height: 50px;
 
 header.main {
     height: 100px;
@@ -135,7 +135,7 @@ header.main #logo a {
     margin-top: 10px;
     background-position: center center;
     background-size: $header-logo-width;
-    background-image: url(https://www.boeing.com/assets/images/logo.png);
+    background-image: url(/client/images/logo.png);
     background-repeat: no-repeat;
     text-indent: -9999em;
 }
