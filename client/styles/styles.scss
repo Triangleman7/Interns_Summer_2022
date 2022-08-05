@@ -394,11 +394,15 @@ thead th:nth-child(1), tbody td:nth-child(1) {
 }
 
 thead th:nth-child(2), tbody td:nth-child(2) {
-    width: 25%;
+    width: 20%;
 }
 
 thead th:nth-child(3), tbody td:nth-child(3) {
-    width: 25%;
+    width: 15%;
+}
+
+thead th:nth-child(4), tbody td:nth-child(4) {
+    width: 15%;
 }
 
 #results-table {
