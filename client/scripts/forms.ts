@@ -117,8 +117,8 @@ function requestFormPrimaryZIP() {
 function responseFormPrimaryZIP(xhr: XMLHttpRequest) {
     let date = <string>xhr.getResponseHeader("Date");
     let datetime: number = Date.parse(date);
-    
-    let blob = new Blob([xhr.response], {type: "octet/stream"});
+
+    let blob = new Blob([xhr.response], {type: "application/zip"});
     let anchor: HTMLElement = downloadAnchor(`form-primary_output-${datetime}.zip`, blob);
 
     let tdFormOutput = <Element>document.querySelector(
