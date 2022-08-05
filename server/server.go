@@ -6,12 +6,10 @@ package server
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"syscall"
 )
 
@@ -149,15 +147,12 @@ func ProcessFormPrimaryZIPRequest(w http.ResponseWriter, r *http.Request) {
 	requestCheck(w, r, path)
 
 	var zippath string
-	var filename string
 
 	switch r.Method {
 
 	case "POST":
 		var form = Form{"form-primary"}
 		zippath, err = form.ZIPOutputDirectory()
-
-		_, filename = filepath.Split(zippath)
 
 	default:
 		err = errors.New("only POST requests supported")
@@ -168,7 +163,6 @@ func ProcessFormPrimaryZIPRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/zip")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename='%s'", filename))
 
 	http.ServeFile(w, r, zippath)
 }

@@ -2,21 +2,20 @@
  * Handles events that are triggered when the submit action of a form is invoked.
  */
 
-
-function elementJSONDownload(filename: string, content: string): HTMLElement {
+/**
+ * 
+ * @param filename 
+ * @param blob 
+ * @returns An anchor element (`<a>`) to download the contents stored in `blob`
+ */
+function downloadAnchor(filename: string, blob: Blob): HTMLElement {
     let a: HTMLElement = document.createElement("a");
     a.classList.add("download-results");
-    a.setAttribute(
-        "href",
-        `data:application/json;charset=utf-8,${encodeURIComponent(content)}`
-    );
+    a.setAttribute("href", window.URL.createObjectURL(blob));
     a.setAttribute("download", filename);
 
     let textnode: Text = document.createTextNode("Download");
     a.appendChild(textnode);
-
-    let div: HTMLElement = document.createElement("div");
-    div.appendChild(a);
 
     return a;
 }
@@ -52,6 +51,11 @@ function requestFormPrimary(event: SubmitEvent) {
     xhr.onload = () => { responseFormPrimary(xhr, formData) };
 }
 
+/**
+ * 
+ * @param xhr 
+ * @param form 
+ */
 function responseFormPrimary(xhr: XMLHttpRequest, form: FormData) {
     let data = JSON.parse(xhr.response);
     let datetime = new Date(Date.now());
@@ -59,54 +63,65 @@ function responseFormPrimary(xhr: XMLHttpRequest, form: FormData) {
     // JSON-seralize form input
     let formObject: any = {};
     form.forEach((value, key) => formObject[key] = value);
-    var formJSON = JSON.stringify(formObject);
 
-    //
-    let JSONDownload = elementJSONDownload(`form-primary_${Date.now()}.json`, formJSON);
+    // Create blob 
+    let blob = new Blob([JSON.stringify(formObject)], {type: "application/json"});
+    let anchor: HTMLElement = downloadAnchor(`form-primary_input${Date.now()}.json`, blob);
 
-    // Clear form
+    // Clear form on successful submission
     if (data["success"]) {
         formPrimary.reset();
     }
 
-    let table = <HTMLElement>document.getElementById("results-table");
-
-    // Create new node to contain form submission information
-    let tbody: HTMLElement = document.createElement("tbody");
-    tbody.classList.add(
-        "results-table-body",
-        data["success"] ? "success" : "failure"
-    );
-
-    //
+    // Create new <tr> element to hold informatino about most recent form submission
     let tr: HTMLElement = document.createElement("tr");
+    tr.classList.add("results-table-body", data["success"] ? "success": "failure");
+    tr.innerHTML = `<td class="timestamp"></td>
+    <td class="result-status"></td>
+    <td class="form-input"></td>
+    <td class="form-output"></td>`
+    tr.querySelector(".timestamp")?.appendChild(document.createTextNode(datetime.toString()));
+    tr.querySelector(".result-status")?.appendChild(document.createTextNode(data["success"] ? "Success" : "Failure"));
+    tr.querySelector(".form-input")?.appendChild(anchor);
 
-    //
-    let tdTimestamp: HTMLElement = document.createElement("td");
-    tdTimestamp.classList.add("col-timestamp");
-    tdTimestamp.innerText = datetime.toString();
-    tr.appendChild(tdTimestamp);
+    // Insert new table row as a child of <table> immediately after <thead> element
+    let table = <HTMLElement>document.getElementById("results-table");
+    let thead = <HTMLElement>document.getElementById("results-table-head");
+    table.insertBefore(tr, thead.nextElementSibling);
 
-    //
-    let tdResultStatus: HTMLElement = document.createElement("td");
-    tdResultStatus.classList.add("col-result-status");
-    tdResultStatus.innerText = (data["success"] ? "Success" : "Failure");
-    tr.appendChild(tdResultStatus);
-
-    //
-    let tdFormInput: HTMLElement = document.createElement("td");
-    tdFormInput.classList.add("col-form-input");
-    tdFormInput.appendChild(JSONDownload);
-    tr.appendChild(tdFormInput);
-
-    //
-    tbody.appendChild(tr);
-
-    //
-    let tbodyFirst = <HTMLElement>document.querySelector("#results-table tbody:nth-of-type(1)")
-    table.insertBefore(tbody, tbodyFirst);
+    requestFormPrimaryZIP()
 }
- 
+
+/**
+ * 
+ */
+function requestFormPrimaryZIP() {
+    let path: string = "forms/primary/zip";
+
+    // Configure a POST request
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", path);
+
+    // Send request
+    xhr.send();
+
+    // Listen for 'load' event
+    xhr.onload = () => { responseFormPrimaryZIP(xhr) };
+}
+
+/**
+ * 
+ * @param xhr 
+ */
+function responseFormPrimaryZIP(xhr: XMLHttpRequest) {
+    let blob = new Blob([xhr.response], {type: "application/zip"});
+    let anchor: HTMLElement = downloadAnchor(`form-primary_output${Date.now()}.zip`, blob);
+
+    let tdFormOutput = <Element>document.querySelector(
+        "table#results-table tr:nth-of-type(1) td.form-output"
+    );
+    tdFormOutput.appendChild(anchor);
+}
  
 const formSearch: HTMLFormElement = document.forms[<any>"search"];
 formSearch.addEventListener("submit", handleFormSearch);
