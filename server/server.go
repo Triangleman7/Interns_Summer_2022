@@ -133,7 +133,7 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	payload := make(map[string]interface{})
-	payload["success"] = (err != nil)
+	payload["success"] = (err == nil)
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(payload)
