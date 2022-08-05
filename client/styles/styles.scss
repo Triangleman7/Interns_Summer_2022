@@ -381,24 +381,28 @@ table {
     border-collapse: collapse;
 }
 
-tbody.failure td.col-result-status {
-    color: red;
-}
-
-tbody.success td.col-result-status {
-    color: green;
-}
-
-thead th:nth-child(1), tbody td:nth-child(1) {
+thead .timestamp, tbody.timestamp {
     width: 50%;
 }
 
-thead th:nth-child(2), tbody td:nth-child(2) {
-    width: 25%;
+thead .result-status, tbody .result-status {
+    width: 20%;
 }
 
-thead th:nth-child(3), tbody td:nth-child(3) {
-    width: 25%;
+thead .form-input, tbody .form-input {
+    width: 15%;
+}
+
+thead .form-output, tbody.form-output {
+    width: 15%;
+}
+
+tr.failure td.result-status {
+    color: red;
+}
+
+tr.success td.result-status {
+    color: green;
 }
 
 #results-table {
