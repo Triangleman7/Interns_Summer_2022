@@ -6,6 +6,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -134,6 +135,7 @@ func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
 	payload["success"] = (err == nil)
 
 	w.Header().Set("Content-Type", "application/json")
+
 	err = json.NewEncoder(w).Encode(payload)
 	if err != nil {
 		log.Panic(err)
@@ -162,7 +164,12 @@ func ProcessFormPrimaryZIPRequest(w http.ResponseWriter, r *http.Request) {
 		log.Panic(err)
 	}
 
-	w.Header().Set("Content-Type", "application/zip")
+	w.Header().Set("Content-Type", "octet/stream")
 
-	http.ServeFile(w, r, zippath)
+	var reader []byte
+	reader, err = ioutil.ReadFile(zippath)
+	if err != nil {
+		log.Panic(err)
+	}
+	w.Write(reader)
 }

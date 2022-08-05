@@ -58,7 +58,8 @@ function requestFormPrimary(event: SubmitEvent) {
  */
 function responseFormPrimary(xhr: XMLHttpRequest, form: FormData) {
     let data = JSON.parse(xhr.response);
-    let datetime = new Date(Date.now());
+    let date = <string>xhr.getResponseHeader("Date");
+    let datetime: number = Date.parse(date);
 
     // JSON-seralize form input
     let formObject: any = {};
@@ -66,7 +67,7 @@ function responseFormPrimary(xhr: XMLHttpRequest, form: FormData) {
 
     // Create blob 
     let blob = new Blob([JSON.stringify(formObject)], {type: "application/json"});
-    let anchor: HTMLElement = downloadAnchor(`form-primary_input${Date.now()}.json`, blob);
+    let anchor: HTMLElement = downloadAnchor(`form-primary_input-${datetime}.json`, blob);
 
     // Clear form on successful submission
     if (data["success"]) {
@@ -80,7 +81,7 @@ function responseFormPrimary(xhr: XMLHttpRequest, form: FormData) {
     <td class="result-status"></td>
     <td class="form-input"></td>
     <td class="form-output"></td>`
-    tr.querySelector(".timestamp")?.appendChild(document.createTextNode(datetime.toString()));
+    tr.querySelector(".timestamp")?.appendChild(document.createTextNode(date));
     tr.querySelector(".result-status")?.appendChild(document.createTextNode(data["success"] ? "Success" : "Failure"));
     tr.querySelector(".form-input")?.appendChild(anchor);
 
@@ -114,8 +115,11 @@ function requestFormPrimaryZIP() {
  * @param xhr 
  */
 function responseFormPrimaryZIP(xhr: XMLHttpRequest) {
-    let blob = new Blob([xhr.response], {type: "application/zip"});
-    let anchor: HTMLElement = downloadAnchor(`form-primary_output${Date.now()}.zip`, blob);
+    let date = <string>xhr.getResponseHeader("Date");
+    let datetime: number = Date.parse(date);
+    
+    let blob = new Blob([xhr.response], {type: "octet/stream"});
+    let anchor: HTMLElement = downloadAnchor(`form-primary_output-${datetime}.zip`, blob);
 
     let tdFormOutput = <Element>document.querySelector(
         "table#results-table tr:nth-of-type(1) td.form-output"
