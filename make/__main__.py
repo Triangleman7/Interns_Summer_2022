@@ -1,8 +1,8 @@
 """
-Runs an imitation of the `$ make (build|run|clean)` command.
+Runs an imitation of the `$ make (build|clean|run)` command.
 
 Usage:
-- `$ python -m make (build|run|clean)`
+- `$ python -m make (build|clean|run)`
 """
 
 import sys
@@ -17,6 +17,6 @@ COMMANDS = {
 }
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     cmd = COMMANDS.get(sys.argv[1])
     cmd()

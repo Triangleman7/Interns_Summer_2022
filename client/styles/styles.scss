@@ -122,13 +122,13 @@ header.main #logo a {
     text-indent: -9999em;
 }
 
-header.main .search {
+header.main #search {
     clear: right;
     float: right;
     margin: 14px 0 4px;
 }
 
-header.main .search .input-text {
+header.main #search .input-text {
     width: 107px;
     font-family: Helvetica, 'Open Sans', Arial, sans-serif;
     transition: width 150ms linear;

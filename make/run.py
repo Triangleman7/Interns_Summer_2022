@@ -3,13 +3,15 @@ Imitates the `$ make run` command.
 """
 
 import os
-import subprocess
 import sys
 
 from .constants import BINARY_NAME, SCRIPTS, STYLES, TEMPLATES
 
 
 def main():
+    """
+    Runs the commands defined in **makefile** for the `$ make run` command.
+    """
     # Compile/Transpile TypeScript source files
     for file in SCRIPTS.glob("*.ts"):
         os.system(f"tsc {file}")
@@ -20,7 +22,6 @@ def main():
 
     # Compile Go package
     os.system(f"go build -o {BINARY_NAME} main.go")
-
     try:
         os.system(f"{BINARY_NAME}")
     except KeyboardInterrupt:
