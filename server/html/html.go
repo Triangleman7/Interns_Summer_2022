@@ -1,5 +1,5 @@
 /*
-Package outputdata/html handles writing HTML Document (.HTML) output.
+Package html handles writing HTML Document (.HTML) output.
 */
 package html
 
@@ -37,7 +37,12 @@ func WriteHTML(path string, content string) (err error) {
 	if err != nil {
 		return
 	}
-	defer file.Close()
+	defer func() {
+		var e = file.Close()
+		if e != nil {
+			panic(err)
+		}
+	}()
 
 	_, err = file.Write([]byte(content))
 	if err != nil {

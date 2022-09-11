@@ -1,5 +1,5 @@
 /**
- * Handles popup-style elements.
+ * Handles element animations.
  */
 
 /**
@@ -52,6 +52,8 @@ class Popup {
     }
 }
 
-const popupImageUpload = new Popup("primary-image-upload");
-const popupCaptionCasing = new Popup("primary-caption-casing");
-const popupFormSubmit = new Popup("primary-form-submit");
+const popupFileUpload = new Popup("file-upload-popup");
+const popupUploadTimestamp = new Popup("upload-timestamp-popup");
+const popupCaptionCasing = new Popup("caption-casing-popup");
+const popupCaptionStyling = new Popup("caption-styling-popup");
+const popupFormSubmit = new Popup("form-submit-popup");

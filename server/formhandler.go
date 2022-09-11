@@ -5,11 +5,15 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"os/exec"
 	"path/filepath"
+	"strconv"
+	"time"
 
 	"github.com/Triangleman7/Interns_Summer_2022/resources/msword"
 	"github.com/Triangleman7/Interns_Summer_2022/server/docx"
 	"github.com/Triangleman7/Interns_Summer_2022/server/html"
+	"github.com/Triangleman7/Interns_Summer_2022/server/scss"
 )
 
 type FormOutput interface {
@@ -37,7 +41,7 @@ func (f *Form) SetupOutput(name string) {
 
 	DirectorySetup(f.OutDir(), FILEMODE)
 
-	var subdirs []string = []string{"images"}
+	var subdirs = []string{"images"}
 	for _, sd := range subdirs {
 		DirectorySetup(filepath.Join(f.OutDir(), sd), FILEMODE)
 	}
@@ -73,14 +77,14 @@ func (f *Form) OutHTML() (path string) {
 	return f.GetOut("index.html")
 }
 
-// TemplateCSS returns the path to the template CSS stylesheet.
-func (f *Form) TemplateCSS() (path string) {
-	return f.GetTemplate("styles.css")
+// TemplateSCSS returns the path to the template CSS stylesheet.
+func (f *Form) TemplateSCSS() (path string) {
+	return f.GetTemplate("styles.scss")
 }
 
-// OutCSS returns the path to the output CSS stylesheet.
-func (f *Form) OutCSS() (path string) {
-	return f.GetOut("styles.css")
+// OutSCSS returns the path to the output CSS stylesheet.
+func (f *Form) OutSCSS() (path string) {
+	return f.GetOut("styles.scss")
 }
 
 // OutImages returns the path to the output images/ directory.
@@ -91,46 +95,90 @@ func (f *Form) OutImages() (path string) {
 type FormPrimary struct {
 	form Form
 
-	primaryImage string // {primary-image}
-	primaryText  string // {primary-text}
+	fileUpload       string
+	fileUploadFile   multipart.File
+	fileUploadHeader *multipart.FileHeader
+	uploadTimestamp  string
+	imageScale       int
+	imageAlign       string
+	captionText      string
+	captionAlign     string
+	captionCasing    string
+	captionStyling   map[string]bool
 }
 
 func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error) {
-	if f.form.Name == "" {
-		return fmt.Errorf("output directory for element 'form#primary' not set up")
-	}
-	log.Print("Handling form submission to form#primary")
+	f.form.Name = "form-primary"
+	log.Printf("%s - Handling form submission", f.form.Name)
 
 	// Parse form submission
 	err = r.ParseMultipartForm(0)
 	if err != nil {
 		return
 	}
-	log.Print("Parsed form submission")
+	log.Printf("%s - Parsed form submission", f.form.Name)
 
-	// Process element input[name="primary-text"]
-	var primaryText string = r.FormValue("caption-text")
-	var primaryTextCasing string = r.FormValue("caption-casing")
-	f.primaryText = FormatValue(primaryText, primaryTextCasing)
-
-	// Process element input[name="primary-image"]
-	var file multipart.File
-	var header *multipart.FileHeader
-	file, header, err = r.FormFile("image-upload")
+	// Process form <input> fields
+	f.fileUploadFile, f.fileUploadHeader, err = r.FormFile("file-upload")
 	if err != nil {
 		return
 	}
-	defer file.Close()
+	f.uploadTimestamp = r.FormValue("upload-timestamp")
+	f.imageScale, err = strconv.Atoi(r.FormValue("image-scale"))
+	if err != nil {
+		return
+	}
+	f.imageAlign = r.FormValue("image-align")
+	f.captionText = r.FormValue("caption-text")
+	f.captionAlign = r.FormValue("caption-align")
+	f.captionCasing = r.FormValue("caption-casing")
+	f.captionStyling = make(map[string]bool)
+	for _, style := range []string{
+		"italic", "bold", "underline", "strikethrough",
+	} {
+		if r.FormValue(fmt.Sprintf("caption-styling-%s", style)) == "on" {
+			f.captionStyling[style] = true
+		} else {
+			f.captionStyling[style] = false
+		}
+	}
+	log.Printf("%s - Processed form <input> fields: %v", f.form.Name, f.form)
+
+	// Process {primary-image} output field
+	defer func() {
+		var e = f.fileUploadFile.Close()
+		if e != nil {
+			panic(e)
+		}
+	}()
 	var uploadpath string
-	uploadpath, err = UploadFile(file, header)
+	uploadpath, err = UploadFile(f.fileUploadFile, f.fileUploadHeader)
 	if err != nil {
 		return
 	}
-	f.primaryImage = filepath.Join(f.form.OutImages(), header.Filename)
-	err = CopyFile(uploadpath, f.primaryImage)
+	f.fileUpload = filepath.Join(f.form.OutImages(), f.fileUploadHeader.Filename)
+	err = CopyFile(uploadpath, f.fileUpload)
 	if err != nil {
 		return
 	}
+	log.Printf("%s - Processed output for field {primary-image}", f.form.Name)
+
+	// Process {primary-image-timestamp} output field
+	var timeFormat = "2006-01-02T03:04"
+	var datetime time.Time
+	datetime, err = time.Parse(timeFormat, f.uploadTimestamp)
+	if r.FormValue("image-timestamp") == "" {
+		f.uploadTimestamp = time.Now().Format(timeFormat)
+	} else if err != nil {
+		f.uploadTimestamp = time.Now().Format(timeFormat)
+	} else {
+		f.uploadTimestamp = datetime.Format(timeFormat)
+	}
+	log.Printf("%s - Processed output for field {primary-images-timestamp}", f.form.Name)
+
+	// Process {primary-text} output field
+	f.captionText = FormatValue(f.captionText, f.captionCasing)
+	log.Printf("%s - Processed output for field {primary-text}", f.form.Name)
 
 	// Write output
 	err = f.outputDOCX()
@@ -141,18 +189,28 @@ func (f *FormPrimary) handle(w http.ResponseWriter, r *http.Request) (err error)
 	if err != nil {
 		return
 	}
-	err = f.copyCSS()
+	err = f.outputSCSS()
 	if err != nil {
 		return
 	}
-	log.Printf("Successfully wrote all output: %s", OUTPUTDIRECTORY)
+	log.Printf("%s - Successfully wrote all output: %s", f.form.Name, OUTPUTDIRECTORY)
+
+	// Transpile output SCSS to CSS
+	var cmd = exec.Command(
+		"sass", fmt.Sprintf("%s:%s", f.form.OutDir(), f.form.OutDir()),
+	)
+	err = cmd.Run()
+	if err != nil {
+		return
+	}
+	log.Printf("%s - Successfully compiled SCSS to CSS: %s", f.form.Name, f.form.OutDir())
 
 	return
 }
 
 func (f *FormPrimary) outputDOCX() (err error) {
-	var templatepath string = f.form.TemplateDOCX()
-	var outpath string = f.form.OutDOCX()
+	var templatepath = f.form.TemplateDOCX()
+	var outpath = f.form.OutDOCX()
 
 	var reader *msword.ReplaceDocx
 	var outDOCX *msword.Docx
@@ -160,24 +218,30 @@ func (f *FormPrimary) outputDOCX() (err error) {
 	if err != nil {
 		return
 	}
-	defer reader.Close()
+	defer func() {
+		var e = reader.Close()
+		if e != nil {
+			panic(e)
+		}
+	}()
 
-	docx.Image(outDOCX, 1, f.primaryImage)
-	docx.Paragraph(outDOCX, "caption-text", f.primaryText)
+	docx.Image(outDOCX, 1, f.fileUpload)
+	docx.Paragraph(outDOCX, "image-timestamp", f.uploadTimestamp)
+	docx.Paragraph(outDOCX, "caption-text", f.captionText)
 
 	err = docx.WriteDOCX(outpath, outDOCX)
 	if err != nil {
 		return
 	}
 
-	log.Printf("DOCX output written to %s", outpath)
+	log.Printf("%s - DOCX output written to %s", f.form.Name, outpath)
 
 	return
 }
 
 func (f *FormPrimary) outputHTML() (err error) {
-	var templatepath string = f.form.TemplateHTML()
-	var outpath string = f.form.OutHTML()
+	var templatepath = f.form.TemplateHTML()
+	var outpath = f.form.OutHTML()
 
 	var outHTML string
 	outHTML, err = html.ReadTemplate(templatepath)
@@ -185,19 +249,75 @@ func (f *FormPrimary) outputHTML() (err error) {
 		return
 	}
 
-	html.Image(&outHTML, "image-upload", f.primaryImage)
-	html.Paragraph(&outHTML, "caption-text", f.primaryText)
+	html.Image(&outHTML, "image-upload", f.fileUpload)
+	html.Paragraph(&outHTML, "image-timestamp", f.uploadTimestamp)
+	html.Paragraph(&outHTML, "caption-text", f.captionText)
 
 	err = html.WriteHTML(outpath, outHTML)
 	if err != nil {
 		return
 	}
 
-	log.Printf("HTML output written to %s", outpath)
+	log.Printf("%s - HTML output written to %s", f.form.Name, outpath)
 
 	return
 }
 
-func (f *FormPrimary) copyCSS() (err error) {
-	return CopyFile(f.form.TemplateCSS(), f.form.OutCSS())
+func (f *FormPrimary) outputSCSS() (err error) {
+	var templatepath = f.form.TemplateSCSS()
+	var outpath = f.form.OutSCSS()
+
+	var outSCSS string
+	outSCSS, err = scss.ReadTemplate(templatepath)
+	if err != nil {
+		return
+	}
+
+	scss.Rule(
+		&outSCSS,
+		"div.container",
+		map[string]string{
+			"display": "block",
+			"width":   fmt.Sprintf("%d%%", f.imageScale),
+			"margin":  scss.ImgMargin(f.imageAlign),
+		},
+	)
+	scss.Rule(
+		&outSCSS,
+		"img.image-upload",
+		map[string]string{
+			"height": "100%",
+			"width":  "100%",
+		},
+	)
+	scss.Rule(
+		&outSCSS,
+		"p.image-timestamp",
+		map[string]string{
+			"text-align":  "center",
+			"font-family": "monospace",
+		},
+	)
+	scss.Rule(
+		&outSCSS,
+		"p.caption-text",
+		map[string]string{
+			"text-align":  f.captionAlign,
+			"font-style":  scss.PFontStyle(f.captionStyling["italic"]),
+			"font-weight": scss.PFontWeight(f.captionStyling["bold"]),
+			"text-decoration": scss.PTextDecoration(
+				f.captionStyling["strikethrough"], f.captionStyling["underline"],
+			),
+			"overflow-wrap": "break-word",
+		},
+	)
+
+	err = scss.WriteSCSS(outpath, outSCSS)
+	if err != nil {
+		return
+	}
+
+	log.Printf("%s - SCSS output written to %s", f.form.Name, outpath)
+
+	return
 }

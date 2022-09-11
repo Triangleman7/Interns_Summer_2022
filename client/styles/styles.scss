@@ -8,7 +8,6 @@ $background-color: #eaeaea;
     border: 0;
     margin: 0;
     vertical-align: baseline;
-    font-size: 100%;
     font: inherit;
 }
 
@@ -38,6 +37,25 @@ hr.section-divider {
 
 ol, ul {
     list-style: none;
+}
+
+span.optional, span.required {
+    color: #9B9B9B;
+    font-size: 0.875rem;
+}
+
+span.optional {
+    font-style: italic;
+}
+
+span.required {
+    font-style: italic;
+    font-weight: bold;
+}
+
+span.req-asterisk {
+    color: #ff0000;
+    font-weight: bold;
 }
 
 #site {
@@ -199,15 +217,23 @@ input {
 
 /* || Main content */
 
-$main-content-background-color: #fff;
+$main-content-bg-color: #fff;
 
-.bfd {
+#content {
+    clear: both;
+    display: table;
+    overflow: auto;
+    position: relative;
+    width: 100%;
+    height: 100%;
     padding: 100px 0;
-    background-color: $main-content-background-color;
+    background-color: $main-content-bg-color;
     font-size: 16px;
+    line-height: 1.7;
 }
 
-.bfd h2 {
+#content h2 {
+    margin: 5px;
     font-family: inherit;
     font-size: 2.75rem;
     color: #333333;
@@ -215,54 +241,14 @@ $main-content-background-color: #fff;
     line-height: 1.2em;
 }
 
-.bfd h4 {
+#content h3 {
     padding-top: 1rem;
+    margin-bottom: 5px;
     font-family: inherit;
-    font-size: 1.375rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #008bac;
     line-height: 1.2em;
-}
-
-.block.copy-large {
-    clear: both;
-    display: block;
-}
-
-.block.fade-bottom {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background-color: $main-content-background-color;
-}
-
-.block.fade-bottom .row {
-    position: relative;
-}
-
-.col {
-    float: left;
-    position: relative;
-    padding: 0 5px;
-}
-
-.col, .row {
-    min-height: 0;
-}
-
-.copy-styles {
-    font-size: 13px;
-    line-height: 1.7;
-}
-
-.copy-styles h4 {
-    margin-bottom: 5px;
-}
-
-.row {
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto;
 }
 
 /* || Form */
@@ -271,45 +257,74 @@ $form-ph-text-color: #ccc;
 $form-text-color: #495057;
 $form-bg-color: #fff;
 
-$btn-hover-text-color: darken(white, 10%);
-$btn-hover-bg-color: rgb(50,50,60);
+$form-label-padding: 0px 0px 0px 10px;
 
-$form-field-height: 3.5rem;
-
-.bfd h3 {
-    font-family: inherit;
-    font-size: 2rem;
-    color: #333333;
-    font-weight: lighter;
-    line-height: 1.2em;
+#content .form-container {
+    float: left;
+    display: table-row;
+    position: relative;
+    width: 50%;
+    max-width: 100%;
+    min-height: 0;
+    margin: 0% 25%;
+    padding: 0 5px;
 }
 
-.bfd .bfd-form-group {
+#content .form-container .form-group {
     padding-top: 1rem;
     margin: 1rem 0 1.75rem 0;
 }
 
-.bfd .bfd-form-group input, .bfd .bfd-form-group textarea {
-    font-family: inherit;
-  }
+#content .form-container .form-group input {
+    font-family: inherit
+}
 
-.bfd .bfd-form-group label {
+#content .form-container .form-group textarea {
+    font-family: inherit;
+}
+
+.form-container .form-group fieldset {
+    border: 1px solid rgba(25, 25, 25, 0.32);
+    background-clip: padding-box;
+    color: $form-text-color;
+}
+
+.form-container .form-group fieldset label {
+    font-family: inherit;
+    font-size: 1em;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.form-container .form-group fieldset legend {
+    padding: $form-label-padding;
     font-family: inherit;
     font-size: 1em;
     font-weight: bolder;
     color: rgba(0, 0, 0, 0.87);
 }
 
-.bfd .bfd-form-group input::placeholder {
+.form-container .form-group label {
+    padding: $form-label-padding;
+    font-family: inherit;
+    font-size: 1em;
+    font-weight: bolder;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.form-container .form-group input {
+    border: 1px solid rgba(25, 25, 25, 0.32);
+    background-clip: padding-box;
+    color: $form-text-color;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-container .form-group input::placeholder {
     color: $form-ph-text-color;
     opacity: 1;
 }
 
-.bfd .bfd-form-group input, .bfd .bfd-form-group textarea {
-    font-family: inherit;
-}
-
-.bfd .form-control {
+.form-container .form-group .form-control {
     display: block;
     width: 100%;
     height: 3.5rem;
@@ -321,14 +336,23 @@ $form-field-height: 3.5rem;
     color: $form-text-color;
 }
 
-.bfd input[type='file'] {
-    line-height: auto;
+.form-container .form-group input[type='checkbox'] {
+    padding: 1rem;
+    margin: 0.4rem;
 }
 
-.bfd input[type='submit'] {
+// .form-container .form-group input[type='datetime-local'] {}
+
+.form-container .form-group input[type='file'] {
+    line-height: inherit;
+}
+
+// .form-container .form-group input[type='number'] {}
+
+.form-container .form-group input[type='submit'] {
     background-color: #009bdf;
     color: $form-bg-color;
-    font-size: 0.75rem;
+    font-size: 1.5rem;
     display: block;
     padding: 2rem;
     width: 100%;
@@ -339,11 +363,21 @@ $form-field-height: 3.5rem;
     cursor: pointer;
 }
 
-.bfd input[type='text'], .bfd select {
+// .form-container .form-group input[type='text'] {}
+
+.form-container .form-group select {
     border: 1px solid rgba(25, 25, 25, 0.32);
     background-clip: padding-box;
     color: $form-text-color;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-container #form-success {
+    color: #00ff00;
+}
+
+.form-container #form-failure {
+    color: #ff0000;
 }
 
 /* || Info popup */
@@ -363,6 +397,7 @@ img.info {
 .popup {
     position: relative;
     display: inline-block;
+    margin: 0% 0% 0% 100%;
     cursor: pointer;
 }
   
@@ -396,7 +431,7 @@ img.info {
 }
   
 /* Toggle this class when clicking on the popup container (hide and show the popup) */
-.popup .show {
+.popup .popuptext.show {
     visibility: visible;
     -webkit-animation: popupFadeIn 1s;
     animation: popupFadeIn 1s

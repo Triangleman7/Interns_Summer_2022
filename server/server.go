@@ -4,6 +4,7 @@ Package server provides support for hosting, running, and handling a local serve
 package server
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -34,7 +35,7 @@ func DirectorySetup(dirpath string, mode os.FileMode) {
 	DirectoryTeardown(dirpath)
 
 	// Create an empty output directory
-	var err error = os.Mkdir(dirpath, mode)
+	var err = os.Mkdir(dirpath, mode)
 	if err != nil {
 		panic(err)
 	}
@@ -48,7 +49,7 @@ func DirectorySetup(dirpath string, mode os.FileMode) {
 func DirectoryTeardown(dirpath string) {
 	log.Printf("Tearing down directory at %s", dirpath)
 
-	var err error = os.RemoveAll(dirpath)
+	var err = os.RemoveAll(dirpath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,37 +79,69 @@ func SetupCloseHandler() {
 	}()
 }
 
-// ProcessRootResponse processes and responds to all requests made to the root url ("/"). Only GET
-// and POST requests are accepted and raises an error if other requests are received.
-//
-// Raises any errors encountered while handling POST requests.
-func ProcessRootResponse(w http.ResponseWriter, r *http.Request) {
-	var err error
-
-	// Assert URL path directs to the root address
-	if r.URL.Path != "/" {
+func requestCheck(w http.ResponseWriter, r *http.Request, path string) {
+	if r.URL.Path != path {
 		http.Error(w, "404 not found.", http.StatusNotFound)
 		return
 	}
 
-	log.Printf("Received request: %s", r.Method)
-	log.Printf("Request headers: %v", r.Header)
+	log.Printf("%s - Received request: %s", path, r.Method)
+	log.Printf("%s - Request headers: %v", path, r.Header)
+}
+
+// ProcessRootRequest processes and responds to all requests made to the root URL ("/"). Only GET
+// requests are supported; raises an error if other request types are received.
+func ProcessRootRequest(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var path = "/"
+	requestCheck(w, r, path)
+
 	switch r.Method {
 
 	case "GET":
-		// Serve the root HTML document
 		http.ServeFile(w, r, "client/index.html")
 
-	case "POST":
-		// Handle form submission to element form#primary
-		var form FormPrimary
-		form.form.SetupOutput("form-primary")
-		err = form.handle(w, r)
-
 	default:
-		err = errors.New("only GET and POST requests supported")
+		err = errors.New("only GET requests supported")
 	}
 
+	if err != nil {
+		log.Panic(err)
+	}
+}
+
+// ProcessFormPrimaryRequest processes and responds to all POST requests made to the form
+// `form#primary` ("/forms/primary"). Only POST requests are supported; raises an error if other
+// request types are received.
+//
+// Raises any errors encountered while handling POST requests.
+func ProcessFormPrimaryRequest(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var path = "/forms/primary"
+	requestCheck(w, r, path)
+
+	payload := make(map[string]interface{})
+
+	switch r.Method {
+
+	case "POST":
+		var formPrimary FormPrimary
+		formPrimary.form.SetupOutput("form-primary")
+		err = formPrimary.handle(w, r)
+
+	default:
+		err = errors.New("only POST requests supported")
+	}
+
+	if err != nil {
+		payload["success"] = false
+		log.Panic(err)
+	} else {
+		payload["success"] = true
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(payload)
 	if err != nil {
 		log.Panic(err)
 	}
